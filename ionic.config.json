@@ -1,0 +1,7 @@
+{
+  "name": "Gym-System",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
