@@ -14,9 +14,16 @@ export class LoginPage {
     private loginDivHeightObservable?: Observable<Event>;
     private loginDivHeightSubscription?: Subscription;
 
+    username: String = "";
+    password: String = "";
+
     constructor() { }
 
     ionViewDidEnter() {
         this.LoginDiv?.nativeElement.style.setProperty("--calculatedOffset", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
+    }
+
+    submitCredentials() {
+
     }
 }
