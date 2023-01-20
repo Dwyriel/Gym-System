@@ -1,0 +1,19 @@
+.centralized {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.full-width {
+    width: 100%;
+    padding: 0 1rem;
+    margin-inline: 0;
+}
+
+.messageText {
+    margin-top: 1.25rem;
+    opacity: 75%;
+    text-align: center;
+}
