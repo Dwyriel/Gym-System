@@ -3,16 +3,16 @@
         <ion-col>
             <ion-item class="ion-margin-horizontal">
                 <ion-label position="floating">Usuario</ion-label>
-                <ion-input [(ngModel)]="username"></ion-input>
+                <ion-input [(ngModel)]="username" (ionInput)="ChangeOnInput()"></ion-input>
             </ion-item>
             <ion-item class="ion-margin">
                 <ion-label position="floating">Senha</ion-label>
-                <ion-input [(ngModel)]="password"></ion-input>
+                <ion-input [(ngModel)]="password" type="password" (ionInput)="ChangeOnInput()"></ion-input>
             </ion-item>
-            <ion-button class="full-width" (click)="submitCredentials()">Entrar</ion-button>
+            <ion-button class="full-width" (click)="LoginBtn()" [disabled]="inputIsEmpty" #SubmitButton>Entrar</ion-button>
         </ion-col>
         <div class="messageText ion-margin-bottom">
-            <ion-text class="ion-text-center">Entre em contato com o administrador do sistema para obter acesso.</ion-text>
+            <p class="ion-text-center" #Message>Entre em contato com o administrador do sistema para obter acesso.</p>
         </div>
     </div>
 </ion-content>
