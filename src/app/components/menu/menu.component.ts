@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { AccountService } from "../../services/account.service";
 import { MenuController } from "@ionic/angular";
+import { DeviceIDService } from "../../services/device-id.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -10,8 +11,9 @@ import {Router} from "@angular/router";
 })
 export class MenuComponent implements OnInit {
     displayUsername: string | null | undefined;
+    deviceName: string | null = this.deviceIDService.GetDeviceName();
 
-    constructor(private router: Router, private accountService: AccountService, private menu: MenuController) { }
+    constructor(private router: Router, private accountService: AccountService, private menu: MenuController, private deviceIDService: DeviceIDService) { }
 
     ngOnInit() {
         this.accountService.GetUserObservable().subscribe(result => {
