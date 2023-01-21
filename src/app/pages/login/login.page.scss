@@ -6,11 +6,13 @@
     font-size: xxx-large;
 }
 
-.centralized {
+.login-div {
+    max-width: 500px;
     position: absolute;
     width: 100%;
     top: 50%;
-    transform: translateY(var(--calculatedOffset));
+    left: 50%;
+    transform: translate(var(--calculatedOffsetX), var(--calculatedOffsetY));
 }
 
 .full-width {

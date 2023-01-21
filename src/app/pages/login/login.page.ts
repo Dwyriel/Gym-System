@@ -1,9 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-
-import { fromEvent, Observable, Subscription } from "rxjs";
-
-import { AccountService } from "../../services/account.service";
-import {user} from "@angular/fire/auth";
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {AccountService} from "../../services/account.service";
 
 @Component({
     selector: 'app-login',
@@ -11,65 +7,72 @@ import {user} from "@angular/fire/auth";
     styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
-
     @ViewChild('LoginDiv') LoginDiv?: ElementRef;
     @ViewChild('GymName') GymName?: ElementRef;
-
     @ViewChild('Message') Message?: ElementRef;
 
-
-    username: string = "";
+    email: string = "";
     password: string = "";
+    isLoading: boolean = false;
 
-    inputIsEmpty: boolean = true;
-
-    typingStage: string = "display: ";
-    loadingStage: string = "display: none";
-
-    constructor(private accountService: AccountService) { }
+    constructor(private accountService: AccountService) {}
 
     ionViewDidEnter() {
-        this.LoginDiv?.nativeElement.style.setProperty("--calculatedOffset", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
+        this.LoginDiv?.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
+        this.LoginDiv?.nativeElement.style.setProperty("--calculatedOffsetX", ((this.LoginDiv?.nativeElement.offsetWidth / 2) * -1) + "px");
         this.GymName?.nativeElement.style.setProperty("--calculatedOffset", ((this.GymName?.nativeElement.offsetWidth / 2) * -1) + "px");
     }
 
-    LoginBtn() {
-        this.typingStage = "display: none";
-        this.loadingStage = "display: ";
-
-        this.accountService.Login(this.username, this.password)
-            .then()
-            .catch(error => {
-                this.Message?.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
-                this.DisplayErrorMessage(error.code);
-
-                this.typingStage = "display: ";
-                this.loadingStage = "display: none";
-        });
-
-        this.username = "";
+    ionViewWillLeave() {
+        this.email = "";
         this.password = "";
-        this.ChangeOnInput();
     }
 
-    DisplayErrorMessage(errorCode: string) {
+    async LoginBtn() {
+        this.isLoading = true;
+        await this.accountService.Login(this.email, this.password)
+            .then(asnwer => {
+                this.isLoading = false;
+                //todo redirect
+            }).catch(error => {
+                this.Message?.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
+                this.ShowLoginError(error.code);
+                this.isLoading = false;
+                this.password = "";
+            });
+    }
+
+    ShowLoginError(errorCode: string) {
         switch (errorCode) {
             case "auth/invalid-email":
             case "auth/user-not-found":
-                this.Message!.nativeElement.textContent = "Email inválido";
+                this.DisplayErrorMessage("Email inválido");
                 break;
             case "auth/wrong-password":
-                this.Message!.nativeElement.textContent = "Senha inválida";
+                this.DisplayErrorMessage("Senha inválida");
                 break;
             case "auth/network-request-failed":
-                this.Message!.nativeElement.textContent = "Sem conexão";
+                this.DisplayErrorMessage("Sem conexão");
                 break;
             default:
-                this.Message!.nativeElement.textContent = errorCode;
+                this.DisplayErrorMessage(errorCode);
         }
     }
 
-    ChangeOnInput() {
-        setTimeout(() => {this.inputIsEmpty = !(this.username != "" && this.password != "")}, 10);
+    async EnterPressed() {
+        if (!this.email) {
+            this.DisplayErrorMessage("Campo email vazio");
+            return;
+        }
+        if (!this.password) {
+            this.DisplayErrorMessage("Campo senha vazio");
+            return;
+        }
+        await this.LoginBtn();
+    }
+
+    DisplayErrorMessage(message: string) {
+        this.Message?.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
+        this.Message!.nativeElement.textContent = message;
     }
 }
