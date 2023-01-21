@@ -14,7 +14,7 @@
         </ion-col>
         <div class="message-text ion-margin-bottom">
             <ion-spinner name="crescent" class="big-spinner" [hidden]="!isLoading"></ion-spinner>
-            <p class="ion-text-center" [hidden]="isLoading" #Message>Entre em contato com o administrador do sistema para obter acesso.</p>
+            <p class="ion-text-center" [hidden]="isLoading" #Message> {{messageContent}} </p>
         </div>
     </div>
 </ion-content>

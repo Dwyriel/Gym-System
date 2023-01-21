@@ -14,11 +14,8 @@ export class MenuComponent implements OnInit {
 
     ngOnInit() {}
 
-    ionWillLeave() {
-        this.menu.close("menu").then();
-    }
-
     async LogoutBtn() {
+        await this.menu.close("menu");
         await this.accountService.Logout()
             .then(async () => {
             await this.router.navigate(["login"]);

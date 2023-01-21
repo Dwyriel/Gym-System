@@ -12,6 +12,7 @@ import {AppInfoService} from "../../services/app-info.service";
 })
 export class LoginPage {
     readonly gymName: string = gymName;
+    messageContent: string = "Entre em contato com o administrador do sistema para obter acesso.";
 
     private appInfoSubscription?: Subscription;
     private authSubscription?: Subscription;
@@ -52,6 +53,8 @@ export class LoginPage {
     }
 
     ionViewWillLeave() {
+        this.messageContent = "Entre em contato com o administrador do sistema para obter acesso.";
+        this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-text-color)");
         this.email = "";
         this.password = "";
         if (this.appInfoSubscription && !this.appInfoSubscription.closed)
@@ -74,6 +77,18 @@ export class LoginPage {
             });
     }
 
+    async EnterPressed() {
+        if (!this.email) {
+            this.DisplayErrorMessage("Campo email vazio");
+            return;
+        }
+        if (!this.password) {
+            this.DisplayErrorMessage("Campo senha vazio");
+            return;
+        }
+        await this.LoginBtn();
+    }
+
     ShowLoginError(errorCode: string) {
         switch (errorCode) {
             case "auth/invalid-email":
@@ -91,20 +106,8 @@ export class LoginPage {
         }
     }
 
-    async EnterPressed() {
-        if (!this.email) {
-            this.DisplayErrorMessage("Campo email vazio");
-            return;
-        }
-        if (!this.password) {
-            this.DisplayErrorMessage("Campo senha vazio");
-            return;
-        }
-        await this.LoginBtn();
-    }
-
     DisplayErrorMessage(message: string) {
         this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
-        this.MessageElement!.nativeElement.textContent = message;
+        this.messageContent = message;
     }
 }
