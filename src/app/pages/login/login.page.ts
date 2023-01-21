@@ -14,6 +14,7 @@ export class LoginPage {
     readonly gymName: string = gymName;
 
     private appInfoSubscription?: Subscription;
+    private authSubscription?: Subscription;
 
     @ViewChild('LoginDiv') LoginDivElement?: ElementRef;
     @ViewChild('GymName') GymNameElement?: ElementRef;
@@ -37,11 +38,26 @@ export class LoginPage {
         });
     }
 
+    ionViewDidEnter() {
+        if (this.authSubscription && !this.authSubscription.closed)
+            this.authSubscription.unsubscribe();
+        this.authSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
+            if (!answer)
+                return;
+            this.email = "";
+            this.password = "";
+            this.isLoading = false;
+            await this.router.navigate(["/"]);
+        })
+    }
+
     ionViewWillLeave() {
         this.email = "";
         this.password = "";
         if (this.appInfoSubscription && !this.appInfoSubscription.closed)
             this.appInfoSubscription.unsubscribe();
+        if (this.authSubscription && !this.authSubscription.closed)
+            this.authSubscription.unsubscribe();
     }
 
     async LoginBtn() {
