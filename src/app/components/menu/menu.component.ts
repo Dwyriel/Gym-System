@@ -30,9 +30,8 @@ export class MenuComponent implements OnInit {
 
     async LogoutBtn() {
         await this.menu.close("menu");
-        await this.accountService.Logout()
-            .then(async () => {
-                await this.router.navigate(["login"]);
-            });
+        await this.accountService.Logout().then(async () => {
+            await this.router.navigate(["/login"]);
+        });
     }
 }
