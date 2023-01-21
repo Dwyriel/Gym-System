@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Platform} from "@ionic/angular";
 import {Subscription} from "rxjs";
 import {AppInfoService} from "./services/app-info.service";
+import {DeviceIDService} from "./services/device-id.service";
 
 @Component({
     selector: 'app-root',
@@ -12,10 +13,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     private resizeSubscription?: Subscription;
 
-    constructor(private platform: Platform) {}
+    constructor(private platform: Platform, private deviceIDService: DeviceIDService) {}
 
     async ngOnInit() {
         this.GetPlatformInfo();
+        await this.deviceIDService.SetDeviceName();
     }
 
     async ngOnDestroy() {
