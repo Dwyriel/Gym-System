@@ -1,0 +1,20 @@
+<ion-content>
+    <h1 class="gym-name" #GymName>Viva +</h1>
+    <div class="login-div" #LoginDiv>
+        <ion-col>
+            <ion-item class="ion-margin-horizontal">
+                <ion-label position="floating">Email</ion-label>
+                <ion-input (keyup.enter)="EnterPressed()" [(ngModel)]="email" ></ion-input>
+            </ion-item>
+            <ion-item class="ion-margin">
+                <ion-label position="floating">Senha</ion-label>
+                <ion-input (keyup.enter)="EnterPressed()" [(ngModel)]="password" type="password" ></ion-input>
+            </ion-item>
+            <ion-button class="full-width" (click)="LoginBtn()" [disabled]="!email || !password" [hidden]="isLoading">Entrar</ion-button>
+        </ion-col>
+        <div class="message-text ion-margin-bottom">
+            <ion-spinner name="crescent" class="big-spinner" [hidden]="!isLoading"></ion-spinner>
+            <p class="ion-text-center" [hidden]="isLoading" #Message>Entre em contato com o administrador do sistema para obter acesso.</p>
+        </div>
+    </div>
+</ion-content>
