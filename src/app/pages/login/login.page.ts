@@ -18,9 +18,9 @@ export class LoginPage {
     constructor(private accountService: AccountService) {}
 
     ionViewDidEnter() {
-        this.LoginDiv?.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
-        this.LoginDiv?.nativeElement.style.setProperty("--calculatedOffsetX", ((this.LoginDiv?.nativeElement.offsetWidth / 2) * -1) + "px");
-        this.GymName?.nativeElement.style.setProperty("--calculatedOffset", ((this.GymName?.nativeElement.offsetWidth / 2) * -1) + "px");
+        this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
+        this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetX", ((this.LoginDiv?.nativeElement.offsetWidth / 2) * -1) + "px");
+        this.GymName!.nativeElement.style.setProperty("--calculatedOffset", ((this.GymName?.nativeElement.offsetWidth / 2) * -1) + "px");
     }
 
     ionViewWillLeave() {
@@ -35,7 +35,7 @@ export class LoginPage {
                 this.isLoading = false;
                 //todo redirect
             }).catch(error => {
-                this.Message?.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
+                this.Message!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
                 this.ShowLoginError(error.code);
                 this.isLoading = false;
                 this.password = "";
@@ -72,7 +72,7 @@ export class LoginPage {
     }
 
     DisplayErrorMessage(message: string) {
-        this.Message?.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
+        this.Message!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
         this.Message!.nativeElement.textContent = message;
     }
 }
