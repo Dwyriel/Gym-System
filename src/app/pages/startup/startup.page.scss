@@ -1,0 +1,18 @@
+.gym-name {
+    font-size: xxx-large;
+    white-space: nowrap;
+    margin-bottom: 5rem;
+}
+
+.spinner-div {
+    max-width: 500px;
+    position: absolute;
+    width: fit-content;
+    top: 50%;
+    left: 50%;
+    transform: translate(var(--calculatedOffsetX), var(--calculatedOffsetY));
+}
+
+.big-spinner {
+    transform: scale(4);
+}

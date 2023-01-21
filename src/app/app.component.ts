@@ -1,8 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Platform} from "@ionic/angular";
-import {AppInfoService} from "./services/app-info.service";
-import {AppInfo} from "./interfaces/app-info";
 import {Subscription} from "rxjs";
+import {AppInfoService} from "./services/app-info.service";
 
 @Component({
     selector: 'app-root',

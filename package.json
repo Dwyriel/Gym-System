@@ -10,7 +10,8 @@
         "watch": "ng build --watch --configuration development",
         "test": "ng test",
         "lint": "ng lint",
-        "ionic_start": "ionic serve"
+        "ionic_start": "ionic serve",
+        "ionic_start_prod": "ionic serve --prod"
     },
     "private": true,
     "dependencies": {
