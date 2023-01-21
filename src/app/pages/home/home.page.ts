@@ -28,5 +28,4 @@ export class HomePage {
         if (this.authSubscription && !this.authSubscription.closed)
             this.authSubscription.unsubscribe();
     }
-
 }

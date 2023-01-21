@@ -12,6 +12,7 @@ import {AppInfoService} from "../../services/app-info.service";
 })
 export class LoginPage {
     readonly gymName: string = gymName;
+    messageContent: string = "Entre em contato com o administrador do sistema para obter acesso.";
 
     private appInfoSubscription?: Subscription;
     private authSubscription?: Subscription;
@@ -48,10 +49,12 @@ export class LoginPage {
             this.password = "";
             this.isLoading = false;
             await this.router.navigate(["/"]);
-        })
+        });
     }
 
     ionViewWillLeave() {
+        this.messageContent = "Entre em contato com o administrador do sistema para obter acesso.";
+        this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-text-color)");
         this.email = "";
         this.password = "";
         if (this.appInfoSubscription && !this.appInfoSubscription.closed)
@@ -63,7 +66,7 @@ export class LoginPage {
     async LoginBtn() {
         this.isLoading = true;
         await this.accountService.Login(this.email, this.password)
-            .then(async asnwer => {
+            .then(async answer => {
                 this.isLoading = false;
                 await this.router.navigate(["/"]);
             }).catch(error => {
@@ -72,6 +75,18 @@ export class LoginPage {
                 this.isLoading = false;
                 this.password = "";
             });
+    }
+
+    async EnterPressed() {
+        if (!this.email) {
+            this.DisplayErrorMessage("Campo email vazio");
+            return;
+        }
+        if (!this.password) {
+            this.DisplayErrorMessage("Campo senha vazio");
+            return;
+        }
+        await this.LoginBtn();
     }
 
     ShowLoginError(errorCode: string) {
@@ -91,20 +106,8 @@ export class LoginPage {
         }
     }
 
-    async EnterPressed() {
-        if (!this.email) {
-            this.DisplayErrorMessage("Campo email vazio");
-            return;
-        }
-        if (!this.password) {
-            this.DisplayErrorMessage("Campo senha vazio");
-            return;
-        }
-        await this.LoginBtn();
-    }
-
     DisplayErrorMessage(message: string) {
         this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
-        this.MessageElement!.nativeElement.textContent = message;
+        this.messageContent = message;
     }
 }
