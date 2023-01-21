@@ -1,7 +1,7 @@
 {
-  "name": "Gym-System",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
+    "name": "Gym-System",
+    "integrations": {
+        "capacitor": {}
+    },
+    "type": "angular"
 }

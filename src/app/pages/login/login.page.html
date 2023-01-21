@@ -4,11 +4,11 @@
         <ion-col>
             <ion-item class="ion-margin-horizontal">
                 <ion-label position="floating">Email</ion-label>
-                <ion-input (keyup.enter)="EnterPressed()" [(ngModel)]="email" ></ion-input>
+                <ion-input (keyup.enter)="EnterPressed()" [(ngModel)]="email"></ion-input>
             </ion-item>
             <ion-item class="ion-margin">
                 <ion-label position="floating">Senha</ion-label>
-                <ion-input (keyup.enter)="EnterPressed()" [(ngModel)]="password" type="password" ></ion-input>
+                <ion-input (keyup.enter)="EnterPressed()" [(ngModel)]="password" type="password"></ion-input>
             </ion-item>
             <ion-button class="full-width" (click)="LoginBtn()" [disabled]="!email || !password" [hidden]="isLoading">Entrar</ion-button>
         </ion-col>

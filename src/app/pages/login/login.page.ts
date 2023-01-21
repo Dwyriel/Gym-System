@@ -25,8 +25,8 @@ export class LoginPage {
     ionViewDidEnter() {
         if (this.appInfoSubscription && !this.appInfoSubscription.closed)
             this.appInfoSubscription.unsubscribe();
-        this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo =>{
-            if(!appInfo)
+        this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
+            if (!appInfo)
                 return
             this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
             this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetX", (appInfo.appWidth >= 600) ? (((this.LoginDiv?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
