@@ -1,4 +1,5 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {gymName} from '../../../environments/environment';
 import {AccountService} from "../../services/account.service";
@@ -22,9 +23,9 @@ export class LoginPage {
     password: string = "";
     isLoading: boolean = false;
 
-    constructor(private accountService: AccountService) {}
+    constructor(private router: Router, private accountService: AccountService) {}
 
-    ionViewDidEnter() {
+    ionViewWillEnter() {
         if (this.appInfoSubscription && !this.appInfoSubscription.closed)
             this.appInfoSubscription.unsubscribe();
         this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
@@ -46,9 +47,9 @@ export class LoginPage {
     async LoginBtn() {
         this.isLoading = true;
         await this.accountService.Login(this.email, this.password)
-            .then(asnwer => {
+            .then(async asnwer => {
                 this.isLoading = false;
-                //todo redirect
+                await this.router.navigate(["/"]);
             }).catch(error => {
                 this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
                 this.ShowLoginError(error.code);
