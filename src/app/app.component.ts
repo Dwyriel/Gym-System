@@ -16,8 +16,8 @@ export class AppComponent implements OnInit, OnDestroy {
     constructor(private platform: Platform, private deviceIDService: DeviceIDService) {}
 
     async ngOnInit() {
-        this.GetPlatformInfo();
         await this.deviceIDService.SetDeviceName();
+        this.GetPlatformInfo();
     }
 
     async ngOnDestroy() {
