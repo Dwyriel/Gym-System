@@ -48,7 +48,7 @@ export class LoginPage {
             this.password = "";
             this.isLoading = false;
             await this.router.navigate(["/"]);
-        })
+        });
     }
 
     ionViewWillLeave() {
