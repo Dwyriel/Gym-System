@@ -1,31 +1,39 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AccountService} from "../../services/account.service";
 import {MenuController} from "@ionic/angular";
 import {DeviceIDService} from "../../services/device-id.service";
 import {Router} from "@angular/router";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-menu',
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.scss'],
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent implements OnInit, OnDestroy {
     displayUsername: string | null | undefined;
     deviceName: string | null = null;
+
+    private authSubscription?: Subscription;
+    private deviceIDSubscription?: Subscription;
+
 
     constructor(private router: Router, private accountService: AccountService, private menu: MenuController, private deviceIDService: DeviceIDService) { }
 
     ngOnInit() {
-        this.deviceIDService.GetDeviceNameObservable().subscribe(deviceName => this.deviceName = deviceName);
-        this.accountService.GetUserObservable().subscribe(result => {
+        this.UnsubscribeSubscription(this.deviceIDSubscription);
+        this.UnsubscribeSubscription(this.authSubscription);
+        this.deviceIDSubscription = this.deviceIDService.GetDeviceNameObservable().subscribe(deviceName => this.deviceName = deviceName);
+        this.authSubscription = this.accountService.GetUserObservable().subscribe(result => {
             if (result && typeof result != "boolean") {
                 this.displayUsername = (result?.displayName) ? result?.displayName : result?.email;
             }
         });
     }
 
-    ionViewWillEnter() {
-        console.log("Hewwo");
+    ngOnDestroy() {
+        this.UnsubscribeSubscription(this.deviceIDSubscription);
+        this.UnsubscribeSubscription(this.authSubscription);
     }
 
     async LogoutBtn() {
@@ -33,5 +41,10 @@ export class MenuComponent implements OnInit {
         await this.accountService.Logout().then(async () => {
             await this.router.navigate(["/login"]);
         });
+    }
+
+    UnsubscribeSubscription(subscription?: Subscription) {
+        if (subscription && !subscription.closed)
+            subscription.unsubscribe();
     }
 }
