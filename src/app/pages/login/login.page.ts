@@ -1,6 +1,7 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
-import {AccountService} from "../../services/account.service";
 import {Subscription} from "rxjs";
+import {gymName} from '../../../environments/environment';
+import {AccountService} from "../../services/account.service";
 import {AppInfoService} from "../../services/app-info.service";
 
 @Component({
@@ -9,12 +10,13 @@ import {AppInfoService} from "../../services/app-info.service";
     styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
+    readonly gymName: string = gymName;
 
     private appInfoSubscription?: Subscription;
 
-    @ViewChild('LoginDiv') LoginDiv?: ElementRef;
-    @ViewChild('GymName') GymName?: ElementRef;
-    @ViewChild('Message') Message?: ElementRef;
+    @ViewChild('LoginDiv') LoginDivElement?: ElementRef;
+    @ViewChild('GymName') GymNameElement?: ElementRef;
+    @ViewChild('Message') MessageElement?: ElementRef;
 
     email: string = "";
     password: string = "";
@@ -28,9 +30,9 @@ export class LoginPage {
         this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
             if (!appInfo)
                 return
-            this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
-            this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetX", (appInfo.appWidth >= 600) ? (((this.LoginDiv?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
-            this.GymName!.nativeElement.style.setProperty("--calculatedOffset", ((this.GymName?.nativeElement.offsetWidth / 2) * -1) + "px");
+            this.LoginDivElement!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDivElement?.nativeElement.offsetHeight / 2) * -1) + "px");
+            this.LoginDivElement!.nativeElement.style.setProperty("--calculatedOffsetX", (appInfo.appWidth >= 600) ? (((this.LoginDivElement?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
+            this.GymNameElement!.nativeElement.style.setProperty("--calculatedOffset", ((this.GymNameElement?.nativeElement.offsetWidth / 2) * -1) + "px");
         });
     }
 
@@ -48,7 +50,7 @@ export class LoginPage {
                 this.isLoading = false;
                 //todo redirect
             }).catch(error => {
-                this.Message!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
+                this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
                 this.ShowLoginError(error.code);
                 this.isLoading = false;
                 this.password = "";
@@ -85,7 +87,7 @@ export class LoginPage {
     }
 
     DisplayErrorMessage(message: string) {
-        this.Message!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
-        this.Message!.nativeElement.textContent = message;
+        this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
+        this.MessageElement!.nativeElement.textContent = message;
     }
 }
