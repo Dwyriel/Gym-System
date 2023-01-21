@@ -1,4 +1,5 @@
 <ion-content>
+    <h1 class="gym-name" #GymName>Viva +</h1>
     <div class="centralized" #LoginDiv>
         <ion-col>
             <ion-item class="ion-margin-horizontal">
@@ -9,10 +10,11 @@
                 <ion-label position="floating">Senha</ion-label>
                 <ion-input [(ngModel)]="password" type="password" (ionInput)="ChangeOnInput()"></ion-input>
             </ion-item>
-            <ion-button class="full-width" (click)="LoginBtn()" [disabled]="inputIsEmpty" #SubmitButton>Entrar</ion-button>
+            <ion-button class="full-width" (click)="LoginBtn()" [disabled]="inputIsEmpty" [style]="typingStage">Entrar</ion-button>
         </ion-col>
-        <div class="messageText ion-margin-bottom">
-            <p class="ion-text-center" #Message>Entre em contato com o administrador do sistema para obter acesso.</p>
+        <div class="message-text ion-margin-bottom">
+            <ion-spinner name="crescent" class="big-spinner" [style]="loadingStage"></ion-spinner>
+            <p class="ion-text-center" [style]="typingStage" #Message>Entre em contato com o administrador do sistema para obter acesso.</p>
         </div>
     </div>
 </ion-content>

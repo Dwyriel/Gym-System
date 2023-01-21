@@ -13,34 +13,43 @@ import {user} from "@angular/fire/auth";
 export class LoginPage {
 
     @ViewChild('LoginDiv') LoginDiv?: ElementRef;
-    @ViewChild('SubmitButton') SubmitButton?: ElementRef;
+    @ViewChild('GymName') GymName?: ElementRef;
+
     @ViewChild('Message') Message?: ElementRef;
 
-
-    private loginDivHeightObservable?: Observable<Event>;
-    private loginDivHeightSubscription?: Subscription;
 
     username: string = "";
     password: string = "";
 
     inputIsEmpty: boolean = true;
 
+    typingStage: string = "display: ";
+    loadingStage: string = "display: none";
+
     constructor(private accountService: AccountService) { }
 
     ionViewDidEnter() {
         this.LoginDiv?.nativeElement.style.setProperty("--calculatedOffset", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
+        this.GymName?.nativeElement.style.setProperty("--calculatedOffset", ((this.GymName?.nativeElement.offsetWidth / 2) * -1) + "px");
     }
 
     LoginBtn() {
+        this.typingStage = "display: none";
+        this.loadingStage = "display: ";
+
         this.accountService.Login(this.username, this.password)
             .then()
             .catch(error => {
                 this.Message?.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
                 this.DisplayErrorMessage(error.code);
+
+                this.typingStage = "display: ";
+                this.loadingStage = "display: none";
         });
 
         this.username = "";
         this.password = "";
+        this.ChangeOnInput();
     }
 
     DisplayErrorMessage(errorCode: string) {
