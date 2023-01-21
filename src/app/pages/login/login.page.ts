@@ -1,5 +1,7 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {AccountService} from "../../services/account.service";
+import {Subscription} from "rxjs";
+import {AppInfoService} from "../../services/app-info.service";
 
 @Component({
     selector: 'app-login',
@@ -7,6 +9,9 @@ import {AccountService} from "../../services/account.service";
     styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
+
+    private appInfoSubscription?: Subscription;
+
     @ViewChild('LoginDiv') LoginDiv?: ElementRef;
     @ViewChild('GymName') GymName?: ElementRef;
     @ViewChild('Message') Message?: ElementRef;
@@ -18,14 +23,22 @@ export class LoginPage {
     constructor(private accountService: AccountService) {}
 
     ionViewDidEnter() {
-        this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
-        this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetX", ((this.LoginDiv?.nativeElement.offsetWidth / 2) * -1) + "px");
-        this.GymName!.nativeElement.style.setProperty("--calculatedOffset", ((this.GymName?.nativeElement.offsetWidth / 2) * -1) + "px");
+        if (this.appInfoSubscription && !this.appInfoSubscription.closed)
+            this.appInfoSubscription.unsubscribe();
+        this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo =>{
+            if(!appInfo)
+                return
+            this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDiv?.nativeElement.offsetHeight / 2) * -1) + "px");
+            this.LoginDiv!.nativeElement.style.setProperty("--calculatedOffsetX", (appInfo.appWidth >= 600) ? (((this.LoginDiv?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
+            this.GymName!.nativeElement.style.setProperty("--calculatedOffset", ((this.GymName?.nativeElement.offsetWidth / 2) * -1) + "px");
+        });
     }
 
     ionViewWillLeave() {
         this.email = "";
         this.password = "";
+        if (this.appInfoSubscription && !this.appInfoSubscription.closed)
+            this.appInfoSubscription.unsubscribe();
     }
 
     async LoginBtn() {

@@ -4,6 +4,7 @@
     left: 50%;
     transform: translateX(var(--calculatedOffset));
     font-size: xxx-large;
+    white-space: nowrap;
 }
 
 .login-div {
