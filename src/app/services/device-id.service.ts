@@ -2,8 +2,6 @@ import {Injectable} from '@angular/core';
 import {collection, doc, Firestore, getCountFromServer, setDoc} from "@angular/fire/firestore";
 import {Preferences} from '@capacitor/preferences';
 
-const varToString = varObj => Object.keys(varObj)[0];
-
 @Injectable({
     providedIn: 'root'
 })
