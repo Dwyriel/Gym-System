@@ -63,7 +63,7 @@ export class LoginPage {
     async LoginBtn() {
         this.isLoading = true;
         await this.accountService.Login(this.email, this.password)
-            .then(async asnwer => {
+            .then(async answer => {
                 this.isLoading = false;
                 await this.router.navigate(["/"]);
             }).catch(error => {
