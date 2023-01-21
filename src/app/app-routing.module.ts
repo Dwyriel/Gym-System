@@ -7,6 +7,14 @@ const routes: Routes = [
         loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule),
         pathMatch: 'full'
     },
+  {
+    path: 'startup',
+    loadChildren: () => import('./pages/startup/startup.module').then( m => m.StartupPageModule)
+  },
+  {
+    path: 'home',
+    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
+  },
 ];
 
 @NgModule({
