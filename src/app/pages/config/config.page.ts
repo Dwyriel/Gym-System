@@ -65,11 +65,8 @@ export class ConfigPage {
     }
 
     async LogoutBtn() {
-        if (await this.alertService.confirmationAlert('Deseja sair da conta?', "", "Cancelar", "Sim")) {
-            await this.accountService.Logout().then(async () => {
-                await this.router.navigate(["/login"]);
-            });
-        }
+        if (await this.alertService.confirmationAlert('Deseja sair da conta?', "", "Cancelar", "Sim"))
+            await this.accountService.Logout().then(async () => await this.router.navigate(["/login"]));
     }
 
     async ChangeAccountName() {
