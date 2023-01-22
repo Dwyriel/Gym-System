@@ -9,7 +9,7 @@ export class AccountService {
     private user = new BehaviorSubject<User | null | boolean>(false);
 
     constructor(private auth: Auth) {
-        onAuthStateChanged(this.auth, user => {this.user.next(user); console.log(user)});
+        onAuthStateChanged(this.auth, user => this.user.next(user));
     }
 
     /**

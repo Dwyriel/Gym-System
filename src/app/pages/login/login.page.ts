@@ -4,6 +4,7 @@ import {Subscription} from "rxjs";
 import {gymName} from '../../../environments/environment';
 import {AccountService} from "../../services/account.service";
 import {AppInfoService} from "../../services/app-info.service";
+import {UnsubscribeIfSubscribed} from "../../services/app.utility";
 
 @Component({
     selector: 'app-login',
@@ -12,9 +13,10 @@ import {AppInfoService} from "../../services/app-info.service";
 })
 export class LoginPage {
     readonly gymName: string = gymName;
+    messageContent: string = "Entre em contato com o administrador do sistema para obter acesso.";
 
     private appInfoSubscription?: Subscription;
-    private authSubscription?: Subscription;
+    private userSubscription?: Subscription;
 
     @ViewChild('LoginDiv') LoginDivElement?: ElementRef;
     @ViewChild('GymName') GymNameElement?: ElementRef;
@@ -27,8 +29,7 @@ export class LoginPage {
     constructor(private router: Router, private accountService: AccountService) {}
 
     ionViewWillEnter() {
-        if (this.appInfoSubscription && !this.appInfoSubscription.closed)
-            this.appInfoSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
         this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
             if (!appInfo)
                 return
@@ -39,31 +40,30 @@ export class LoginPage {
     }
 
     ionViewDidEnter() {
-        if (this.authSubscription && !this.authSubscription.closed)
-            this.authSubscription.unsubscribe();
-        this.authSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
+        UnsubscribeIfSubscribed(this.userSubscription);
+        this.userSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
             if (!answer)
                 return;
             this.email = "";
             this.password = "";
             this.isLoading = false;
             await this.router.navigate(["/"]);
-        })
+        });
     }
 
     ionViewWillLeave() {
+        this.messageContent = "Entre em contato com o administrador do sistema para obter acesso.";
+        this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-text-color)");
         this.email = "";
         this.password = "";
-        if (this.appInfoSubscription && !this.appInfoSubscription.closed)
-            this.appInfoSubscription.unsubscribe();
-        if (this.authSubscription && !this.authSubscription.closed)
-            this.authSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
+        UnsubscribeIfSubscribed(this.userSubscription);
     }
 
     async LoginBtn() {
         this.isLoading = true;
         await this.accountService.Login(this.email, this.password)
-            .then(async asnwer => {
+            .then(async answer => {
                 this.isLoading = false;
                 await this.router.navigate(["/"]);
             }).catch(error => {
@@ -72,23 +72,6 @@ export class LoginPage {
                 this.isLoading = false;
                 this.password = "";
             });
-    }
-
-    ShowLoginError(errorCode: string) {
-        switch (errorCode) {
-            case "auth/invalid-email":
-            case "auth/user-not-found":
-                this.DisplayErrorMessage("Email inválido");
-                break;
-            case "auth/wrong-password":
-                this.DisplayErrorMessage("Senha inválida");
-                break;
-            case "auth/network-request-failed":
-                this.DisplayErrorMessage("Sem conexão");
-                break;
-            default:
-                this.DisplayErrorMessage(errorCode);
-        }
     }
 
     async EnterPressed() {
@@ -103,8 +86,28 @@ export class LoginPage {
         await this.LoginBtn();
     }
 
+    ShowLoginError(errorCode: string) {
+        switch (errorCode) {
+            case "auth/invalid-email":
+            case "auth/user-not-found":
+                this.DisplayErrorMessage("Email inválido");
+                break;
+            case "auth/wrong-password":
+                this.DisplayErrorMessage("Senha inválida");
+                break;
+            case "auth/network-request-failed":
+                this.DisplayErrorMessage("Sem conexão");
+                break;
+            case "auth/user-disabled":
+                this.DisplayErrorMessage("Conta desabilitada");
+                break;
+            default:
+                this.DisplayErrorMessage(errorCode);
+        }
+    }
+
     DisplayErrorMessage(message: string) {
         this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
-        this.MessageElement!.nativeElement.textContent = message;
+        this.messageContent = message;
     }
 }
