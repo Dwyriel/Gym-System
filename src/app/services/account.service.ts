@@ -30,10 +30,11 @@ export class AccountService {
         return signInWithEmailAndPassword(this.auth, email, password);
     }
 
-    public UpdateUserProfile(profile: { displayName?: string | null | undefined, photoURL?: string | null | undefined }) {
+    public async UpdateUserProfile(profile: { displayName?: string | null | undefined, photoURL?: string | null | undefined }) {
         if (!this.auth.currentUser)
             return;
-        return updateProfile(this.auth.currentUser, profile);
+        await updateProfile(this.auth.currentUser, profile);
+        this.user.next(this.auth.currentUser);
     }
 
     /**
