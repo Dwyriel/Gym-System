@@ -15,7 +15,7 @@ export class LoginPage {
     messageContent: string = "Entre em contato com o administrador do sistema para obter acesso.";
 
     private appInfoSubscription?: Subscription;
-    private authSubscription?: Subscription;
+    private userSubscription?: Subscription;
 
     @ViewChild('LoginDiv') LoginDivElement?: ElementRef;
     @ViewChild('GymName') GymNameElement?: ElementRef;
@@ -40,9 +40,9 @@ export class LoginPage {
     }
 
     ionViewDidEnter() {
-        if (this.authSubscription && !this.authSubscription.closed)
-            this.authSubscription.unsubscribe();
-        this.authSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
+        if (this.userSubscription && !this.userSubscription.closed)
+            this.userSubscription.unsubscribe();
+        this.userSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
             if (!answer)
                 return;
             this.email = "";
@@ -59,8 +59,8 @@ export class LoginPage {
         this.password = "";
         if (this.appInfoSubscription && !this.appInfoSubscription.closed)
             this.appInfoSubscription.unsubscribe();
-        if (this.authSubscription && !this.authSubscription.closed)
-            this.authSubscription.unsubscribe();
+        if (this.userSubscription && !this.userSubscription.closed)
+            this.userSubscription.unsubscribe();
     }
 
     async LoginBtn() {

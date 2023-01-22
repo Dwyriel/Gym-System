@@ -14,7 +14,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     displayUsername: string | null | undefined;
     deviceName: string | null = null;
 
-    private authSubscription?: Subscription;
+    private userSubscription?: Subscription;
     private deviceIDSubscription?: Subscription;
 
 
@@ -22,9 +22,9 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.UnsubscribeSubscription(this.deviceIDSubscription);
-        this.UnsubscribeSubscription(this.authSubscription);
         this.deviceIDSubscription = this.deviceIDService.GetDeviceNameObservable().subscribe(deviceName => this.deviceName = deviceName);
-        this.authSubscription = this.accountService.GetUserObservable().subscribe(result => {
+        this.UnsubscribeSubscription(this.userSubscription);
+        this.userSubscription = this.accountService.GetUserObservable().subscribe(result => {
             if (result && typeof result != "boolean") {
                 this.displayUsername = (result?.displayName) ? result?.displayName : result?.email;
             }
@@ -33,7 +33,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.UnsubscribeSubscription(this.deviceIDSubscription);
-        this.UnsubscribeSubscription(this.authSubscription);
+        this.UnsubscribeSubscription(this.userSubscription);
     }
 
     async LogoutBtn() {
