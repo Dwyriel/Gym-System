@@ -59,7 +59,7 @@ export class AlertService {
                         return false;
                     }
                 }, {
-                    text: buttonOkText ? buttonOkText : 'OK',
+                    text: buttonOkText ? buttonOkText : 'Ok',
                     handler: () => {
                         alert.dismiss(true);
                         return false;
@@ -67,10 +67,37 @@ export class AlertService {
                 }
             ]
         });
-        var returned = false;
+        let returned = false;
         await alert.present();
         await alert.onDidDismiss().then((data) => { returned = data.data as boolean; });
         return returned;
+    }
+
+    async TextAlert(title: string, placeholder: string, buttonOkText?: string | null | undefined) {
+        const alert = await this.alertController.create({
+            header: title,
+            inputs: [
+                {
+                    placeholder: placeholder,
+                    name: "text",
+                    type: "text"
+                },
+            ],
+            buttons: [
+                {
+                    text: buttonOkText ? buttonOkText : "Ok",
+                    handler: (data) => {
+                        alert.dismiss(data);
+                        return false;
+                    }
+                }
+            ],
+
+        });
+        let text: string | null = null;
+        await alert.present();
+        await alert.onDidDismiss().then(({data}) => {text = data.text})
+        return text;
     }
 
     /**Creates and presents a toast.
@@ -95,7 +122,7 @@ export class AlertService {
     /**Not yet functional
      */
     async presentActionSheet() {
-        var variable;
+        let variable;
         const actionSheet = await this.actionSheetController.create({
             header: 'to be changed header',
             cssClass: 'my-custom-class',

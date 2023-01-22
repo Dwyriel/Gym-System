@@ -18,18 +18,8 @@
             </ion-select>
         </ion-item>
 
-        <ion-item>
-            <ion-accordion-group>
-                <ion-accordion value="first">
-                    <ion-item slot="header">
-                        <ion-label>Alterar nome da conta</ion-label>
-                    </ion-item>
-                    <ion-item slot="content">
-                        <ion-input [placeholder]="accountName || 'Novo nome'" [(ngModel)]="newAccountName"></ion-input>
-                        <ion-button (click)="ChangeAccountName()">Alterar</ion-button>
-                    </ion-item>
-                </ion-accordion>
-            </ion-accordion-group>
+        <ion-item button="true" (click)="ChangeAccountName()">
+            <ion-label>Alterar nome da conta</ion-label>
         </ion-item>
 
         <ion-item button="true" (click)="LogoutBtn()">

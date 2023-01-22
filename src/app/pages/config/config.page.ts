@@ -7,6 +7,7 @@ import {AppInfoService} from "../../services/app-info.service";
 import {Themes} from "../../classes/app-config";
 import {AlertService} from "../../services/alert.service";
 
+
 @Component({
     selector: 'app-config',
     templateUrl: './config.page.html',
@@ -18,7 +19,6 @@ export class ConfigPage {
     colorTheme?: string;
     accountName: string | null | undefined;
 
-    newAccountName?: string;
 
     constructor(private router: Router, private accountService: AccountService, private alertService: AlertService) { }
 
@@ -70,7 +70,8 @@ export class ConfigPage {
     }
 
     async ChangeAccountName() {
-        await this.accountService.UpdateUserProfile({displayName: this.newAccountName});
-        this.newAccountName = "";
+        let newName = await this.alertService.TextAlert("Insira o novo nome", "Novo nome", "Alterar");
+        if (newName)
+            await this.accountService.UpdateUserProfile({displayName: newName});
     }
 }
