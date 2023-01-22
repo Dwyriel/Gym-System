@@ -33,8 +33,15 @@ export class AccountService {
     public async UpdateUserProfile(profile: { displayName?: string | null | undefined, photoURL?: string | null | undefined }) {
         if (!this.auth.currentUser)
             return;
-        await updateProfile(this.auth.currentUser, profile);
-        this.user.next(this.auth.currentUser);
+        let wasSuccessful = false;
+        await updateProfile(this.auth.currentUser, profile).then(() => {
+            this.user.next(this.auth.currentUser);
+            wasSuccessful = true;
+        }).catch(error => {
+            console.log(error);
+            wasSuccessful = false;
+        });
+        return wasSuccessful;
     }
 
     /**
