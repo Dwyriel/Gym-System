@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Auth, User, onAuthStateChanged, signInWithEmailAndPassword} from "@angular/fire/auth";
+import {Auth, User, onAuthStateChanged, signInWithEmailAndPassword, updateProfile} from "@angular/fire/auth";
 import {BehaviorSubject} from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AccountService {
-    private user = new BehaviorSubject<User | null | boolean>(false);
+    private user = new BehaviorSubject<User | null | false>(false);
 
     constructor(private auth: Auth) {
         onAuthStateChanged(this.auth, user => this.user.next(user));
@@ -28,6 +28,12 @@ export class AccountService {
 
     public Login(email: string, password: string) {
         return signInWithEmailAndPassword(this.auth, email, password);
+    }
+
+    public UpdateUserProfile(profile: { displayName?: string | null | undefined, photoURL?: string | null | undefined }) {
+        if (!this.auth.currentUser)
+            return;
+        return updateProfile(this.auth.currentUser, profile);
     }
 
     /**
