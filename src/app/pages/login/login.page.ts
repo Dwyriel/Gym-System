@@ -98,6 +98,9 @@ export class LoginPage {
             case "auth/network-request-failed":
                 this.DisplayErrorMessage("Sem conexão");
                 break;
+            case "auth/user-disabled":
+                this.DisplayErrorMessage("Conta desabilitada");
+                break;
             default:
                 this.DisplayErrorMessage(errorCode);
         }
