@@ -31,7 +31,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         });
         UnsubscribeIfSubscribed(this.userSubscription);
         this.userSubscription = this.accountService.GetUserObservable().subscribe(result => {
-            if (result && typeof result != "boolean") {
+            if (result) {
                 this.displayUsername = (result?.displayName) ? result?.displayName : result?.email;
             }
         });
@@ -44,6 +44,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
 
     async ConfigBtn() {
+        await this.menu.close("menu")
         await this.router.navigate(["/config"]);
     }
 }
