@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {collection, doc, Firestore, getCountFromServer, setDoc} from "@angular/fire/firestore";
+import {collection, doc, Firestore, getCountFromServer, getDoc, setDoc} from "@angular/fire/firestore";
 import {Preferences} from '@capacitor/preferences';
 import {BehaviorSubject} from "rxjs";
 
@@ -25,6 +25,13 @@ export class DeviceIDService {
 
     public async SetDeviceName() {
         let deviceName = (await Preferences.get({key: this.storageDeviceNameKey})).value;
+        if (deviceName) {
+            let doc = await getDoc(this.docShort(deviceName));
+            if (!doc.exists()) {
+                await Preferences.remove({key: this.storageDeviceNameKey});
+                deviceName = null;
+            }
+        }
         if (!deviceName) {
             deviceName = this.namePrefixWithSpace + ((await getCountFromServer(this.colShort())).data().count + 1);
             await setDoc(this.docShort(deviceName), {deviceName: deviceName});
