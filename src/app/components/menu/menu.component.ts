@@ -15,6 +15,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     displayUsername: string | null | undefined;
     deviceName: string | null = null;
 
+    isLoading: boolean = true;
+
     private userSubscription?: Subscription;
     private deviceIDSubscription?: Subscription;
 
@@ -23,7 +25,10 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         UnsubscribeIfSubscribed(this.deviceIDSubscription);
-        this.deviceIDSubscription = this.deviceIDService.GetDeviceNameObservable().subscribe(deviceName => this.deviceName = deviceName);
+        this.deviceIDSubscription = this.deviceIDService.GetDeviceNameObservable().subscribe(deviceName => {
+            this.deviceName = deviceName
+            this.isLoading = false;
+        });
         UnsubscribeIfSubscribed(this.userSubscription);
         this.userSubscription = this.accountService.GetUserObservable().subscribe(result => {
             if (result && typeof result != "boolean") {
@@ -35,6 +40,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         UnsubscribeIfSubscribed(this.deviceIDSubscription);
         UnsubscribeIfSubscribed(this.userSubscription);
+        this.isLoading = true;
     }
 
     async LogoutBtn() {

@@ -4,8 +4,9 @@
     </ion-content>
     <ion-footer class="ion-padding flex">
         <div>
-            <p class="no-margin"> {{displayUsername}} </p>
-            <p class="no-margin small-text"> {{deviceName}}</p>
+            <p class="no-margin" [hidden]="isLoading"> {{displayUsername}} </p>
+            <p class="no-margin small-text" [hidden]="isLoading"> {{deviceName}}</p>
+            <ion-spinner name="dots" class="spinner" [hidden]="!isLoading"></ion-spinner>
         </div>
         <div class="margin-left-auto">
             <ion-button (click)="LogoutBtn()">Sair</ion-button>
