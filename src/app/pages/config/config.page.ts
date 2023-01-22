@@ -5,7 +5,7 @@ import {Router} from "@angular/router";
 import {AccountService} from "../../services/account.service";
 import {AppInfoService} from "../../services/app-info.service";
 import {Themes} from "../../classes/app-config";
-import {AlertController} from "@ionic/angular";
+import {AlertService} from "../../services/alert.service";
 
 @Component({
     selector: 'app-config',
@@ -20,7 +20,7 @@ export class ConfigPage {
 
     newAccountName?: string;
 
-    constructor(private router: Router, private accountService: AccountService, private alertController: AlertController) { }
+    constructor(private router: Router, private accountService: AccountService, private alertService: AlertService) { }
 
     ionViewDidEnter() {
         UnsubscribeIfSubscribed(this.userSubscription);
@@ -65,25 +65,11 @@ export class ConfigPage {
     }
 
     async LogoutBtn() {
-        const alert = await this.alertController.create({
-            header: 'Deseja sair da conta?',
-            buttons: [
-                {
-                    text: 'Cancelar',
-                    role: 'cancel',
-                },
-                {
-                    text: 'Sim',
-                    role: 'confirm',
-                    handler: async () => {
-                        await this.accountService.Logout().then(async () => {
-                            await this.router.navigate(["/login"]);
-                        })
-                    },
-                },
-            ],
-        });
-        await alert.present();
+        if (await this.alertService.confirmationAlert('Deseja sair da conta?', "", "Cancelar", "Sim")) {
+            await this.accountService.Logout().then(async () => {
+                await this.router.navigate(["/login"]);
+            });
+        }
     }
 
     async ChangeAccountName() {
