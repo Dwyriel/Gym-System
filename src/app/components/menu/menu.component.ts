@@ -43,10 +43,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.isLoading = true;
     }
 
-    async LogoutBtn() {
-        await this.menu.close("menu");
-        await this.accountService.Logout().then(async () => {
-            await this.router.navigate(["/login"]);
-        });
+    async ConfigBtn() {
+        await this.router.navigate(["/config"]);
     }
 }

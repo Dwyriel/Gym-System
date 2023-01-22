@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Configurações</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen="true">
+    <ion-list>
+        <ion-item button="true" id="auto-trigger">
+            <ion-label>Tema</ion-label>
+            <ion-select interface="popover">
+                <ion-select-option value="System">Padrão do Sistema</ion-select-option>
+                <ion-select-option value="Dark">Escuro</ion-select-option>
+                <ion-select-option value="Light">Claro</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-accordion-group>
+            <ion-accordion value="first">
+                <ion-item slot="header">
+                    <ion-label>Alterar nome da conta</ion-label>
+                </ion-item>
+                <ion-item slot="content">
+                    <ion-input placeholder="Novo nome"></ion-input>
+                    <ion-button>Alterar</ion-button>
+                </ion-item>
+            </ion-accordion>
+        </ion-accordion-group>
+
+        <ion-item button="true" (click)="LogoutBtn()">
+            <ion-label>Sair</ion-label>
+        </ion-item>
+    </ion-list>
+</ion-content>
