@@ -38,7 +38,7 @@ export class StartupPage {
         UnsubscribeIfSubscribed(this.appInfoSubscription);
         this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
             if (!appInfo)
-                return
+                return;
             this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.SpinnerDivElement?.nativeElement.offsetHeight / 2) * -1) - 40 + "px");
             this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetX", (appInfo.appWidth >= 600) ? (((this.SpinnerDivElement?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
         });
