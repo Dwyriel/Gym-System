@@ -77,7 +77,7 @@ export class ConfigPage {
                 await this.alertService.PresentAlert("Ocorreu um erro, tente mais tarde.");
                 return;
             }
-            await this.alertService.ShowToast("Nome mudado com successo.");
+            await this.alertService.ShowToast("Nome alterado com successo.", undefined, "primary");
         }
     }
 }
