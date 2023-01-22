@@ -12,7 +12,7 @@ export class AlertService {
      * @returns the id of the element created.
      * @param message (Optional) the custom message
      */
-    async presentLoading(message?: string | null | undefined) {
+    async PresentLoading(message?: string | null | undefined) {
         const loading = await this.loadingController.create({
             message: message ? message : 'Loading!',
             backdropDismiss: true
@@ -22,18 +22,18 @@ export class AlertService {
     }
 
     /**dismisses the top overlay, or the overlay with the id, if provided.*/
-    async dismissLoading(id?: string) {//made some changes on this class. might not work as intended.
+    async DismissLoading(id?: string) {//made some changes on this class. might not work as intended.
         await this.loadingController.dismiss(undefined, undefined, (id) ? id : undefined);
     }
 
     /**Creates and presents an alert message.
      * @param title the title shown on the top of the alert message
-     * @param text the text shown in the middle of the alert message
+     * @param description the text shown in the middle of the alert message
      */
-    async presentAlert(title: string, text: string) {
+    async PresentAlert(title: string, description?: string) {
         const alert = await this.alertController.create({
             header: title,
-            message: text,
+            message: description ? description : "",
             buttons: ['Ok'],
         });
         await alert.present();
@@ -47,10 +47,10 @@ export class AlertService {
      * @param buttonOkText (Optional) the text shown for the "Ok" button
      * @returns a boolean value based on the button the user pressed. true for ok, false for cancel.
      */
-    async confirmationAlert(title: string, description: string, buttonCancelText?: string | null | undefined, buttonOkText?: string | null | undefined): Promise<boolean> {
+    async ConfirmationAlert(title: string, description?: string, buttonCancelText?: string | null | undefined, buttonOkText?: string | null | undefined): Promise<boolean> {
         const alert = await this.alertController.create({
             header: title,
-            message: description,
+            message: description ? description : "",
             buttons: [
                 {
                     text: buttonCancelText ? buttonCancelText : 'Cancel',
@@ -73,7 +73,7 @@ export class AlertService {
         return returned;
     }
 
-    async TextAlert(title: string, placeholder: string, buttonOkText?: string | null | undefined) {
+    async TextInputAlert(title: string, placeholder: string, buttonOkText?: string | null | undefined) {
         const alert = await this.alertController.create({
             header: title,
             inputs: [

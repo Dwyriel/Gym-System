@@ -7,7 +7,6 @@ import {AppInfoService} from "../../services/app-info.service";
 import {Themes} from "../../classes/app-config";
 import {AlertService} from "../../services/alert.service";
 
-
 @Component({
     selector: 'app-config',
     templateUrl: './config.page.html',
@@ -18,7 +17,6 @@ export class ConfigPage {
 
     colorTheme?: string;
     accountName: string | null | undefined;
-
 
     constructor(private router: Router, private accountService: AccountService, private alertService: AlertService) { }
 
@@ -65,13 +63,21 @@ export class ConfigPage {
     }
 
     async LogoutBtn() {
-        if (await this.alertService.confirmationAlert('Deseja sair da conta?', "", "Cancelar", "Sim"))
+        if (await this.alertService.ConfirmationAlert('Deseja sair da conta?', "", "Cancelar", "Sim"))
             await this.accountService.Logout().then(async () => await this.router.navigate(["/login"]));
     }
 
     async ChangeAccountName() {
-        let newName = await this.alertService.TextAlert("Insira o novo nome", "Novo nome", "Alterar");
-        if (newName)
-            await this.accountService.UpdateUserProfile({displayName: newName});
+        let newName = await this.alertService.TextInputAlert("Insira o novo nome", "Novo nome", "Alterar");
+        if (newName) {
+            let loadingId = await this.alertService.PresentLoading("Aguarde");
+            let wasSuccessful = await this.accountService.UpdateUserProfile({displayName: newName});
+            await this.alertService.DismissLoading(loadingId);
+            if(!wasSuccessful) {
+                await this.alertService.PresentAlert("Ocorreu um erro, tente mais tarde.");
+                return;
+            }
+            await this.alertService.ShowToast("Nome mudado com successo.");
+        }
     }
 }
