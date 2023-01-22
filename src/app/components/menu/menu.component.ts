@@ -4,6 +4,7 @@ import {MenuController} from "@ionic/angular";
 import {DeviceIDService} from "../../services/device-id.service";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
+import {UnsubscribeIfSubscribed} from "../../services/app.utility";
 
 @Component({
     selector: 'app-menu',
@@ -21,9 +22,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     constructor(private router: Router, private accountService: AccountService, private menu: MenuController, private deviceIDService: DeviceIDService) { }
 
     ngOnInit() {
-        this.UnsubscribeSubscription(this.deviceIDSubscription);
+        UnsubscribeIfSubscribed(this.deviceIDSubscription);
         this.deviceIDSubscription = this.deviceIDService.GetDeviceNameObservable().subscribe(deviceName => this.deviceName = deviceName);
-        this.UnsubscribeSubscription(this.userSubscription);
+        UnsubscribeIfSubscribed(this.userSubscription);
         this.userSubscription = this.accountService.GetUserObservable().subscribe(result => {
             if (result && typeof result != "boolean") {
                 this.displayUsername = (result?.displayName) ? result?.displayName : result?.email;
@@ -32,8 +33,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.UnsubscribeSubscription(this.deviceIDSubscription);
-        this.UnsubscribeSubscription(this.userSubscription);
+        UnsubscribeIfSubscribed(this.deviceIDSubscription);
+        UnsubscribeIfSubscribed(this.userSubscription);
     }
 
     async LogoutBtn() {
@@ -41,10 +42,5 @@ export class MenuComponent implements OnInit, OnDestroy {
         await this.accountService.Logout().then(async () => {
             await this.router.navigate(["/login"]);
         });
-    }
-
-    UnsubscribeSubscription(subscription?: Subscription) {
-        if (subscription && !subscription.closed)
-            subscription.unsubscribe();
     }
 }

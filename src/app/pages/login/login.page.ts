@@ -4,6 +4,7 @@ import {Subscription} from "rxjs";
 import {gymName} from '../../../environments/environment';
 import {AccountService} from "../../services/account.service";
 import {AppInfoService} from "../../services/app-info.service";
+import {UnsubscribeIfSubscribed} from "../../services/app.utility";
 
 @Component({
     selector: 'app-login',
@@ -28,8 +29,7 @@ export class LoginPage {
     constructor(private router: Router, private accountService: AccountService) {}
 
     ionViewWillEnter() {
-        if (this.appInfoSubscription && !this.appInfoSubscription.closed)
-            this.appInfoSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
         this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
             if (!appInfo)
                 return
@@ -40,8 +40,7 @@ export class LoginPage {
     }
 
     ionViewDidEnter() {
-        if (this.userSubscription && !this.userSubscription.closed)
-            this.userSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.userSubscription);
         this.userSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
             if (!answer)
                 return;
@@ -57,10 +56,8 @@ export class LoginPage {
         this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-text-color)");
         this.email = "";
         this.password = "";
-        if (this.appInfoSubscription && !this.appInfoSubscription.closed)
-            this.appInfoSubscription.unsubscribe();
-        if (this.userSubscription && !this.userSubscription.closed)
-            this.userSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
+        UnsubscribeIfSubscribed(this.userSubscription);
     }
 
     async LoginBtn() {

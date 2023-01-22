@@ -4,6 +4,7 @@ import {gymName} from '../../../environments/environment';
 import {AppInfoService} from "../../services/app-info.service";
 import {Router} from "@angular/router";
 import {AccountService} from "../../services/account.service";
+import {UnsubscribeIfSubscribed} from "../../services/app.utility";
 
 @Component({
     selector: 'app-startup',
@@ -29,15 +30,12 @@ export class StartupPage {
     }
 
     ionViewWillLeave() {
-        if (this.appInfoSubscription && !this.appInfoSubscription.closed)
-            this.appInfoSubscription.unsubscribe();
-        if (this.accountSubscription && !this.accountSubscription.closed)
-            this.accountSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
+        UnsubscribeIfSubscribed(this.accountSubscription);
     }
 
     SetOffsetsOfElements() {
-        if (this.appInfoSubscription && !this.appInfoSubscription.closed)
-            this.appInfoSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
         this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
             if (!appInfo)
                 return
@@ -47,8 +45,7 @@ export class StartupPage {
     }
 
     CheckIfUserIsLoggedInAndRedirect() {
-        if (this.accountSubscription && !this.accountSubscription.closed)
-            this.accountSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.accountSubscription);
         this.accountSubscription = this.accountService.GetUserObservable().subscribe(async (answer) => {
             if (typeof answer == "boolean")//todo test this on a mobile app (loading html offline)
                 return;

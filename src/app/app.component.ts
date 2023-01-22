@@ -3,6 +3,7 @@ import {Platform} from "@ionic/angular";
 import {Subscription} from "rxjs";
 import {AppInfoService} from "./services/app-info.service";
 import {DeviceIDService} from "./services/device-id.service";
+import {UnsubscribeIfSubscribed} from "./services/app.utility";
 
 @Component({
     selector: 'app-root',
@@ -21,14 +22,12 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     async ngOnDestroy() {
-        if (this.resizeSubscription && !this.resizeSubscription.closed)
-            this.resizeSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.resizeSubscription);
     }
 
     GetPlatformInfo() {
         this.PushAppInfo();
-        if (this.resizeSubscription && !this.resizeSubscription.closed)
-            this.resizeSubscription.unsubscribe();
+        UnsubscribeIfSubscribed(this.resizeSubscription);
         this.resizeSubscription = this.platform.resize.subscribe(() => this.PushAppInfo());
     }
 
