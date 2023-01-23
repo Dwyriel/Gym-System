@@ -2,11 +2,11 @@
     <ion-content class="ion-padding">
 
     </ion-content>
-    <ion-footer class="ion-padding">
+    <ion-footer>
         <ion-toolbar>
-            <div class="flex">
+            <div class="flex ion-padding">
                 <div>
-                    <p class="no-margin" [hidden]="isLoading" style="color: var(--ion-text-color)"> {{displayUsername}} </p>
+                    <p class="no-margin" [hidden]="isLoading"> {{displayUsername}} </p>
                     <p class="no-margin small-text" [hidden]="isLoading"> {{deviceName}} </p>
                     <ion-spinner name="dots" class="spinner" [hidden]="!isLoading"></ion-spinner>
                 </div>
