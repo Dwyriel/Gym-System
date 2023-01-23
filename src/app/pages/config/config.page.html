@@ -1,18 +1,18 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Configurações</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Configurações</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen="true">
     <ion-list>
         <ion-item id="auto-trigger" detail="false">
             <ion-label>Tema</ion-label>
-            <ion-select interface="popover" (ionChange)="ChangeColorTheme()" [(ngModel)]="colorTheme">
-                <ion-select-option value="MatchSystem">Padrão do Sistema</ion-select-option>
+            <ion-select interface="alert" (ionChange)="ChangeColorTheme()" [(ngModel)]="colorTheme" cancelText="Cancelar">
+                <ion-select-option value="MatchSystem" selected>Padrão do Sistema</ion-select-option>
                 <ion-select-option value="Dark">Escuro</ion-select-option>
                 <ion-select-option value="Light">Claro</ion-select-option>
             </ion-select>
