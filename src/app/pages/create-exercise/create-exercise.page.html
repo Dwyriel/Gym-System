@@ -1,0 +1,31 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/exercises" text="">
+            </ion-back-button>
+        </ion-buttons>
+        <ion-title>Criar exercício</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content fullscreen="true">
+    <ion-list [hidden]="isLoading">
+        <ion-item class="ion-margin-horizontal" >
+            <ion-label position="floating">Nome</ion-label>
+            <ion-input [(ngModel)]="exerciseName" (keyup.enter)="EnterPressed()"></ion-input>
+        </ion-item>
+        <ion-select interface="alert" [(ngModel)]="categorySelected" (ionChange)="IsInsertingCategory()">
+            <ion-select-option [value]="categoryCreationValue">Criar categoria</ion-select-option>
+            <ion-select-option *ngFor="let category of possibleCategories" [value]="category"> {{category}} </ion-select-option>
+        </ion-select>
+        <ion-item class="ion-margin-horizontal" [hidden]="hideCategoryInsertion || isLoading">
+            <ion-label position="floating">Nome da nova categoria</ion-label>
+            <ion-input [(ngModel)]="newCategoryName" (keyup.enter)="EnterPressed()"></ion-input>
+        </ion-item>
+    </ion-list>
+    <ion-row class="ion-justify-content-center" [hidden]="isLoading">
+        <ion-button class="full-width" [disabled]="!exerciseName || (!hideCategoryInsertion && !newCategoryName)" (click)="CreateExercise()">Criar</ion-button>
+    </ion-row>
+    <div class="spinner-div">
+        <ion-spinner name="crescent" class="big-spinner" [hidden]="!isLoading"></ion-spinner>
+    </div>
+</ion-content>
