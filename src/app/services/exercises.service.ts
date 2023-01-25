@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs} from "@angular/fire/firestore";
+import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData} from "@angular/fire/firestore";
 import {ExerciseTemplate} from "../interfaces/exercises";
 
 @Injectable({
@@ -36,8 +36,6 @@ export class ExercisesService {
      * @param exerciseTemplate the modifications that will be performed
      */
     public async UpdateExercise(id: string, exerciseTemplate: { category?: string, name?: string }) {
-        if (!exerciseTemplate)
-            return;
         return updateDoc(this.docShort(id), exerciseTemplate);
     }
 
@@ -55,6 +53,10 @@ export class ExercisesService {
         if (!doc.exists())
             return Promise.reject();
         return Promise.resolve(doc.data() as ExerciseTemplate);
+    }
+
+    public async GetExerciseObservable(id: string) {
+        return docData(this.docShort(id));
     }
 
     public async GetAllExercises() {
