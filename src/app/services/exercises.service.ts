@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData} from "@angular/fire/firestore";
-import {ExerciseTemplate} from "../interfaces/exercises";
+import {ExerciseTemplate} from "../interfaces/exercise";
 
 @Injectable({
     providedIn: 'root'

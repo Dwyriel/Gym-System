@@ -1,4 +1,4 @@
-import {Exercises} from "../interfaces/exercises";
+import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
 
 export class Practitioner {
@@ -7,7 +7,7 @@ export class Practitioner {
     objectives: string = "";
     observations: string = "";
     exercisesID: string = "";
-    exercises?: Exercises[];
-    frequencyLogID: string = "";
-    frequencyLog?: Presence[];
+    exercises?: Exercise[];
+    presenceLogID: string = "";
+    presenceLog?: Presence[];
 }
