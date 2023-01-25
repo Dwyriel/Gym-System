@@ -1,10 +1,13 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Platform} from "@ionic/angular";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MenuController, Platform} from "@ionic/angular";
 import {Subscription} from "rxjs";
+import {gymName} from '../environments/environment';
 import {AppInfoService} from "./services/app-info.service";
 import {DeviceIDService} from "./services/device-id.service";
 import {UnsubscribeIfSubscribed} from "./services/app.utility";
 import {Themes} from "./classes/app-config";
+import {Router} from "@angular/router";
+import {AccountService} from "./services/account.service";
 
 const handleColorSchemeChangeEvent = (event: MediaQueryListEvent) => document.body.classList.toggle("dark", event.matches);
 
@@ -14,23 +17,54 @@ const handleColorSchemeChangeEvent = (event: MediaQueryListEvent) => document.bo
     styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+    @ViewChild('SpinnerDiv') SpinnerDivElement?: ElementRef;
 
     private resizeSubscription?: Subscription;
     private appConfigSubscription?: Subscription;
+    private accountSubscription?: Subscription;
+    private deviceIDSubscription?: Subscription;
 
+    readonly gymName: string = gymName;
     private sysTheme?: MediaQueryList;
 
-    constructor(private platform: Platform, private deviceIDService: DeviceIDService) {}
+    public firebaseResponded: boolean = false;
+    public displayUsername: string | null | undefined;
+    public deviceName: string | null = null;
+    public menuId: string = "menu";
+    public isLoadingDeviceName: boolean = true;
+
+    constructor(private platform: Platform, private deviceIDService: DeviceIDService, private router: Router, private accountService: AccountService, private menuController: MenuController) {}
 
     async ngOnInit() {
         this.GetPlatformInfo();
         await this.SetAppTheme();
-        await this.deviceIDService.SetDeviceName();
+        await this.SetDeviceName();
+        this.CheckIfUserIsLoggedInAndRedirect();
     }
 
     async ngOnDestroy() {
         UnsubscribeIfSubscribed(this.resizeSubscription);
         UnsubscribeIfSubscribed(this.appConfigSubscription);
+        UnsubscribeIfSubscribed(this.accountSubscription);
+        UnsubscribeIfSubscribed(this.deviceIDSubscription);
+    }
+
+    GetPlatformInfo() {
+        this.PushAppInfo();
+        UnsubscribeIfSubscribed(this.resizeSubscription);
+        this.resizeSubscription = this.platform.resize.subscribe(() => {
+            this.PushAppInfo();
+            this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.SpinnerDivElement?.nativeElement.offsetHeight / 2) * -1) - 40 + "px");
+            this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetX", (this.platform.width() >= 600) ? (((this.SpinnerDivElement?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
+        });
+    }
+
+    PushAppInfo() {
+        AppInfoService.PushAppInfo({
+            appWidth: this.platform.width(),
+            appHeight: this.platform.height(),
+            userAgent: navigator.userAgent
+        });
     }
 
     async SetAppTheme() {
@@ -55,17 +89,32 @@ export class AppComponent implements OnInit, OnDestroy {
         });
     }
 
-    GetPlatformInfo() {
-        this.PushAppInfo();
-        UnsubscribeIfSubscribed(this.resizeSubscription);
-        this.resizeSubscription = this.platform.resize.subscribe(() => this.PushAppInfo());
+    async SetDeviceName() {
+        await this.deviceIDService.SetDeviceName();
+        UnsubscribeIfSubscribed(this.deviceIDSubscription);
+        this.deviceIDSubscription = this.deviceIDService.GetDeviceNameObservable().subscribe(deviceName => {
+            this.deviceName = deviceName
+            this.isLoadingDeviceName = false;
+        });
     }
 
-    PushAppInfo() {
-        AppInfoService.PushAppInfo({
-            appWidth: this.platform.width(),
-            appHeight: this.platform.height(),
-            userAgent: navigator.userAgent
+    CheckIfUserIsLoggedInAndRedirect() {
+        UnsubscribeIfSubscribed(this.accountSubscription);
+        this.accountSubscription = this.accountService.GetUserObservable().subscribe(async (answer) => {
+            if (typeof answer == "boolean")//todo test this on a mobile app (loading html offline)
+                return;
+            this.firebaseResponded = true;
+            if (!answer) {
+                await this.router.navigate(["/login"]);
+                return;
+            }
+            this.displayUsername = (answer?.displayName) ? answer?.displayName : answer?.email;
+            await this.router.navigate(["/home"]);
         });
+    }
+
+    async ConfigBtn() {
+        await this.menuController.close(this.menuId)
+        await this.router.navigate(["/config"]);
     }
 }

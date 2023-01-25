@@ -117,3 +117,24 @@ ion-note {
 ion-item.selected {
     --color: var(--ion-color-primary);
 }
+
+.no-margin {
+    margin: 0;
+}
+
+.small-text {
+    font-size: small;
+    opacity: 75%;
+}
+
+.flex {
+    display: flex;
+}
+
+.margin-left-auto {
+    margin-left: auto;
+}
+
+.spinner {
+    height: 44px;
+}

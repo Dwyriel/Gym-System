@@ -11,20 +11,6 @@ import {UnsubscribeIfSubscribed} from "../../services/app.utility";
 })
 export class HomePage {
 
-    private userSubscription?: Subscription;
-
     constructor(private router: Router, private accountService: AccountService) { }
-
-    ionViewDidEnter() {
-        UnsubscribeIfSubscribed(this.userSubscription);
-        this.userSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
-            if (typeof answer == "boolean" || answer)
-                return;
-            await this.router.navigate(["/login"]);
-        });
-    }
-
-    ionViewWillLeave() {
-        UnsubscribeIfSubscribed(this.userSubscription);
-    }
+    
 }
