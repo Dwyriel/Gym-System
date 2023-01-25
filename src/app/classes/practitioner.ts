@@ -1,5 +1,5 @@
 import {Exercises} from "../interfaces/exercises";
-import {FrequencyLog} from "../interfaces/frequency-log";
+import {Presence} from "../interfaces/frequency-log";
 
 export class Practitioner {
     formCreationDate: Date = new Date(Date.now());
@@ -9,5 +9,5 @@ export class Practitioner {
     exercisesID: string = "";
     exercises?: Exercises[];
     frequencyLogID: string = "";
-    frequencyLog?: FrequencyLog[];
+    frequencyLog?: Presence[];
 }
