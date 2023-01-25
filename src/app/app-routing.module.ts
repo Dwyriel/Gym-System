@@ -19,6 +19,10 @@ const routes: Routes = [
         path: 'config',
         loadChildren: () => import('./pages/config/config.module').then( m => m.ConfigPageModule)
     },
+  {
+    path: 'practitioners',
+    loadChildren: () => import('./pages/practitioners/practitioners.module').then( m => m.PractitionersPageModule)
+  },
 ];
 
 @NgModule({
