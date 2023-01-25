@@ -1,12 +1,20 @@
 <ion-app>
     <ion-menu contentId="main-content" [menuId]="menuId" *ngIf="firebaseResponded">
+        <ion-header>
+            <ion-toolbar>
+                <ion-title> {{gymName}} </ion-title>
+            </ion-toolbar>
+        </ion-header>
         <ion-content>
             <ion-list>
                 <ion-menu-toggle>
-                    <ion-item button="true" routerLink="/home">Home</ion-item>
+                    <ion-item button="true" routerLink="/home" detail="false">Home</ion-item>
                 </ion-menu-toggle>
                 <ion-menu-toggle>
-                    <ion-item button="true" routerLink="/practitioners">Alunos</ion-item>
+                    <ion-item button="true" routerLink="/practitioners" detail="false">Alunos</ion-item>
+                </ion-menu-toggle>
+                <ion-menu-toggle>
+                    <ion-item button="true" routerLink="/exercises" detail="false">Exercícios</ion-item>
                 </ion-menu-toggle>
             </ion-list>
         </ion-content>
