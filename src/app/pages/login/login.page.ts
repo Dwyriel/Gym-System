@@ -1,5 +1,4 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
-import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {gymName} from '../../../environments/environment';
 import {AccountService} from "../../services/account.service";
@@ -16,7 +15,6 @@ export class LoginPage {
     messageContent: string = "Entre em contato com o administrador do sistema para obter acesso.";
 
     private appInfoSubscription?: Subscription;
-    private userSubscription?: Subscription;
 
     @ViewChild('LoginDiv') LoginDivElement?: ElementRef;
     @ViewChild('GymName') GymNameElement?: ElementRef;
@@ -26,7 +24,7 @@ export class LoginPage {
     password: string = "";
     isLoading: boolean = false;
 
-    constructor(private router: Router, private accountService: AccountService) {}
+    constructor(private accountService: AccountService) {}
 
     ionViewWillEnter() {
         UnsubscribeIfSubscribed(this.appInfoSubscription);
@@ -39,25 +37,12 @@ export class LoginPage {
         });
     }
 
-    ionViewDidEnter() {
-        UnsubscribeIfSubscribed(this.userSubscription);
-        this.userSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
-            if (!answer)
-                return;
-            this.email = "";
-            this.password = "";
-            this.isLoading = false;
-            await this.router.navigate(["/"]);
-        });
-    }
-
     ionViewWillLeave() {
         this.messageContent = "Entre em contato com o administrador do sistema para obter acesso.";
         this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-text-color)");
         this.email = "";
         this.password = "";
         UnsubscribeIfSubscribed(this.appInfoSubscription);
-        UnsubscribeIfSubscribed(this.userSubscription);
     }
 
     async LoginBtn() {
@@ -65,7 +50,6 @@ export class LoginPage {
         await this.accountService.Login(this.email, this.password)
             .then(async answer => {
                 this.isLoading = false;
-                await this.router.navigate(["/"]);
             }).catch(error => {
                 this.MessageElement!.nativeElement.style.setProperty("color", "var(--ion-color-danger)");
                 this.ShowLoginError(error.code);
