@@ -110,7 +110,9 @@ export class PractitionerService {
         const pracDoc = await getDoc(this.docPracShort(id));
         if (!pracDoc.exists())
             return Promise.reject();
-        return Promise.resolve(pracDoc.data() as Practitioner);
+        let practitioner: Practitioner = pracDoc.data() as Practitioner;
+        practitioner.thisObjectID = pracDoc.id;
+        return Promise.resolve(practitioner);
     }
 
     public async GetPractitionersExercises(id: string) {
