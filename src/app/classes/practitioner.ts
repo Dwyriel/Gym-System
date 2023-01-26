@@ -2,6 +2,7 @@ import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
 
 export class Practitioner {
+    thisObjectID?: string;
     formCreationDate: Date = new Date(Date.now());
     name: string = "";
     objectives: string = "";

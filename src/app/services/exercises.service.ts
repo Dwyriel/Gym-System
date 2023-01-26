@@ -62,7 +62,11 @@ export class ExercisesService {
     public async GetAllExercises() {
         const allDocs = await getDocs(this.colShort());
         let arrayOfExercises: (ExerciseTemplate)[] = [];
-        allDocs.forEach(doc => arrayOfExercises.push(doc.data() as ExerciseTemplate));
+        allDocs.forEach(doc => {
+            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            exercise.thisObjectID = doc.id;
+            arrayOfExercises.push(exercise);
+        });
         return arrayOfExercises;
     }
 }

@@ -147,7 +147,11 @@ export class PractitionerService {
     public async GetAllPractitioners() {
         const allDocs = await getDocs(this.colPracShort());
         let arrayOfPractitioner: (Practitioner)[] = [];
-        allDocs.forEach(doc => arrayOfPractitioner.push(doc.data() as Practitioner));
+        allDocs.forEach(doc => {
+            let practitioner: Practitioner = doc.data() as Practitioner;
+            practitioner.thisObjectID = doc.id;
+            arrayOfPractitioner.push(practitioner)
+        });
         return arrayOfPractitioner;
     }
 }

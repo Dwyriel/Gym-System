@@ -1,4 +1,5 @@
 export interface ExerciseTemplate {
+    thisObjectID? :string;
     category: string;
     name: string;
 }
