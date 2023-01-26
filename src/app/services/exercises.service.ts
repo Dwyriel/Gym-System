@@ -52,7 +52,9 @@ export class ExercisesService {
         const doc = await getDoc(this.docShort(id));
         if (!doc.exists())
             return Promise.reject();
-        return Promise.resolve(doc.data() as ExerciseTemplate);
+        let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+        exercise.thisObjectID = doc.id;
+        return Promise.resolve(exercise);
     }
 
     public async GetExerciseObservable(id: string) {
@@ -62,7 +64,11 @@ export class ExercisesService {
     public async GetAllExercises() {
         const allDocs = await getDocs(this.colShort());
         let arrayOfExercises: (ExerciseTemplate)[] = [];
-        allDocs.forEach(doc => arrayOfExercises.push(doc.data() as ExerciseTemplate));
+        allDocs.forEach(doc => {
+            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            exercise.thisObjectID = doc.id;
+            arrayOfExercises.push(exercise);
+        });
         return arrayOfExercises;
     }
 }

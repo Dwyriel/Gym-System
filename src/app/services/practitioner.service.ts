@@ -92,7 +92,12 @@ export class PractitionerService {
      * @param presence the presence that will be added
      */
     public async AddPresence(id: string, presence: Presence) {
-        return updateDoc(this.docPresShort(id), {items: arrayUnion(presence)});
+        return updateDoc(this.docPresShort(id), {
+            items: arrayUnion({
+                date: presence.date.getTime(),
+                wasPresent: presence.wasPresent
+            })
+        });
     }
 
     /**
@@ -110,7 +115,9 @@ export class PractitionerService {
         const pracDoc = await getDoc(this.docPracShort(id));
         if (!pracDoc.exists())
             return Promise.reject();
-        return Promise.resolve(pracDoc.data() as Practitioner);
+        let practitioner: Practitioner = pracDoc.data() as Practitioner;
+        practitioner.thisObjectID = pracDoc.id;
+        return Promise.resolve(practitioner);
     }
 
     public async GetPractitionersExercises(id: string) {
@@ -127,7 +134,11 @@ export class PractitionerService {
         const doc = await getDoc(this.docPresShort(id));
         if (!doc.exists())
             return Promise.reject();
-        return Promise.resolve((doc.data() as { items: Presence[] }).items);
+        let data = (doc.data() as { items: { date: number, wasPresent: boolean }[] }).items
+        let presences: Presence[] = [];
+        for (let i = 0; i < data.length; i++)
+            presences.push({date: new Date(data[i].date), wasPresent: data[i].wasPresent});
+        return Promise.resolve(presences);
     }
 
     public async GetPractitionerAllFieldsFilled(id: string) {
@@ -136,18 +147,19 @@ export class PractitionerService {
             return Promise.reject();
         let practitioner = pracDoc.data() as Practitioner;
         const ExerDoc = await getDoc(this.docExerShort(practitioner.exercisesID));
-        practitioner.exercises = (ExerDoc.data() as { items: Exercise[] }).items;
-        for (let i = 0; i < practitioner.exercises.length; i++)
-            practitioner.exercises[i].exercise = await this.exercisesService.GetExercise(practitioner.exercises[i].exerciseID);
-        const PresDoc = await getDoc(this.docPresShort(practitioner.presenceLogID));
-        practitioner.presenceLog = (PresDoc.data() as { items: Presence[] }).items;
+        practitioner.exercises = await this.GetPractitionersExercises(practitioner.exercisesID);
+        practitioner.presenceLog = await this.GetPractitionersPresences(practitioner.presenceLogID);
         return Promise.resolve(practitioner);
     }
 
     public async GetAllPractitioners() {
         const allDocs = await getDocs(this.colPracShort());
         let arrayOfPractitioner: (Practitioner)[] = [];
-        allDocs.forEach(doc => arrayOfPractitioner.push(doc.data() as Practitioner));
+        allDocs.forEach(doc => {
+            let practitioner: Practitioner = doc.data() as Practitioner;
+            practitioner.thisObjectID = doc.id;
+            arrayOfPractitioner.push(practitioner)
+        });
         return arrayOfPractitioner;
     }
 }
