@@ -1,8 +1,4 @@
-export interface FrequencyLog {
-    days: Day[];
-}
-
-export interface Day{
+export interface Presence {
     date: Date;
     wasPresent: boolean;
 }
