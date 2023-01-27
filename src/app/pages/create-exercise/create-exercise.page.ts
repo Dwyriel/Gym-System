@@ -29,6 +29,7 @@ export class CreateExercisePage {
     }
 
     async ionViewWillEnter() {
+        this.isLoading = true;
         await this.GetUniqueCategories();
         this.idToChangeExercise = this.activatedRoute.snapshot.paramMap.get("id")
         if (this.idToChangeExercise) {
@@ -36,6 +37,7 @@ export class CreateExercisePage {
             this.exerciseName = exerciseToChange.name;
             this.categorySelected = exerciseToChange.category;
         }
+        this.isLoading = false;
     }
 
     async ionViewDidLeave() {

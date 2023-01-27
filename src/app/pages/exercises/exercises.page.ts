@@ -37,16 +37,15 @@ export class ExercisesPage {
         }
     }
 
-    async DeleteExerciseBtn(exerciseId: string, categoryName: string) {
-        let answer = await this.alertService.ConfirmationAlert("Deseja apagar este exercício?", undefined, "Não", "Sim");
+    async DeleteExerciseBtn(exercise: ExerciseTemplate) {
+        let answer = await this.alertService.ConfirmationAlert("Apagar este exercício?", `"${exercise.name}" desaparecerá para sempre`, "Não", "Sim");
         if (answer) {
-            if (await this.DeleteExercise(exerciseId)) {
+            if (await this.DeleteExercise(exercise.thisObjectID!)) {
                 await this.alertService.ShowToast("Exercício apagado com sucesso", undefined, "primary");
-
                 this.exercisesByCategory.forEach((categories, categoriesIndex) => {
-                    if (categories.category == categoryName) {
+                    if (categories.category == exercise.category) {
                         categories.exercises.forEach( (exercises, exercisesIndex) => {
-                            if (exercises.thisObjectID == exerciseId)
+                            if (exercises.thisObjectID == exercise.thisObjectID)
                                 categories.exercises.splice(exercisesIndex, 1);
                         });
                         if (categories.exercises.length == 0)
