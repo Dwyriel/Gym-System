@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ExerciseTemplate } from "../../interfaces/exercise";
+import {Component} from '@angular/core';
+import {ExerciseTemplate} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertService} from "../../services/alert.service";
@@ -14,19 +14,18 @@ export class CreateExercisePage {
 
     exerciseName: string = "";
     possibleCategories: Array<string> = new Array<string>();
-    categorySelected: string | number = 1;
+    categorySelected?: string | number;
     newCategoryName: string = "";
 
-    hideCategoryInsertion: boolean = false;
+    hideCategoryInsertion: boolean = true;
     isLoading: boolean = false;
-    isChanging: boolean = false;
 
     idToChangeExercise: string | null = null;
 
     constructor(private exercisesService: ExercisesService, private router: Router, private activatedRoute: ActivatedRoute, private alertService: AlertService) { }
 
     IsInsertingCategory() {
-        this.hideCategoryInsertion = !(typeof this.categorySelected == "number");
+        this.hideCategoryInsertion = typeof this.categorySelected != "number";
     }
 
     async ionViewWillEnter() {
@@ -44,7 +43,7 @@ export class CreateExercisePage {
         this.exerciseName = "";
         this.newCategoryName = "";
         this.isLoading = false;
-        this.categorySelected = 1;
+        this.categorySelected = undefined;
     }
 
     async GetUniqueCategories() {
@@ -59,11 +58,11 @@ export class CreateExercisePage {
     }
 
     async OnClick() {
-        let functionResult = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
+        let functionResult: Promise<any> = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
         await this.router.navigate(["/exercises"]);
         this.isLoading = false;
         functionResult
-            .then( async () => await this.alertService.ShowToast((this.idToChangeExercise)? "Exercício alterado com sucesso": "Exercício criado com sucesso" , undefined, "primary"))
+            .then(async () => await this.alertService.ShowToast((this.idToChangeExercise) ? "Exercício alterado com sucesso" : "Exercício criado com sucesso", undefined, "primary"))
             .catch(async () => await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger"));
     }
 
@@ -71,14 +70,14 @@ export class CreateExercisePage {
         this.isLoading = true;
         if (typeof this.categorySelected == "number")
             this.categorySelected = this.newCategoryName;
-        return this.exercisesService.CreateExercise({name: this.exerciseName, category: this.categorySelected});
+        return this.exercisesService.CreateExercise({name: this.exerciseName, category: this.categorySelected!});
     }
 
     async UpdateExercise() {
         this.isLoading = true;
         if (typeof this.categorySelected == "number")
             this.categorySelected = this.newCategoryName;
-        return this.exercisesService.UpdateExercise(this.idToChangeExercise!, {name: this.exerciseName, category: this.categorySelected});
+        return this.exercisesService.UpdateExercise(this.idToChangeExercise!, {name: this.exerciseName, category: this.categorySelected!});
     }
 
 }
