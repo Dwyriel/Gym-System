@@ -54,6 +54,8 @@ export class AppComponent implements OnInit, OnDestroy {
         UnsubscribeIfSubscribed(this.resizeSubscription);
         this.resizeSubscription = this.platform.resize.subscribe(() => {
             this.PushAppInfo();
+            if(this.firebaseResponded)
+                return;
             this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.SpinnerDivElement?.nativeElement.offsetHeight / 2) * -1) - 40 + "px");
             this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetX", (this.platform.width() >= 600) ? (((this.SpinnerDivElement?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
         });
