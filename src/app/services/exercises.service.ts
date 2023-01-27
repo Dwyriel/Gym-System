@@ -26,8 +26,7 @@ export class ExercisesService {
     public async CreateExercise(exerciseTemplate: ExerciseTemplate) {
         if (!exerciseTemplate)
             return;
-        const ref = await addDoc(this.colShort(), exerciseTemplate);
-        return ref.id;
+        return await addDoc(this.colShort(), exerciseTemplate);
     }
 
     /**
@@ -59,6 +58,13 @@ export class ExercisesService {
 
     public async GetExerciseObservable(id: string) {
         return docData(this.docShort(id));
+    }
+
+    public async GetAllCategories() {
+        let exercises = await this.GetAllExercises();
+        let cats: string[] = [];
+        exercises.forEach(exercise => cats.push(exercise.category));
+        return cats;
     }
 
     public async GetAllExercises() {

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {addDoc, arrayUnion, collection, deleteDoc, doc, docData, Firestore, getDoc, getDocs, updateDoc} from "@angular/fire/firestore";
+import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, docData, Firestore, getDoc, getDocs, updateDoc} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
 import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
@@ -48,16 +48,19 @@ export class PractitionerService {
         if (!practitioner)
             return;
         const exerRef = await addDoc(this.colExerShort(), {items: []});
-        const freqRef = await addDoc(this.colFreqShort(), {items: []});
-        const ref = await addDoc(this.colPracShort(), {
+        if (!exerRef)
+            return undefined;
+        const presRef = await addDoc(this.colFreqShort(), {items: []});
+        if (!presRef)
+            return undefined;
+        return addDoc(this.colPracShort(), {
             formCreationDate: practitioner.formCreationDate.getTime(),
             name: practitioner.name,
             objectives: practitioner.objectives,
             observations: practitioner.observations,
             exercisesID: exerRef.id,
-            presenceLogID: freqRef.id
+            presenceLogID: presRef.id
         });
-        return ref.id;
     }
 
     /**
@@ -88,7 +91,7 @@ export class PractitionerService {
 
     /**
      * Updates an existing practitioner's presence array on the database.
-     * @param id the id of the array of presence (aka practitioner.presenceLogID)
+     * @param id the id of the array of presences (aka practitioner.presenceLogID)
      * @param presence the presence that will be added
      */
     public async AddPresence(id: string, presence: Presence) {
@@ -98,6 +101,53 @@ export class PractitionerService {
                 wasPresent: presence.wasPresent
             })
         });
+    }
+
+    /**
+     * Removes an exercise from a practitioner's exercise array.
+     * @param id the id of the array of exercises (aka practitioner.exercisesID)
+     * @param exercise the exercise that will be removed
+     */
+    public async RemoveExercise(id: string, exercise: Exercise) {
+        return updateDoc(this.docExerShort(id), {
+            items: arrayRemove({
+                exerciseID: exercise.exerciseID,
+                series: exercise.series,
+                repetition: exercise.repetition,
+                rest: exercise.rest,
+                load: exercise.load,
+            })
+        });
+    }
+
+    /**
+     * Removes a presence from a practitioner's presence array.
+     * @param id the id of the array of presences (aka practitioner.presenceLogID)
+     * @param presence the presence that will be removed
+     */
+    public async RemovePresence(id: string, presence: Presence) {
+        return updateDoc(this.docPresShort(id), {
+            items: arrayRemove({
+                date: presence.date.getTime(),
+                wasPresent: presence.wasPresent
+            })
+        });
+    }
+
+    /**
+     * Clears the practitioner's exercise array.
+     * @param id the id of the array of exercises (aka practitioner.exercisesID)
+     */
+    public async ClearExercises(id: string) {
+        return updateDoc(this.docExerShort(id), {items: []});
+    }
+
+    /**
+     * Clears the practitioner's presence array.
+     * @param id the id of the array of presences (aka practitioner.presenceLogID)
+     */
+    public async ClearPresences(id: string) {
+        return updateDoc(this.docPresShort(id), {items: []});
     }
 
     /**
@@ -111,6 +161,10 @@ export class PractitionerService {
         return deleteDoc(this.docPracShort(id));
     }
 
+    /**
+     * Gets a practitioner from the database
+     * @param id the id of the practitioner
+     */
     public async GetPractitioner(id: string) {
         const pracDoc = await getDoc(this.docPracShort(id));
         if (!pracDoc.exists())
@@ -120,6 +174,10 @@ export class PractitionerService {
         return Promise.resolve(practitioner);
     }
 
+    /**
+     * Gets all the exercises of a practitioner
+     * @param id the id of the array of exercises (aka practitioner.presenceLogID)
+     */
     public async GetPractitionersExercises(id: string) {
         const doc = await getDoc(this.docExerShort(id));
         if (!doc.exists())
@@ -130,6 +188,10 @@ export class PractitionerService {
         return Promise.resolve(exercises);
     }
 
+    /**
+     * Gets all the presences of a practitioner
+     * @param id the id of the array of presences (aka practitioner.presenceLogID)
+     */
     public async GetPractitionersPresences(id: string) {
         const doc = await getDoc(this.docPresShort(id));
         if (!doc.exists())
@@ -141,6 +203,10 @@ export class PractitionerService {
         return Promise.resolve(presences);
     }
 
+    /**
+     * Gets a practitioner with all the fields filled (including the exercise and presence array)
+     * @param id the id of the practitioner
+     */
     public async GetPractitionerAllFieldsFilled(id: string) {
         const pracDoc = await getDoc(this.docPracShort(id));
         if (!pracDoc.exists())
@@ -152,6 +218,9 @@ export class PractitionerService {
         return Promise.resolve(practitioner);
     }
 
+    /**
+     * Gets all the practitioner, without any optional fields being filled
+     */
     public async GetAllPractitioners() {
         const allDocs = await getDocs(this.colPracShort());
         let arrayOfPractitioner: (Practitioner)[] = [];
