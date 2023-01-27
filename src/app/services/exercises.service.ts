@@ -60,10 +60,12 @@ export class ExercisesService {
         return docData(this.docShort(id));
     }
 
-    public async GetAllCategories() {
-        let exercises = await this.GetAllExercises();
+    public async GetAllCategories(exercises?: ExerciseTemplate[]) {
+        if (!exercises)
+            exercises = await this.GetAllExercises();
         let cats: string[] = [];
         exercises.forEach(exercise => cats.push(exercise.category));
+        cats = [...new Set(cats)];
         return cats;
     }
 
