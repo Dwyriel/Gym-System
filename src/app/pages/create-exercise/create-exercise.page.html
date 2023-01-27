@@ -4,7 +4,7 @@
             <ion-back-button defaultHref="/exercises" text="">
             </ion-back-button>
         </ion-buttons>
-        <ion-title>Criar exercício</ion-title>
+        <ion-title> {{(idToChangeExercise) ? "Alterar" : "Criar"}} exercício</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content fullscreen="true">
@@ -23,7 +23,7 @@
         </ion-item>
     </ion-list>
     <ion-row class="ion-justify-content-center" [hidden]="isLoading">
-        <ion-button class="full-width" [disabled]="!exerciseName || (!hideCategoryInsertion && !newCategoryName)" (click)="CreateExercise()">Criar</ion-button>
+        <ion-button class="full-width" [disabled]="!exerciseName || (!hideCategoryInsertion && !newCategoryName)" (click)="(idToChangeExercise ? ChangeExercise : CreateExercise)()"> {{(idToChangeExercise) ? "Alterar" : "Criar"}} </ion-button>
     </ion-row>
     <div class="spinner-div">
         <ion-spinner name="crescent" class="big-spinner" [hidden]="!isLoading"></ion-spinner>

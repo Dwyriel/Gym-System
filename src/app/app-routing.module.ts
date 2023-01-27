@@ -19,18 +19,22 @@ const routes: Routes = [
         path: 'config',
         loadChildren: () => import('./pages/config/config.module').then( m => m.ConfigPageModule)
     },
-  {
+    {
     path: 'practitioners',
     loadChildren: () => import('./pages/practitioners/practitioners.module').then( m => m.PractitionersPageModule)
-  },
-  {
+    },
+    {
     path: 'exercises',
     loadChildren: () => import('./pages/exercises/exercises.module').then( m => m.ExercisesPageModule)
-  },
-  {
+    },
+    {
     path: 'create-exercise',
     loadChildren: () => import('./pages/create-exercise/create-exercise.module').then( m => m.CreateExercisePageModule)
-  },
+    },
+    {
+        path: 'create-exercise/:id',
+        loadChildren: () => import('./pages/create-exercise/create-exercise.module').then( m => m.CreateExercisePageModule)
+    },
 ];
 
 @NgModule({
