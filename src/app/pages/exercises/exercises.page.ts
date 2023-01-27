@@ -11,7 +11,7 @@ import {AlertService} from "../../services/alert.service";
 })
 export class ExercisesPage {
     private allExercises?: Array<ExerciseTemplate>;
-    public exercisesByCategory: Array<{categoryName: string, exercises: Array<ExerciseTemplate>}> = new Array<{categoryName: string; exercises: Array<ExerciseTemplate>}>();
+    public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
 
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService) { }
@@ -20,7 +20,7 @@ export class ExercisesPage {
         await this.PopulateInterface();
     }
     ionViewDidLeave() {
-        this.exercisesByCategory = new Array<{categoryName: string; exercises: Array<ExerciseTemplate>}>();
+        this.exercisesByCategory = new Array<ExercisesByCategory>();
         this.allExercises = new Array<ExerciseTemplate>();
     }
 
@@ -44,7 +44,7 @@ export class ExercisesPage {
                 await this.alertService.ShowToast("Exercício apagado com sucesso", undefined, "primary");
                 this.exercisesByCategory.forEach((categories, categoriesIndex) => {
                     if (categories.categoryName == exercise.category) {
-                        categories.exercises.forEach( (exercises, exercisesIndex) => {
+                        categories.exercises.forEach((exercises, exercisesIndex) => {
                             if (exercises.thisObjectID == exercise.thisObjectID)
                                 categories.exercises.splice(exercisesIndex, 1);
                         });
@@ -71,4 +71,9 @@ export class ExercisesPage {
         await this.exercisesService.DeleteExercise(exerciseId);
         return true;
     }
+}
+
+interface ExercisesByCategory {
+    categoryName: string,
+    exercises: Array<ExerciseTemplate>
 }
