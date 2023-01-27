@@ -15,7 +15,7 @@
         </ion-fab>
 
         <ion-list *ngFor="let category of exercisesByCategory" lines="full">
-            <ion-list-header class="ion-text-center">{{category.category}}</ion-list-header>
+            <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
             <ion-item *ngFor="let exercise of category.exercises">
                 <ion-label class="ion-padding-start">{{exercise.name}}</ion-label>
                 <ion-item button="true" routerLink="/create-exercise/{{exercise.thisObjectID}}" detail="false">

@@ -11,7 +11,7 @@ import {AlertService} from "../../services/alert.service";
 })
 export class ExercisesPage {
     private allExercises?: Array<ExerciseTemplate>;
-    public exercisesByCategory: Array<{category: string, exercises: Array<ExerciseTemplate>}> = new Array<{category: string; exercises: Array<ExerciseTemplate>}>();
+    public exercisesByCategory: Array<{categoryName: string, exercises: Array<ExerciseTemplate>}> = new Array<{categoryName: string; exercises: Array<ExerciseTemplate>}>();
 
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService) { }
@@ -20,18 +20,18 @@ export class ExercisesPage {
         await this.PopulateInterface();
     }
     ionViewDidLeave() {
-        this.exercisesByCategory = new Array<{category: string; exercises: Array<ExerciseTemplate>}>();
+        this.exercisesByCategory = new Array<{categoryName: string; exercises: Array<ExerciseTemplate>}>();
         this.allExercises = new Array<ExerciseTemplate>();
     }
 
     async PopulateInterface() {
         this.allExercises = await this.exercisesService.GetAllExercises();
         let categories: Array<string> = await this.exercisesService.GetAllCategories(this.allExercises);
-        categories.forEach(category => this.exercisesByCategory.push({category, exercises: new Array<ExerciseTemplate>()}));
+        categories.forEach(categoryName => this.exercisesByCategory.push({categoryName, exercises: new Array<ExerciseTemplate>()}));
 
         for (let i = 0; i < categories.length; i++){
             this.allExercises.forEach(exercise => {
-                if (exercise.category == this.exercisesByCategory[i].category)
+                if (exercise.category == this.exercisesByCategory[i].categoryName)
                     this.exercisesByCategory[i].exercises.push(exercise);
             });
         }
@@ -43,7 +43,7 @@ export class ExercisesPage {
             if (await this.DeleteExercise(exercise.thisObjectID!)) {
                 await this.alertService.ShowToast("Exercício apagado com sucesso", undefined, "primary");
                 this.exercisesByCategory.forEach((categories, categoriesIndex) => {
-                    if (categories.category == exercise.category) {
+                    if (categories.categoryName == exercise.category) {
                         categories.exercises.forEach( (exercises, exercisesIndex) => {
                             if (exercises.thisObjectID == exercise.thisObjectID)
                                 categories.exercises.splice(exercisesIndex, 1);
