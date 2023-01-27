@@ -10,8 +10,8 @@ import {AlertService} from "../../services/alert.service";
   styleUrls: ['./exercises.page.scss'],
 })
 export class ExercisesPage {
-    allExercises?: Array<ExerciseTemplate>;
-    exercisesByCategory: Array<{category: string, exercises: Array<ExerciseTemplate>}> = new Array<{category: string; exercises: Array<ExerciseTemplate>}>();
+    private allExercises?: Array<ExerciseTemplate>;
+    public exercisesByCategory: Array<{category: string, exercises: Array<ExerciseTemplate>}> = new Array<{category: string; exercises: Array<ExerciseTemplate>}>();
 
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService) { }
