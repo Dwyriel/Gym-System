@@ -14,6 +14,7 @@
             <ion-input [(ngModel)]="exerciseName" (keyup.enter)="EnterPressed()"></ion-input>
         </ion-item>
         <ion-select interface="alert" [(ngModel)]="categorySelected" (ionChange)="IsInsertingCategory()">
+            <ion-select-option>Escolha categoria</ion-select-option>
             <ion-select-option [value]="categoryCreationValue">Criar categoria</ion-select-option>
             <ion-select-option *ngFor="let category of possibleCategories" [value]="category"> {{category}} </ion-select-option>
         </ion-select>
@@ -23,7 +24,7 @@
         </ion-item>
     </ion-list>
     <ion-row class="ion-justify-content-center" [hidden]="isLoading">
-        <ion-button class="full-width" [disabled]="!exerciseName || (!hideCategoryInsertion && !newCategoryName)" (click)="(idToChangeExercise ? ChangeExercise : CreateExercise)()"> {{(idToChangeExercise) ? "Alterar" : "Criar"}} </ion-button>
+        <ion-button class="full-width" [disabled]="!exerciseName || (!hideCategoryInsertion && !newCategoryName)" (click)="OnClick()"> {{(idToChangeExercise) ? "Alterar" : "Criar"}} </ion-button>
     </ion-row>
     <div class="spinner-div">
         <ion-spinner name="crescent" class="big-spinner" [hidden]="!isLoading"></ion-spinner>
