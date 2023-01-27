@@ -1,9 +1,10 @@
 export interface ExerciseTemplate {
+    thisObjectID? :string;
     category: string;
     name: string;
 }
 
-export interface Exercises {
+export interface Exercise {
     exerciseID: string;
     exercise?: ExerciseTemplate;
     series: number;
