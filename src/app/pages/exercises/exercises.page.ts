@@ -11,6 +11,7 @@ import {AlertService} from "../../services/alert.service";
 })
 export class ExercisesPage {
     //TODO: LIMIT HTML SIZE
+    //TODO: fix code mess (parse to json when receiving from database, apply filters after deleting something, etc)
     private allExercises?: Array<ExerciseTemplate>;
     public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
     public allExercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
