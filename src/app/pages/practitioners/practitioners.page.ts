@@ -16,6 +16,8 @@ export class PractitionersPage {
     private allPractitionersAsString: string = "";
 
     public searchFilter: string = "";
+    public practitionerArrayIsEmpty = true;
+    public fetchingData = true;
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
@@ -32,8 +34,11 @@ export class PractitionersPage {
     }
 
     async PopulateInterface() {
+        this.fetchingData = true;
         this.allPractitioners = await this.practitionersService.GetAllPractitioners();
         this.allPractitionersAsString = JSON.stringify(this.allPractitioners);
+        this.practitionerArrayIsEmpty = this.allPractitioners.length < 1;
+        this.fetchingData = false;
     }
 
     RepopulateInterface() {

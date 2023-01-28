@@ -8,17 +8,20 @@
         </ion-toolbar>
     </ion-header>
     <ion-content>
-        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!allPractitioners || (allPractitioners && allPractitioners.length < 1)">
+        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="practitionerArrayIsEmpty && !fetchingData">
             <ion-note>Não há nenhum aluno registrado</ion-note>
         </ion-row>
-        <div class="webbrowser" *ngIf="allPractitioners && allPractitioners.length > 0">
+        <div class="webbrowser" *ngIf="!practitionerArrayIsEmpty">
             <ion-item>
                 <ion-item>
                     <ion-icon name="search-outline"></ion-icon>
                 </ion-item>
                 <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
             </ion-item>
-            <ion-list>
+            <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!allPractitioners || (allPractitioners && allPractitioners.length < 1)">
+                <ion-note>Nenhum aluno encontrado</ion-note>
+            </ion-row>
+            <ion-list *ngIf="allPractitioners && allPractitioners.length > 0">
                 <ion-item button="true" *ngFor="let practitioner of allPractitioners" routerLink="practitioner-profile/{{practitioner.thisObjectID}}">
                     <ion-label>{{practitioner.name}}</ion-label>
                 </ion-item>

@@ -22,6 +22,8 @@ export class ExercisesPage {
 
     public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
     public searchFilter: string = "";
+    public exercisesArrayIsEmpty = true;
+    public fetchingData = true;
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
@@ -39,6 +41,7 @@ export class ExercisesPage {
     }
 
     async PopulateInterface() {
+        this.fetchingData = true;
         this.allExercises = await this.exercisesService.GetAllExercises();
         let categories: Array<string> = await this.exercisesService.GetAllCategories(this.allExercises);
         categories.forEach(categoryName => this.exercisesByCategory.push({categoryName, exercises: new Array<ExerciseTemplate>()}));
@@ -50,6 +53,8 @@ export class ExercisesPage {
             });
         }
         this.exercisesByCategoryAsString = JSON.stringify(this.exercisesByCategory);
+        this.exercisesArrayIsEmpty = this.exercisesByCategory.length < 1;
+        this.fetchingData = false;
     }
 
     async DeleteExerciseBtn(exercise: ExerciseTemplate) {
