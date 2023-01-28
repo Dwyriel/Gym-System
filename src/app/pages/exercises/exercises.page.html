@@ -20,7 +20,6 @@
                 </ion-item>
                 <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
             </ion-item>
-
             <ion-list *ngFor="let category of exercisesByCategory" lines="full">
                 <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
                 <ion-item *ngFor="let exercise of category.exercises">

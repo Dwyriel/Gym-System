@@ -17,9 +17,9 @@ const handleColorSchemeChangeEvent = (event: MediaQueryListEvent) => document.bo
     styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+    private readonly maxMobileWidth = 1024;
     private readonly paddingSizeInRem = 3;
     private sysTheme?: MediaQueryList;
-    private maxMobileWidth = 1024;
 
     private resizeSubscription?: Subscription;
     private appConfigSubscription?: Subscription;
