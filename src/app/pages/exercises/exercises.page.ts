@@ -33,7 +33,7 @@ export class ExercisesPage {
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
     async ionViewWillEnter() {
-        let id = await this.alertService.PresentLoading();
+        let id = await this.alertService.PresentLoading("Carregando");
         this.SetCSSProperties();
         if (await waitForFirebaseResponse(this.accountService))
             await this.PopulateInterface();
