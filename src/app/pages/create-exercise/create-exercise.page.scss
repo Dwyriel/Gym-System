@@ -16,8 +16,7 @@
 }
 
 .webbrowser{
-    max-width: 1024px;
+    max-width: var(--mobile-max-width);
     margin:0 auto;
     padding-top: var(--desktop-padding-top);
-
 }

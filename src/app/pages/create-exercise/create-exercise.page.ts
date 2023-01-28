@@ -18,13 +18,13 @@ export class CreateExercisePage {
 
     private readonly paddingSizeInRem = 3;
 
+    private appInfoSubscription?: Subscription;
+
     public readonly categoryCreationValue = 1;
     public exerciseName: string = "";
     public possibleCategories: Array<string> = new Array<string>();
     public categorySelected?: string | number;
     public newCategoryName: string = "";
-
-    private appInfoSubscription?: Subscription;
 
     public idToChangeExercise: string | null = null;
     public hideCategoryInsertion: boolean = true;
@@ -61,6 +61,7 @@ export class CreateExercisePage {
     SetCSSProperties() {
         UnsubscribeIfSubscribed(this.appInfoSubscription);
         this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
+            this.contentDiv?.nativeElement.style.setProperty("--mobile-max-width", appInfo?.maxMobileWidth + "px");
             this.contentDiv?.nativeElement.style.setProperty("--desktop-padding-top", appInfo?.isMobile ? "0" : ((inverseLerp(appInfo!.appWidth, appInfo!.maxMobileWidth, appInfo!.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
         });
     }

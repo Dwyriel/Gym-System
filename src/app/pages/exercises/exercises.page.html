@@ -8,30 +8,31 @@
         </ion-toolbar>
     </ion-header>
     <ion-content>
-        <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-            <ion-fab-button routerLink="/create-exercise">
-                <ion-icon name="add"></ion-icon>
-            </ion-fab-button>
-        </ion-fab>
-        <ion-item>
+        <div class="webbrowser" #contentDiv>
+            <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+                <ion-fab-button routerLink="/create-exercise">
+                    <ion-icon name="add"></ion-icon>
+                </ion-fab-button>
+            </ion-fab>
             <ion-item>
-                <ion-icon name="search-outline"></ion-icon>
-            </ion-item>
-            <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
-        </ion-item>
-
-        <ion-list *ngFor="let category of exercisesByCategory" lines="full">
-            <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
-            <ion-item *ngFor="let exercise of category.exercises">
-                <ion-label class="ion-padding-start">{{exercise.name}}</ion-label>
-                <ion-item button="true" routerLink="/create-exercise/{{exercise.thisObjectID}}" detail="false">
-                    <ion-icon name="pencil-outline"></ion-icon>
+                <ion-item>
+                    <ion-icon name="search-outline"></ion-icon>
                 </ion-item>
-                <ion-item button="true" (click)="DeleteExerciseBtn(exercise!)" detail="false">
-                    <ion-icon name="trash"></ion-icon>
-                </ion-item>
+                <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
             </ion-item>
-        </ion-list>
 
+            <ion-list *ngFor="let category of exercisesByCategory" lines="full">
+                <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
+                <ion-item *ngFor="let exercise of category.exercises">
+                    <ion-label class="ion-padding-start">{{exercise.name}}</ion-label>
+                    <ion-item button="true" routerLink="/create-exercise/{{exercise.thisObjectID}}" detail="false">
+                        <ion-icon name="pencil-outline"></ion-icon>
+                    </ion-item>
+                    <ion-item button="true" (click)="DeleteExerciseBtn(exercise!)" detail="false">
+                        <ion-icon name="trash"></ion-icon>
+                    </ion-item>
+                </ion-item>
+            </ion-list>
+        </div>
     </ion-content>
 </div>

@@ -1,10 +1,12 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {ExercisesService} from "../../services/exercises.service";
 import {ExerciseTemplate} from "../../interfaces/exercise";
 import {PractitionerService} from "../../services/practitioner.service";
 import {AlertService} from "../../services/alert.service";
-import {waitForFirebaseResponse} from "../../services/app.utility";
+import {getRemSizeInPixels, inverseLerp, UnsubscribeIfSubscribed, waitForFirebaseResponse} from "../../services/app.utility";
 import {AccountService} from "../../services/account.service";
+import {AppInfoService} from "../../services/app-info.service";
+import {Subscription} from "rxjs";
 
 interface ExercisesByCategory {
     categoryName: string,
@@ -17,18 +19,22 @@ interface ExercisesByCategory {
     styleUrls: ['./exercises.page.scss'],
 })
 export class ExercisesPage {
-    //TODO: LIMIT HTML SIZE
+    @ViewChild('contentDiv') contentDiv?: ElementRef;
+
+    private readonly paddingSizeInRem = 3;
     private allExercises?: Array<ExerciseTemplate>;
     private exercisesByCategoryAsString: string = "";
 
-    public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
+    private appInfoSubscription?: Subscription;
 
+    public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
     public searchFilter: string = "";
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
     async ionViewWillEnter() {
         let id = await this.alertService.PresentLoading();
+        this.SetCSSProperties();
         if (await waitForFirebaseResponse(this.accountService))
             await this.PopulateInterface();
         await this.alertService.DismissLoading(id);
@@ -38,6 +44,14 @@ export class ExercisesPage {
         this.exercisesByCategory = new Array<ExercisesByCategory>();
         this.allExercises = new Array<ExerciseTemplate>();
         this.searchFilter = "";
+    }
+
+    SetCSSProperties() {
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
+        this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
+            this.contentDiv?.nativeElement.style.setProperty("--mobile-max-width", appInfo?.maxMobileWidth + "px");
+            this.contentDiv?.nativeElement.style.setProperty("--desktop-padding-top", appInfo?.isMobile ? "0" : ((inverseLerp(appInfo!.appWidth, appInfo!.maxMobileWidth, appInfo!.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
+        });
     }
 
     async PopulateInterface() {
