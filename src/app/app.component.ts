@@ -54,7 +54,7 @@ export class AppComponent implements OnInit, OnDestroy {
         UnsubscribeIfSubscribed(this.resizeSubscription);
         this.resizeSubscription = this.platform.resize.subscribe(() => {
             this.PushAppInfo();
-            if(this.firebaseResponded)
+            if (this.firebaseResponded)
                 return;
             this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.SpinnerDivElement?.nativeElement.offsetHeight / 2) * -1) - 40 + "px");
             this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetX", (this.platform.width() >= 600) ? (((this.SpinnerDivElement?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
@@ -113,7 +113,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 return;
             }
             this.displayUsername = (answer?.displayName) ? answer?.displayName : answer?.email;
-            await this.router.navigate(["/home"]);
+            if (this.router.url == "/" || this.router.url == "/login")
+                await this.router.navigate(["/home"]);
         });
     }
 
