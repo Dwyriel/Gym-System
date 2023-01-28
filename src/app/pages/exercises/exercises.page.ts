@@ -38,6 +38,7 @@ export class ExercisesPage {
         this.exercisesByCategory = new Array<ExercisesByCategory>();
         this.allExercises = new Array<ExerciseTemplate>();
         this.searchFilter = "";
+        this.fetchingData = true;
     }
 
     async PopulateInterface() {

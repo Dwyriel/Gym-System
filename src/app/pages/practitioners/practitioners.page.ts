@@ -31,6 +31,7 @@ export class PractitionersPage {
     ionViewDidLeave() {
         this.allPractitioners = new Array<Practitioner>();
         this.searchFilter = "";
+        this.fetchingData = true;
     }
 
     async PopulateInterface() {

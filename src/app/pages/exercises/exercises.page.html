@@ -11,7 +11,7 @@
         <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesArrayIsEmpty && !fetchingData">
             <ion-note>Não há nenhum exercício registrado</ion-note>
         </ion-row>
-        <div class="webbrowser" *ngIf="!exercisesArrayIsEmpty">
+        <div class="webbrowser" *ngIf="!exercisesArrayIsEmpty && !fetchingData">
             <ion-item>
                 <ion-item>
                     <ion-icon name="search-outline"></ion-icon>
