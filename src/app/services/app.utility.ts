@@ -1,9 +1,5 @@
 import {Subscription} from "rxjs";
-
-export function UnsubscribeIfSubscribed(subscription?: Subscription) {
-    if (subscription && !subscription.closed)
-        subscription.unsubscribe();
-}
+import {AccountService} from "./account.service";
 
 export function getRemSizeInPixels() {
     return parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -52,6 +48,20 @@ export function fromOneRangeToAnother(value: number, minFirstRange: number, maxF
         maxSecondRange = temp;
     }
     return lerp(inverseLerp(value, minFirstRange, maxFirstRange), minSecondRange, maxSecondRange);
+}
+
+export function UnsubscribeIfSubscribed(subscription?: Subscription) {
+    if (subscription && !subscription.closed)
+        subscription.unsubscribe();
+}
+
+export async function waitForFirebaseResponse(accountService: AccountService) {
+    while (true) {
+        if (typeof accountService.GetCurrentUser() != "boolean")
+            break;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    return Boolean(accountService.GetCurrentUser());
 }
 
 export class AppUtility {

@@ -234,6 +234,7 @@ export class PractitionerService {
 
     /**
      * Gets all the practitioner, without any optional fields being filled
+     * @param maxEntries (optional) the total amount of entries to fetch
      */
     public async GetAllPractitioners(maxEntries?: number) {
         const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colPracShort(), limit(maxEntries))) : await getDocs(this.colPracShort());
