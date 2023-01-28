@@ -4,6 +4,11 @@ import {ExerciseTemplate} from "../../interfaces/exercise";
 import {PractitionerService} from "../../services/practitioner.service";
 import {AlertService} from "../../services/alert.service";
 
+interface ExercisesByCategory {
+    categoryName: string,
+    exercises: Array<ExerciseTemplate>
+}
+
 @Component({
     selector: 'app-exercises',
     templateUrl: './exercises.page.html',
@@ -11,10 +16,10 @@ import {AlertService} from "../../services/alert.service";
 })
 export class ExercisesPage {
     //TODO: LIMIT HTML SIZE
-    //TODO: fix code mess (parse to json when receiving from database, apply filters after deleting something, etc)
     private allExercises?: Array<ExerciseTemplate>;
+    private exercisesByCategoryAsString: string = "";
+
     public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
-    public allExercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
 
     public searchFilter: string = "";
 
@@ -26,12 +31,9 @@ export class ExercisesPage {
 
     ionViewDidLeave() {
         this.exercisesByCategory = new Array<ExercisesByCategory>();
-        this.allExercisesByCategory = new Array<ExercisesByCategory>();
         this.allExercises = new Array<ExerciseTemplate>();
         this.searchFilter = "";
     }
-
-    stringy: string = "";
 
     async PopulateInterface() {
         this.allExercises = await this.exercisesService.GetAllExercises();
@@ -44,39 +46,36 @@ export class ExercisesPage {
                     this.exercisesByCategory[i].exercises.push(exercise);
             });
         }
-        this.stringy = JSON.stringify(this.exercisesByCategory);
-        this.allExercisesByCategory = JSON.parse(this.stringy);
-    }
-
-    RepopulateInterface() {
-        this.exercisesByCategory = JSON.parse(this.stringy);
+        this.exercisesByCategoryAsString = JSON.stringify(this.exercisesByCategory);
     }
 
     async DeleteExerciseBtn(exercise: ExerciseTemplate) {
         let answer = await this.alertService.ConfirmationAlert("Apagar este exercício?", `"${exercise.name}" desaparecerá para sempre`, "Não", "Sim");
-        if (answer) {
-            if (await this.DeleteExercise(exercise.thisObjectID!)) {
-                await this.alertService.ShowToast("Exercício apagado com sucesso", undefined, "primary");
-                this.exercisesByCategory.forEach((categories, categoriesIndex) => {
-                    if (categories.categoryName == exercise.category) {
-                        categories.exercises.forEach((exercises, exercisesIndex) => {
-                            if (exercises.thisObjectID == exercise.thisObjectID)
-                                categories.exercises.splice(exercisesIndex, 1);
-                        });
-                        if (categories.exercises.length == 0)
-                            this.exercisesByCategory.splice(categoriesIndex, 1);
-                    }
-                });
-            } else
-                await this.alertService.ShowToast("Exercício não pode ser apagado", undefined, "danger");
-            this.searchFilter = "";
-            this.allExercisesByCategory = this.exercisesByCategory;
-        }
+        if (!answer)
+            return;
+        if (await this.DeleteExercise(exercise.thisObjectID!)) {
+            await this.alertService.ShowToast("Exercício apagado com sucesso", undefined, "primary");
+            this.exercisesByCategory = JSON.parse(this.exercisesByCategoryAsString);
+            this.exercisesByCategory.forEach((categories, categoriesIndex) => {
+                if (categories.categoryName == exercise.category) {
+                    categories.exercises.forEach((exercises, exercisesIndex) => {
+                        if (exercises.thisObjectID == exercise.thisObjectID)
+                            categories.exercises.splice(exercisesIndex, 1);
+                    });
+                    if (categories.exercises.length == 0)
+                        this.exercisesByCategory.splice(categoriesIndex, 1);
+                }
+            });
+            this.exercisesByCategoryAsString = JSON.stringify(this.exercisesByCategory);
+            await this.SearchNames(false);
+        } else
+            await this.alertService.ShowToast("Exercício não pode ser apagado", undefined, "danger");
     }
 
     async DeleteExercise(exerciseId: string): Promise<boolean> {
         if (!exerciseId)
             return false;
+        let shouldWait = true, returnValue = false;
         let allPractitioners = await this.practitionersService.GetAllPractitioners();
         for (let i = 0; i < allPractitioners.length; i++) {
             let allExercises = await this.practitionersService.GetPractitionersExercises(allPractitioners[i].exercisesID);
@@ -84,12 +83,26 @@ export class ExercisesPage {
                 if (allExercises[j].exerciseID == exerciseId)
                     await this.practitionersService.RemoveExercise(allPractitioners[i].exercisesID, allExercises[j]);
         }
-        await this.exercisesService.DeleteExercise(exerciseId);
-        return true;
+        await this.exercisesService.DeleteExercise(exerciseId).then(() => {
+            returnValue = true;
+            shouldWait = false;
+        }).catch(err => {
+            returnValue = false;
+            shouldWait = false;
+            console.log(err);
+        });
+        while (shouldWait)
+            await new Promise(resolve => setTimeout(resolve, 10));
+        return returnValue;
     }
 
-    async SearchNames() {
-        this.RepopulateInterface();
+    RepopulateInterface() {
+        this.exercisesByCategory = JSON.parse(this.exercisesByCategoryAsString);
+    }
+
+    async SearchNames(repopulate: boolean = true) {
+        if (repopulate)
+            this.RepopulateInterface();
         for (let i = 0; i < this.exercisesByCategory.length; i++) {
             for (let j = 0; j < this.exercisesByCategory[i].exercises.length; j++) {
                 let name = this.exercisesByCategory[i].exercises[j].name.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
@@ -104,9 +117,4 @@ export class ExercisesPage {
             }
         }
     }
-}
-
-interface ExercisesByCategory {
-    categoryName: string,
-    exercises: Array<ExerciseTemplate>
 }
