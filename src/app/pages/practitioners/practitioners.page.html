@@ -8,7 +8,10 @@
         </ion-toolbar>
     </ion-header>
     <ion-content>
-        <div class="webbrowser">
+        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!allPractitioners">
+            <ion-note>Não há nenhum aluno registrado</ion-note>
+        </ion-row>
+        <div class="webbrowser" *ngIf="allPractitioners">
             <ion-item>
                 <ion-item>
                     <ion-icon name="search-outline"></ion-icon>

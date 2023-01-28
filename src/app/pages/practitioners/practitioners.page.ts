@@ -19,7 +19,6 @@ export class PractitionersPage {
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
-
     async ionViewWillEnter() {
         let id = await this.alertService.PresentLoading("Carregando");
         if (await waitForFirebaseResponse(this.accountService))
