@@ -11,7 +11,7 @@
     <div [hidden]="isLoading" class="webbrowser">
         <ion-list>
             <ion-item class="ion-margin-horizontal">
-                <ion-select placeholder="Selecione uma categoria" interface="alert" [(ngModel)]="categorySelected" (ionChange)="IsInsertingCategory()">
+                <ion-select placeholder="Selecione uma categoria" interface="alert" [(ngModel)]="categorySelected" (ionChange)="IsInsertingCategory()" cancelText="Cancelar">
                     <ion-select-option [value]="categoryCreationValue">Criar categoria</ion-select-option>
                     <ion-select-option *ngFor="let category of possibleCategories" [value]="category"> {{category}} </ion-select-option>
                 </ion-select>
