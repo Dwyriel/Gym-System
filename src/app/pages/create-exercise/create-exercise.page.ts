@@ -1,11 +1,9 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {Subscription} from "rxjs";
-import {getRemSizeInPixels, inverseLerp, UnsubscribeIfSubscribed, waitForFirebaseResponse} from "../../services/app.utility";
+import {Component} from '@angular/core';
+import {waitForFirebaseResponse} from "../../services/app.utility";
 import {ExerciseTemplate} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertService} from "../../services/alert.service";
-import {AppInfoService} from "../../services/app-info.service";
 import {AccountService} from "../../services/account.service";
 
 @Component({
@@ -14,12 +12,6 @@ import {AccountService} from "../../services/account.service";
     styleUrls: ['./create-exercise.page.scss'],
 })
 export class CreateExercisePage {
-    @ViewChild('contentDiv') contentDiv?: ElementRef;
-
-    private readonly paddingSizeInRem = 3;
-
-    private appInfoSubscription?: Subscription;
-
     public readonly categoryCreationValue = 1;
     public exerciseName: string = "";
     public possibleCategories: Array<string> = new Array<string>();
@@ -38,7 +30,6 @@ export class CreateExercisePage {
 
     async ionViewWillEnter() {
         this.isLoading = true;
-        this.SetCSSProperties();
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         await this.GetUniqueCategories();
@@ -50,20 +41,11 @@ export class CreateExercisePage {
     }
 
     async ionViewDidLeave() {
-        UnsubscribeIfSubscribed(this.appInfoSubscription);
         this.possibleCategories = new Array<string>();
         this.exerciseName = "";
         this.newCategoryName = "";
         this.isLoading = false;
         this.categorySelected = undefined;
-    }
-
-    SetCSSProperties() {
-        UnsubscribeIfSubscribed(this.appInfoSubscription);
-        this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
-            this.contentDiv?.nativeElement.style.setProperty("--mobile-max-width", appInfo?.maxMobileWidth + "px");
-            this.contentDiv?.nativeElement.style.setProperty("--desktop-padding-top", appInfo?.isMobile ? "0" : ((inverseLerp(appInfo!.appWidth, appInfo!.maxMobileWidth, appInfo!.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
-        });
     }
 
     async GetUniqueCategories() {
@@ -72,7 +54,7 @@ export class CreateExercisePage {
         this.possibleCategories = [...new Set(this.possibleCategories)];
     }
 
-    async GetExerciseFromFirebase(){
+    async GetExerciseFromFirebase() {
         let exerciseToChange = await this.exercisesService.GetExercise(this.idToChangeExercise!);
         this.exerciseName = exerciseToChange.name;
         this.categorySelected = exerciseToChange.category;
