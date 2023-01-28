@@ -29,7 +29,7 @@ export class AccountService {
     /**
      * @returns the firebase authenticator's current user.
      */
-    public GetAuthCurrentUser(){
+    public GetAuthCurrentUser() {
         return this.auth.currentUser;
     }
 

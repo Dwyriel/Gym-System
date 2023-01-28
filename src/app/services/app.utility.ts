@@ -63,6 +63,3 @@ export async function waitForFirebaseResponse(accountService: AccountService) {
     }
     return Boolean(accountService.GetCurrentUser());
 }
-
-export class AppUtility {
-}
