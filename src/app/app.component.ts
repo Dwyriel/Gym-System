@@ -1,10 +1,10 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MenuController, Platform} from "@ionic/angular";
 import {Subscription} from "rxjs";
 import {gymName} from '../environments/environment';
 import {AppInfoService} from "./services/app-info.service";
 import {DeviceIDService} from "./services/device-id.service";
-import {UnsubscribeIfSubscribed} from "./services/app.utility";
+import {getRemSizeInPixels, inverseLerp, UnsubscribeIfSubscribed} from "./services/app.utility";
 import {Themes} from "./classes/app-config";
 import {Router} from "@angular/router";
 import {AccountService} from "./services/account.service";
@@ -17,16 +17,16 @@ const handleColorSchemeChangeEvent = (event: MediaQueryListEvent) => document.bo
     styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-    @ViewChild('SpinnerDiv') SpinnerDivElement?: ElementRef;
+    private readonly maxMobileWidth = 1024;
+    private readonly paddingSizeInRem = 3;
+    private sysTheme?: MediaQueryList;
 
     private resizeSubscription?: Subscription;
     private appConfigSubscription?: Subscription;
     private accountSubscription?: Subscription;
     private deviceIDSubscription?: Subscription;
 
-    readonly gymName: string = gymName;
-    private sysTheme?: MediaQueryList;
-
+    public readonly gymName: string = gymName;
     public firebaseResponded: boolean = false;
     public displayUsername: string | null | undefined;
     public deviceName: string | null = null;
@@ -50,21 +50,24 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     GetPlatformInfo() {
-        this.PushAppInfo();
+        this.PushAppInfoAndSetCSS();
         UnsubscribeIfSubscribed(this.resizeSubscription);
         this.resizeSubscription = this.platform.resize.subscribe(() => {
-            this.PushAppInfo();
-            this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.SpinnerDivElement?.nativeElement.offsetHeight / 2) * -1) - 40 + "px");
-            this.SpinnerDivElement!.nativeElement.style.setProperty("--calculatedOffsetX", (this.platform.width() >= 600) ? (((this.SpinnerDivElement?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
+            this.PushAppInfoAndSetCSS();
         });
     }
 
-    PushAppInfo() {
-        AppInfoService.PushAppInfo({
+    PushAppInfoAndSetCSS() {
+        let appInfo = {
             appWidth: this.platform.width(),
             appHeight: this.platform.height(),
-            userAgent: navigator.userAgent
-        });
+            userAgent: navigator.userAgent,
+            isMobile: this.platform.width() <= this.maxMobileWidth,
+            maxMobileWidth: this.maxMobileWidth
+        }
+        document.documentElement.style.setProperty("--mobile-max-width", appInfo.maxMobileWidth + "px");
+        document.documentElement.style.setProperty("--desktop-padding-top", appInfo?.isMobile ? "0" : ((inverseLerp(appInfo!.appWidth, appInfo!.maxMobileWidth, appInfo!.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
+        AppInfoService.PushAppInfo(appInfo);
     }
 
     async SetAppTheme() {
@@ -109,7 +112,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 return;
             }
             this.displayUsername = (answer?.displayName) ? answer?.displayName : answer?.email;
-            await this.router.navigate(["/home"]);
+            if (this.router.url == "/" || this.router.url == "/login")
+                await this.router.navigate(["/home"]);
         });
     }
 
