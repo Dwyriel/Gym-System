@@ -9,7 +9,7 @@
     </ion-header>
     <ion-content>
         <div class="webbrowser">
-            <ion-item>
+            <ion-item *ngIf="exercisesByCategory && exercisesByCategory.length > 0">
                 <ion-item>
                     <ion-icon name="search-outline"></ion-icon>
                 </ion-item>
@@ -27,6 +27,7 @@
                     </ion-item>
                 </ion-item>
             </ion-list>
+            <p style="text-align: center;" *ngIf="!exercisesByCategory || (exercisesByCategory && 1 > exercisesByCategory.length)">Nenhum exercícios encontrado.</p>
         </div>
         <ion-fab slot="fixed" vertical="bottom" horizontal="end">
             <ion-fab-button routerLink="/create-exercise">
