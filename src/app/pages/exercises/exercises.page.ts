@@ -10,8 +10,12 @@ import {AlertService} from "../../services/alert.service";
   styleUrls: ['./exercises.page.scss'],
 })
 export class ExercisesPage {
+    //TODO: LIMIT HTML SIZE
     private allExercises?: Array<ExerciseTemplate>;
     public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
+    public allExercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
+
+    public searchFilter: string = "";
 
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService) { }
@@ -21,7 +25,9 @@ export class ExercisesPage {
     }
     ionViewDidLeave() {
         this.exercisesByCategory = new Array<ExercisesByCategory>();
+        this.allExercisesByCategory = new Array<ExercisesByCategory>();
         this.allExercises = new Array<ExerciseTemplate>();
+        this.searchFilter = "";
     }
 
     async PopulateInterface() {
@@ -35,6 +41,13 @@ export class ExercisesPage {
                     this.exercisesByCategory[i].exercises.push(exercise);
             });
         }
+        this.allExercisesByCategory = this.exercisesByCategory;
+    }
+
+    RepopulateInterface() {
+        this.exercisesByCategory = Array.from(this.allExercisesByCategory);
+        console.log(this.exercisesByCategory);
+        console.log(this.allExercisesByCategory);
     }
 
     async DeleteExerciseBtn(exercise: ExerciseTemplate) {
@@ -51,10 +64,12 @@ export class ExercisesPage {
                         if (categories.exercises.length == 0)
                             this.exercisesByCategory.splice(categoriesIndex, 1);
                     }
-                    });
+                });
             }
             else
                 await this.alertService.ShowToast("Exercício não pode ser apagado", undefined, "danger");
+            this.searchFilter = "";
+            this.allExercisesByCategory = this.exercisesByCategory;
         }
     }
 
@@ -70,6 +85,27 @@ export class ExercisesPage {
         }
         await this.exercisesService.DeleteExercise(exerciseId);
         return true;
+    }
+
+    async SearchNames() {
+        this.RepopulateInterface();
+        for (let i = 0; i < this.exercisesByCategory.length; i++) {
+            for (let j = 0; j < this.exercisesByCategory[i].exercises.length; j++) {
+                if (!this.exercisesByCategory[i].exercises[j].name.includes(this.searchFilter)) {
+                    this.exercisesByCategory[i].exercises.splice(j, 1);
+                    j--;
+                }
+            }
+            if (this.exercisesByCategory[i].exercises.length == 0) {
+                this.exercisesByCategory.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
+    async ClearFilterAndSearch() {
+        this.searchFilter = "";
+        await this.RepopulateInterface();
     }
 }
 

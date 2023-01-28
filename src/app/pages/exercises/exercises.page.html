@@ -13,6 +13,15 @@
                 <ion-icon name="add"></ion-icon>
             </ion-fab-button>
         </ion-fab>
+        <ion-item>
+            <ion-item>
+                <ion-icon name="search-outline"></ion-icon>
+            </ion-item>
+            <ion-input placeholder="Pesquisar" [(ngModel)]="searchFilter" (ionInput)="SearchNames()"></ion-input>
+            <ion-item [hidden]="!searchFilter" (click)="ClearFilterAndSearch()">
+                <ion-icon name="close-outline"></ion-icon>
+            </ion-item>
+        </ion-item>
 
         <ion-list *ngFor="let category of exercisesByCategory" lines="full">
             <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
