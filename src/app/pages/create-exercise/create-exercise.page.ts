@@ -1,8 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Subscription} from "rxjs";
+import {getRemSizeInPixels, inverseLerp, UnsubscribeIfSubscribed} from "../../services/app.utility";
 import {ExerciseTemplate} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertService} from "../../services/alert.service";
+import {AppInfoService} from "../../services/app-info.service";
 
 @Component({
     selector: 'app-create-exercise',
@@ -10,17 +13,21 @@ import {AlertService} from "../../services/alert.service";
     styleUrls: ['./create-exercise.page.scss'],
 })
 export class CreateExercisePage {
-    readonly categoryCreationValue = 1;
+    @ViewChild('contentDiv') contentDiv?: ElementRef;
 
-    exerciseName: string = "";
-    possibleCategories: Array<string> = new Array<string>();
-    categorySelected?: string | number;
-    newCategoryName: string = "";
+    private readonly paddingSizeInRem = 3;
 
-    hideCategoryInsertion: boolean = true;
-    isLoading: boolean = false;
+    public readonly categoryCreationValue = 1;
+    public exerciseName: string = "";
+    public possibleCategories: Array<string> = new Array<string>();
+    public categorySelected?: string | number;
+    public newCategoryName: string = "";
 
-    idToChangeExercise: string | null = null;
+    private appInfoSubscription?: Subscription;
+
+    public idToChangeExercise: string | null = null;
+    public hideCategoryInsertion: boolean = true;
+    public isLoading: boolean = false;
 
     constructor(private exercisesService: ExercisesService, private router: Router, private activatedRoute: ActivatedRoute, private alertService: AlertService) { }
 
@@ -30,6 +37,10 @@ export class CreateExercisePage {
 
     async ionViewWillEnter() {
         this.isLoading = true;
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
+        this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
+            this.contentDiv?.nativeElement.style.setProperty("--desktop-padding-top", appInfo?.isMobile ? "0" : ((inverseLerp(appInfo!.appWidth, appInfo!.maxMobileWidth, appInfo!.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
+        })
         await this.GetUniqueCategories();
         this.idToChangeExercise = this.activatedRoute.snapshot.paramMap.get("id")
         if (this.idToChangeExercise) {
@@ -41,6 +52,7 @@ export class CreateExercisePage {
     }
 
     async ionViewDidLeave() {
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
         this.possibleCategories = new Array<string>();
         this.exerciseName = "";
         this.newCategoryName = "";

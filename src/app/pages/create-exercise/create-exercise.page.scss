@@ -14,3 +14,10 @@
     left: 50%;
     transform: translate(var(-64.4px), var(-64.4px));
 }
+
+.webbrowser{
+    max-width: 1024px;
+    margin:0 auto;
+    padding-top: var(--desktop-padding-top);
+
+}
