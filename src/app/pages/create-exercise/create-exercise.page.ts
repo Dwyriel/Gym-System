@@ -1,11 +1,12 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
-import {getRemSizeInPixels, inverseLerp, UnsubscribeIfSubscribed} from "../../services/app.utility";
+import {getRemSizeInPixels, inverseLerp, UnsubscribeIfSubscribed, waitForFirebaseResponse} from "../../services/app.utility";
 import {ExerciseTemplate} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertService} from "../../services/alert.service";
 import {AppInfoService} from "../../services/app-info.service";
+import {AccountService} from "../../services/account.service";
 
 @Component({
     selector: 'app-create-exercise',
@@ -29,7 +30,7 @@ export class CreateExercisePage {
     public hideCategoryInsertion: boolean = true;
     public isLoading: boolean = false;
 
-    constructor(private exercisesService: ExercisesService, private router: Router, private activatedRoute: ActivatedRoute, private alertService: AlertService) { }
+    constructor(private exercisesService: ExercisesService, private router: Router, private activatedRoute: ActivatedRoute, private alertService: AlertService, private accountService: AccountService) { }
 
     IsInsertingCategory() {
         this.hideCategoryInsertion = typeof this.categorySelected != "number";
@@ -37,16 +38,13 @@ export class CreateExercisePage {
 
     async ionViewWillEnter() {
         this.isLoading = true;
-        UnsubscribeIfSubscribed(this.appInfoSubscription);
-        this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
-            this.contentDiv?.nativeElement.style.setProperty("--desktop-padding-top", appInfo?.isMobile ? "0" : ((inverseLerp(appInfo!.appWidth, appInfo!.maxMobileWidth, appInfo!.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
-        })
+        this.SetCSSProperties();
+        if (!(await waitForFirebaseResponse(this.accountService)))
+            return;
         await this.GetUniqueCategories();
         this.idToChangeExercise = this.activatedRoute.snapshot.paramMap.get("id")
         if (this.idToChangeExercise) {
-            let exerciseToChange = await this.exercisesService.GetExercise(this.idToChangeExercise);
-            this.exerciseName = exerciseToChange.name;
-            this.categorySelected = exerciseToChange.category;
+            await this.GetExerciseFromFirebase();
         }
         this.isLoading = false;
     }
@@ -60,10 +58,23 @@ export class CreateExercisePage {
         this.categorySelected = undefined;
     }
 
+    SetCSSProperties() {
+        UnsubscribeIfSubscribed(this.appInfoSubscription);
+        this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
+            this.contentDiv?.nativeElement.style.setProperty("--desktop-padding-top", appInfo?.isMobile ? "0" : ((inverseLerp(appInfo!.appWidth, appInfo!.maxMobileWidth, appInfo!.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
+        });
+    }
+
     async GetUniqueCategories() {
         let Exercises: Array<ExerciseTemplate> = await this.exercisesService.GetAllExercises();
         Exercises.forEach(item => this.possibleCategories.push(item.category));
         this.possibleCategories = [...new Set(this.possibleCategories)];
+    }
+
+    async GetExerciseFromFirebase(){
+        let exerciseToChange = await this.exercisesService.GetExercise(this.idToChangeExercise!);
+        this.exerciseName = exerciseToChange.name;
+        this.categorySelected = exerciseToChange.category;
     }
 
     async EnterPressed() {

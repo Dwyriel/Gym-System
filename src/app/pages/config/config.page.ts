@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {UnsubscribeIfSubscribed} from "../../services/app.utility";
+import {UnsubscribeIfSubscribed, waitForFirebaseResponse} from "../../services/app.utility";
 import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
 import {AccountService} from "../../services/account.service";
@@ -20,32 +20,14 @@ export class ConfigPage {
 
     constructor(private router: Router, private accountService: AccountService, private alertService: AlertService) { }
 
-    ionViewDidEnter() {
-        UnsubscribeIfSubscribed(this.userSubscription);
-        this.userSubscription = this.accountService.GetUserObservable().subscribe(async answer => {
-            if (typeof answer == "boolean" || answer)
-                return;
-            await this.router.navigate(["/login"]);
-        });
+    async ionViewDidEnter() {
+        if (!(await waitForFirebaseResponse(this.accountService)))
+            return;
         this.ReadColorTheme()
     }
 
     ionViewWillLeave() {
         UnsubscribeIfSubscribed(this.userSubscription);
-    }
-
-    async ChangeColorTheme() {
-        switch (this.colorTheme) {
-            case "MatchSystem":
-                await AppInfoService.PushAppConfig({theme: Themes.MatchSystem});
-                break;
-            case "Dark":
-                await AppInfoService.PushAppConfig({theme: Themes.Dark});
-                break;
-            case "Light":
-                await AppInfoService.PushAppConfig({theme: Themes.Light});
-                break;
-        }
     }
 
     ReadColorTheme() {
@@ -62,6 +44,20 @@ export class ConfigPage {
         }
     }
 
+    async ChangeColorTheme() {
+        switch (this.colorTheme) {
+            case "MatchSystem":
+                await AppInfoService.PushAppConfig({theme: Themes.MatchSystem});
+                break;
+            case "Dark":
+                await AppInfoService.PushAppConfig({theme: Themes.Dark});
+                break;
+            case "Light":
+                await AppInfoService.PushAppConfig({theme: Themes.Light});
+                break;
+        }
+    }
+
     async LogoutBtn() {
         if (await this.alertService.ConfirmationAlert('Deseja sair da conta?', "", "Cancelar", "Sim"))
             await this.accountService.Logout().then(async () => await this.router.navigate(["/login"]));
@@ -73,7 +69,7 @@ export class ConfigPage {
             let loadingId = await this.alertService.PresentLoading("Aguarde");
             let wasSuccessful = await this.accountService.UpdateUserProfile({displayName: newName});
             await this.alertService.DismissLoading(loadingId);
-            if(!wasSuccessful) {
+            if (!wasSuccessful) {
                 await this.alertService.PresentAlert("Ocorreu um erro, tente mais tarde.");
                 return;
             }

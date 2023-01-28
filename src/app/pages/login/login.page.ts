@@ -3,7 +3,7 @@ import {Subscription} from "rxjs";
 import {gymName} from '../../../environments/environment';
 import {AccountService} from "../../services/account.service";
 import {AppInfoService} from "../../services/app-info.service";
-import {UnsubscribeIfSubscribed} from "../../services/app.utility";
+import {UnsubscribeIfSubscribed, waitForFirebaseResponse} from "../../services/app.utility";
 
 @Component({
     selector: 'app-login',
@@ -26,11 +26,11 @@ export class LoginPage {
 
     constructor(private accountService: AccountService) {}
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         UnsubscribeIfSubscribed(this.appInfoSubscription);
         this.appInfoSubscription = AppInfoService.GetAppInfoObservable().subscribe(appInfo => {
             if (!appInfo)
-                return
+                return;
             this.LoginDivElement!.nativeElement.style.setProperty("--calculatedOffsetY", ((this.LoginDivElement?.nativeElement.offsetHeight / 2) * -1) + "px");
             this.LoginDivElement!.nativeElement.style.setProperty("--calculatedOffsetX", (appInfo.appWidth >= 600) ? (((this.LoginDivElement?.nativeElement.offsetWidth / 2) * -1) + "px") : "-50%");
             this.GymNameElement!.nativeElement.style.setProperty("--calculatedOffset", ((this.GymNameElement?.nativeElement.offsetWidth / 2) * -1) + "px");

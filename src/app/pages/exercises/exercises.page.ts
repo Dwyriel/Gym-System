@@ -3,6 +3,8 @@ import {ExercisesService} from "../../services/exercises.service";
 import {ExerciseTemplate} from "../../interfaces/exercise";
 import {PractitionerService} from "../../services/practitioner.service";
 import {AlertService} from "../../services/alert.service";
+import {waitForFirebaseResponse} from "../../services/app.utility";
+import {AccountService} from "../../services/account.service";
 
 interface ExercisesByCategory {
     categoryName: string,
@@ -23,10 +25,13 @@ export class ExercisesPage {
 
     public searchFilter: string = "";
 
-    constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService) { }
+    constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
     async ionViewWillEnter() {
-        await this.PopulateInterface();
+        let id = await this.alertService.PresentLoading();
+        if (await waitForFirebaseResponse(this.accountService))
+            await this.PopulateInterface();
+        await this.alertService.DismissLoading(id);
     }
 
     ionViewDidLeave() {
