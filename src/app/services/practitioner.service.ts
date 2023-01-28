@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, docData, Firestore, getDoc, getDocs, updateDoc} from "@angular/fire/firestore";
+import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, docData, endAt, Firestore, getDoc, getDocs, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
 import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
@@ -221,8 +221,22 @@ export class PractitionerService {
     /**
      * Gets all the practitioner, without any optional fields being filled
      */
-    public async GetAllPractitioners() {
-        const allDocs = await getDocs(this.colPracShort());
+    public async GetAllFromRange(from: number, to: number) {
+        const allDocs = await getDocs(query(this.colPracShort(), startAt(from), endAt(to)));
+        let arrayOfPractitioner: (Practitioner)[] = [];
+        allDocs.forEach(doc => {
+            let practitioner: Practitioner = doc.data() as Practitioner;
+            practitioner.thisObjectID = doc.id;
+            arrayOfPractitioner.push(practitioner)
+        });
+        return arrayOfPractitioner;
+    }
+
+    /**
+     * Gets all the practitioner, without any optional fields being filled
+     */
+    public async GetAllPractitioners(maxEntries?: number) {
+        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colPracShort(), limit(maxEntries))) : await getDocs(this.colPracShort());
         let arrayOfPractitioner: (Practitioner)[] = [];
         allDocs.forEach(doc => {
             let practitioner: Practitioner = doc.data() as Practitioner;

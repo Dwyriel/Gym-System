@@ -65,7 +65,9 @@ export class AppComponent implements OnInit, OnDestroy {
         AppInfoService.PushAppInfo({
             appWidth: this.platform.width(),
             appHeight: this.platform.height(),
-            userAgent: navigator.userAgent
+            userAgent: navigator.userAgent,
+            isMobile: this.platform.width() <= 1024,
+            maxMobileWidth: 1024
         });
     }
 

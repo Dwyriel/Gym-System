@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData} from "@angular/fire/firestore";
+import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData, query, startAt, endAt, limit, where} from "@angular/fire/firestore";
 import {ExerciseTemplate} from "../interfaces/exercise";
 
 @Injectable({
@@ -69,8 +69,30 @@ export class ExercisesService {
         return cats;
     }
 
-    public async GetAllExercises() {
-        const allDocs = await getDocs(this.colShort());
+    public async GetAllFromRange(from: number, to: number) {
+        const allDocs = await getDocs(query(this.colShort(), startAt(from), endAt(to)));
+        let arrayOfExercises: (ExerciseTemplate)[] = [];
+        allDocs.forEach(doc => {
+            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            exercise.thisObjectID = doc.id;
+            arrayOfExercises.push(exercise);
+        });
+        return arrayOfExercises;
+    }
+
+    public async GetAllMatching(field: string, value: string, maxEntries?: number) {
+        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colShort(), where(field, "==", value), limit(maxEntries))) : await getDocs(query(this.colShort(), where(field, "==", value)));
+        let arrayOfExercises: (ExerciseTemplate)[] = [];
+        allDocs.forEach(doc => {
+            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            exercise.thisObjectID = doc.id;
+            arrayOfExercises.push(exercise);
+        });
+        return arrayOfExercises;
+    }
+
+    public async GetAllExercises(maxEntries?: number) {
+        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colShort(), limit(maxEntries))) : await getDocs(this.colShort());
         let arrayOfExercises: (ExerciseTemplate)[] = [];
         allDocs.forEach(doc => {
             let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
