@@ -14,8 +14,8 @@ import {AccountService} from "../../services/account.service";
 export class CreateExercisePage {
     public readonly categoryCreationValue = 1;
     public exerciseName: string = "";
-    public possibleCategories: Array<string> = new Array<string>();
     public categorySelected?: string | number;
+    public possibleCategories: Array<string> = new Array<string>();
     public newCategoryName: string = "";
 
     public idToChangeExercise: string | null = null;
@@ -33,10 +33,9 @@ export class CreateExercisePage {
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         await this.GetUniqueCategories();
-        this.idToChangeExercise = this.activatedRoute.snapshot.paramMap.get("id")
-        if (this.idToChangeExercise) {
+        this.idToChangeExercise = this.activatedRoute.snapshot.paramMap.get("id");
+        if (this.idToChangeExercise)
             await this.GetExerciseFromFirebase();
-        }
         this.isLoading = false;
     }
 
@@ -55,9 +54,14 @@ export class CreateExercisePage {
     }
 
     async GetExerciseFromFirebase() {
-        let exerciseToChange = await this.exercisesService.GetExercise(this.idToChangeExercise!);
-        this.exerciseName = exerciseToChange.name;
-        this.categorySelected = exerciseToChange.category;
+        await this.exercisesService.GetExercise(this.idToChangeExercise!).then(exercise => {
+            this.exerciseName = exercise.name;
+            this.categorySelected = exercise.category;
+        }).catch(() => {
+            this.exerciseName = "";
+            this.categorySelected = undefined;
+            this.idToChangeExercise = null;
+        });
     }
 
     async EnterPressed() {
