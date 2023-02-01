@@ -1,3 +1,20 @@
+.full-width {
+    width: 100%;
+}
+
+.big-spinner {
+    transform: scale(2.3);
+}
+
+.spinner-div {
+    max-width: 500px;
+    position: absolute;
+    width: fit-content;
+    top: 50%;
+    left: 50%;
+    transform: translate(var(-64.4px), var(-64.4px));
+}
+
 .webbrowser {
     max-width: var(--mobile-max-width);
     margin: 0 auto;

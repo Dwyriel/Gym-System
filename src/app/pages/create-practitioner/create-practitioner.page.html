@@ -25,7 +25,7 @@
             </ion-item>
         </ion-list>
         <ion-row class="ion-justify-content-center">
-            <ion-button class="full-width" [disabled]="!practitioner.name || !practitioner.objectives || !practitioner.observations" (click)="OnClick()"> {{(practitionerID) ? "Alterar" : "Criar"}} </ion-button>
+            <ion-button class="full-width" [disabled]="!practitioner.name" (click)="OnClick()"> {{(practitionerID) ? "Alterar" : "Criar"}} </ion-button>
         </ion-row>
     </div>
     <div class="spinner-div" *ngIf="isLoading">

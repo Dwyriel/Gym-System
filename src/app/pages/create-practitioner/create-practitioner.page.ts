@@ -22,6 +22,7 @@ export class CreatePractitionerPage {
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
+        this.isLoading = false;
     }
 
     ionViewDidLeave() {
@@ -29,11 +30,12 @@ export class CreatePractitionerPage {
         this.practitionerID = null;
     }
 
-    EnterPressed(){
-
+    async EnterPressed() {
+        if (this.practitioner.name)
+            await this.OnClick();
     }
 
-    OnClick(){
+    async OnClick() {
 
     }
 }
