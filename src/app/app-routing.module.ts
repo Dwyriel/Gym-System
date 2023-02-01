@@ -35,6 +35,14 @@ const routes: Routes = [
         path: 'create-exercise/:id',
         loadChildren: () => import('./pages/create-exercise/create-exercise.module').then(m => m.CreateExercisePageModule)
     },
+    {
+        path: 'create-practitioner',
+        loadChildren: () => import('./pages/create-practitioner/create-practitioner.module').then(m => m.CreatePractitionerPageModule)
+    },
+    {
+        path: 'create-practitioner/:id',
+        loadChildren: () => import('./pages/create-practitioner/create-practitioner.module').then(m => m.CreatePractitionerPageModule)
+    },
 ];
 
 @NgModule({
