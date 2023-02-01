@@ -68,7 +68,7 @@ export class CreateExercisePage {
 
     async EnterPressed() {
         if (this.exerciseName && (this.newCategoryName || typeof this.categorySelected == "string"))
-            await this.CreateExercise();
+            await this.OnClick();
     }
 
     async OnClick() {
