@@ -16,7 +16,7 @@ const handleColorSchemeChangeEvent = (event: MediaQueryListEvent) => document.bo
     templateUrl: 'app.component.html',
     styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on firebase based on account, not just randomly (either as an extra field or through collection names)
     private readonly maxMobileWidth = 1024;
     private readonly paddingSizeInRem = 3;
     private sysTheme?: MediaQueryList;
