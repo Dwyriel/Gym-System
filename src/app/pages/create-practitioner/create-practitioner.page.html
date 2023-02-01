@@ -9,5 +9,26 @@
 </ion-header>
 
 <ion-content>
-
+    <div [hidden]="isLoading" class="webbrowser">
+        <ion-list>
+            <ion-item class="ion-margin-horizontal">
+                <ion-label position="floating">Nome do aluno</ion-label>
+                <ion-input [(ngModel)]="practitioner.name" (keyup.enter)="EnterPressed()"></ion-input>
+            </ion-item>
+            <ion-item class="ion-margin-horizontal">
+                <ion-label position="floating">Objetivos</ion-label>
+                <ion-input [(ngModel)]="practitioner.objectives" (keyup.enter)="EnterPressed()"></ion-input>
+            </ion-item>
+            <ion-item class="ion-margin-horizontal">
+                <ion-label position="floating">Observações</ion-label>
+                <ion-input [(ngModel)]="practitioner.observations" (keyup.enter)="EnterPressed()"></ion-input>
+            </ion-item>
+        </ion-list>
+        <ion-row class="ion-justify-content-center">
+            <ion-button class="full-width" [disabled]="!practitioner.name || !practitioner.objectives || !practitioner.observations" (click)="OnClick()"> {{(practitionerID) ? "Alterar" : "Criar"}} </ion-button>
+        </ion-row>
+    </div>
+    <div class="spinner-div" *ngIf="isLoading">
+        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
+    </div>
 </ion-content>

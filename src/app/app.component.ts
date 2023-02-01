@@ -21,7 +21,7 @@ const handleColorSchemeChangeEvent = (event: MediaQueryListEvent) => document.bo
 export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on firebase based on account, not just randomly (either as an extra field or through collection names)
     private readonly maxMobileWidth = 1024;
     private readonly paddingSizeInRem = 3;
-    private sysTheme?: MediaQueryList;
+    private sysTheme?: MediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
     private cachedAppInfo: AppInfo = {appWidth: 1000, appHeight: 1000, maxMobileWidth: this.maxMobileWidth, userAgent: navigator.userAgent, isMobile: true, isOnline: true};
 
     private resizeSubscription?: Subscription;
@@ -38,12 +38,11 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
 
     constructor(private platform: Platform, private deviceIDService: DeviceIDService, private router: Router, private accountService: AccountService, private menuController: MenuController) {}
 
-    async ngOnInit() {
+    ngOnInit() {
         this.SetPlatformInfo();
-        await this.SetAppTheme();
-        await this.SetDeviceName();
-        await this.CheckForConnectivity();
-        AppInfoService.PushAppInfo(this.cachedAppInfo);
+        this.SetAppTheme();
+        this.SetDeviceName();
+        this.CheckForConnectivity();
         this.CheckIfUserIsLoggedInAndRedirect();
     }
 
@@ -57,11 +56,12 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
 
     SetPlatformInfo() {
         this.SetNewWindowSize();
-        this.SetCSSProperties(this.cachedAppInfo);
+        this.SetCSSProperties();
+        AppInfoService.PushAppInfo(this.cachedAppInfo);
         UnsubscribeIfSubscribed(this.resizeSubscription);
         this.resizeSubscription = this.platform.resize.subscribe(() => {
             this.SetNewWindowSize();
-            this.SetCSSProperties(this.cachedAppInfo);
+            this.SetCSSProperties();
             AppInfoService.PushAppInfo(this.cachedAppInfo);
         });
     }
@@ -69,16 +69,15 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
     SetNewWindowSize() {
         this.cachedAppInfo.appWidth = this.platform.width();
         this.cachedAppInfo.appHeight = this.platform.height();
-        this.cachedAppInfo.isMobile = this.maxMobileWidth > this.platform.width();
+        this.cachedAppInfo.isMobile = this.platform.width() <= this.maxMobileWidth;
     }
 
-    SetCSSProperties(appInfo: AppInfo) {
-        document.documentElement.style.setProperty("--mobile-max-width", appInfo.maxMobileWidth + "px");
-        document.documentElement.style.setProperty("--desktop-padding-top", appInfo?.isMobile ? "0" : ((inverseLerp(appInfo!.appWidth, appInfo!.maxMobileWidth, appInfo!.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
+    SetCSSProperties() {
+        document.documentElement.style.setProperty("--mobile-max-width", this.maxMobileWidth + "px");
+        document.documentElement.style.setProperty("--desktop-padding-top", this.cachedAppInfo.isMobile ? "0" : ((inverseLerp(this.cachedAppInfo.appWidth, this.maxMobileWidth, this.maxMobileWidth + (getRemSizeInPixels() * (this.paddingSizeInRem + this.paddingSizeInRem))) * this.paddingSizeInRem) + "rem"));
     }
 
     async SetAppTheme() {
-        this.sysTheme = window.matchMedia("(prefers-color-scheme: dark)");
         await AppInfoService.LoadAppConfig();
         UnsubscribeIfSubscribed(this.appConfigSubscription);
         this.appConfigSubscription = AppInfoService.GetAppConfigObservable().subscribe(appConfig => {
@@ -110,6 +109,7 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
 
     async CheckForConnectivity() {
         this.cachedAppInfo.isOnline = (await Network.getStatus()).connected;
+        AppInfoService.PushAppInfo(this.cachedAppInfo);
         Network.addListener("networkStatusChange", status => {
             this.cachedAppInfo.isOnline = status.connected;
             AppInfoService.PushAppInfo(this.cachedAppInfo);
