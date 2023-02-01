@@ -25,6 +25,7 @@ export class CreateExercisePage {
     constructor(private exercisesService: ExercisesService, private router: Router, private activatedRoute: ActivatedRoute, private alertService: AlertService, private accountService: AccountService) { }
 
     IsInsertingCategory() {
+        this.newCategoryName = "";
         this.hideCategoryInsertion = typeof this.categorySelected != "number";
     }
 
@@ -65,7 +66,7 @@ export class CreateExercisePage {
     }
 
     async EnterPressed() {
-        if (!(!this.exerciseName || (!this.hideCategoryInsertion && !this.newCategoryName)))
+        if (this.exerciseName && (this.newCategoryName || typeof this.categorySelected == "string"))
             await this.CreateExercise();
     }
 
