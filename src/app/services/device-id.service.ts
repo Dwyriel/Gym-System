@@ -40,7 +40,7 @@ export class DeviceIDService {
         this.deviceName.next(deviceName);
     }
 
-    public GetDeviceName() {
+    public get DeviceName() {
         return this.deviceName.value;
     }
 
