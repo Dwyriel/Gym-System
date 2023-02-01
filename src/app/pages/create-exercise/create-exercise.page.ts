@@ -5,6 +5,7 @@ import {ExercisesService} from "../../services/exercises.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertService} from "../../services/alert.service";
 import {AccountService} from "../../services/account.service";
+import {AppInfoService} from "../../services/app-info.service";
 
 @Component({
     selector: 'app-create-exercise',
@@ -23,11 +24,6 @@ export class CreateExercisePage {
     public isLoading: boolean = false;
 
     constructor(private exercisesService: ExercisesService, private router: Router, private activatedRoute: ActivatedRoute, private alertService: AlertService, private accountService: AccountService) { }
-
-    IsInsertingCategory() {
-        this.newCategoryName = "";
-        this.hideCategoryInsertion = typeof this.categorySelected != "number";
-    }
 
     async ionViewWillEnter() {
         this.isLoading = true;
@@ -65,6 +61,11 @@ export class CreateExercisePage {
         });
     }
 
+    IsInsertingCategory() {
+        this.newCategoryName = "";
+        this.hideCategoryInsertion = typeof this.categorySelected != "number";
+    }
+
     async EnterPressed() {
         if (this.exerciseName && (this.newCategoryName || typeof this.categorySelected == "string"))
             await this.CreateExercise();
@@ -73,10 +74,18 @@ export class CreateExercisePage {
     async OnClick() {
         let functionResult: Promise<any> = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
         await this.router.navigate(["/exercises"]);
-        this.isLoading = false;
-        functionResult
-            .then(async () => await this.alertService.ShowToast((this.idToChangeExercise) ? "Exercício alterado com sucesso" : "Exercício criado com sucesso", undefined, "primary"))
-            .catch(async () => await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger"));
+        if(!AppInfoService.AppInfo?.isOnline){
+            await this.alertService.ShowToast("Dispositivo não esta conectado a internet", undefined, "danger");
+            return;
+        }
+        this.isLoading = true;
+        await functionResult.then(async () => {
+            await this.alertService.ShowToast((this.idToChangeExercise) ? "Exercício alterado com sucesso" : "Exercício criado com sucesso", undefined, "primary");
+            await this.router.navigate(["/exercises"]);
+        }).catch(async () => {
+            this.isLoading = false;
+            await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger");
+        });
     }
 
     async CreateExercise() {
