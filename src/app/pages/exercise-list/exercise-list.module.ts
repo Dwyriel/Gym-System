@@ -4,9 +4,9 @@ import {FormsModule} from '@angular/forms';
 
 import {IonicModule} from '@ionic/angular';
 
-import {ExerciseListPageRoutingModule} from './exercises-list-routing.module';
+import {ExerciseListPageRoutingModule} from './exercise-list-routing.module';
 
-import {ExercisesListPage} from './exercises-list.page';
+import {ExerciseListPage} from './exercise-list.page';
 
 @NgModule({
     imports: [
@@ -15,6 +15,6 @@ import {ExercisesListPage} from './exercises-list.page';
         IonicModule,
         ExerciseListPageRoutingModule
     ],
-    declarations: [ExercisesListPage]
+    declarations: [ExerciseListPage]
 })
 export class ExerciseListPageModule {}

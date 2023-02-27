@@ -25,7 +25,7 @@ const routes: Routes = [
     },
     {
         path: 'exercise-list',
-        loadChildren: () => import('./pages/exercise-list/exercises-list.module').then(m => m.ExerciseListPageModule)
+        loadChildren: () => import('./pages/exercise-list/exercise-list.module').then(m => m.ExerciseListPageModule)
     },
     {
         path: 'exercise-form',
