@@ -72,12 +72,11 @@ export class ExerciseFormPage {
     }
 
     async OnClick() {
-        let functionResult: Promise<any> = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
         if(!AppInfoService.AppInfo?.isOnline){
             await this.alertService.ShowToast("Dispositivo não esta conectado a internet", undefined, "danger");
             return;
         }
-        this.isLoading = true;
+        let functionResult: Promise<any> = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
         await functionResult.then(async () => {
             await this.alertService.ShowToast((this.idToChangeExercise) ? "Exercício alterado com sucesso" : "Exercício criado com sucesso", undefined, "primary");
             await this.router.navigate(["/exercise-list"]);
