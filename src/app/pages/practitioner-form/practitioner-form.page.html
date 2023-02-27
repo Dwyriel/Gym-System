@@ -17,11 +17,11 @@
             </ion-item>
             <ion-item class="ion-margin-horizontal">
                 <ion-label position="floating">Objetivos</ion-label>
-                <ion-input [(ngModel)]="practitioner.objectives" (keyup.enter)="EnterPressed()"></ion-input>
+                <ion-textarea autoGrow=true [(ngModel)]="practitioner.objectives"></ion-textarea>
             </ion-item>
             <ion-item class="ion-margin-horizontal">
                 <ion-label position="floating">Observações</ion-label>
-                <ion-input [(ngModel)]="practitioner.observations" (keyup.enter)="EnterPressed()"></ion-input>
+                <ion-textarea autoGrow=true [(ngModel)]="practitioner.observations"></ion-textarea>
             </ion-item>
         </ion-list>
         <ion-row class="ion-justify-content-center">
