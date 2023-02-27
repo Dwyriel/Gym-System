@@ -73,7 +73,6 @@ export class ExerciseFormPage {
 
     async OnClick() {
         let functionResult: Promise<any> = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
-        await this.router.navigate(["/exercise-form-list"]);
         if(!AppInfoService.AppInfo?.isOnline){
             await this.alertService.ShowToast("Dispositivo não esta conectado a internet", undefined, "danger");
             return;
@@ -81,7 +80,7 @@ export class ExerciseFormPage {
         this.isLoading = true;
         await functionResult.then(async () => {
             await this.alertService.ShowToast((this.idToChangeExercise) ? "Exercício alterado com sucesso" : "Exercício criado com sucesso", undefined, "primary");
-            await this.router.navigate(["/exercises"]);
+            await this.router.navigate(["/exercise-list"]);
         }).catch(async () => {
             this.isLoading = false;
             await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger");
@@ -101,5 +100,4 @@ export class ExerciseFormPage {
             this.categorySelected = this.newCategoryName;
         return this.exercisesService.UpdateExercise(this.idToChangeExercise!, {name: this.exerciseName, category: this.categorySelected!});
     }
-
 }
