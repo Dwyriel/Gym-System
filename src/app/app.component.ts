@@ -19,7 +19,7 @@ const handleColorSchemeChangeEvent = (event: MediaQueryListEvent) => document.bo
     styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on firebase based on account, not just randomly (either as an extra field or through collection names)
-    private readonly maxMobileWidth = 1024;
+    private readonly maxMobileWidth = 768;
     private readonly paddingSizeInRem = 3;
     private sysTheme?: MediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
     private cachedAppInfo: AppInfo = {appWidth: 1000, appHeight: 1000, maxMobileWidth: this.maxMobileWidth, userAgent: navigator.userAgent, isMobile: true, isOnline: true};
