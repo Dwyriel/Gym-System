@@ -28,20 +28,20 @@ const routes: Routes = [
         loadChildren: () => import('./pages/exercise-list/exercises-list.module').then(m => m.ExerciseListPageModule)
     },
     {
-        path: 'exercise',
-        loadChildren: () => import('./pages/exercise/exercise.module').then(m => m.ExercisePageModule)
+        path: 'exercise-form',
+        loadChildren: () => import('./pages/exercise-form/exercise-form.module').then(m => m.ExerciseFormPageModule)
     },
     {
-        path: 'exercise/:id',
-        loadChildren: () => import('./pages/exercise/exercise.module').then(m => m.ExercisePageModule)
+        path: 'exercise-form/:id',
+        loadChildren: () => import('./pages/exercise-form/exercise-form.module').then(m => m.ExerciseFormPageModule)
     },
     {
-        path: 'create-practitioner',
-        loadChildren: () => import('./pages/create-practitioner/create-practitioner.module').then(m => m.CreatePractitionerPageModule)
+        path: 'practitioner-form',
+        loadChildren: () => import('./pages/practitioner-form/practitioner-form.module').then(m => m.PractitionerFormPageModule)
     },
     {
-        path: 'create-practitioner/:id',
-        loadChildren: () => import('./pages/create-practitioner/create-practitioner.module').then(m => m.CreatePractitionerPageModule)
+        path: 'practitioner-form/:id',
+        loadChildren: () => import('./pages/practitioner-form/practitioner-form.module').then(m => m.PractitionerFormPageModule)
     },
 ];
 

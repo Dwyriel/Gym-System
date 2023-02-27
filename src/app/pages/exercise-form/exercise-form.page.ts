@@ -8,11 +8,11 @@ import {AccountService} from "../../services/account.service";
 import {AppInfoService} from "../../services/app-info.service";
 
 @Component({
-    selector: 'app-exercise',
-    templateUrl: './exercise.page.html',
-    styleUrls: ['./exercise.page.scss'],
+    selector: 'app-exercise-form',
+    templateUrl: './exercise-form.page.html',
+    styleUrls: ['./exercise-form.page.scss'],
 })
-export class ExercisePage {
+export class ExerciseFormPage {
     public readonly categoryCreationValue = 1;
     public exerciseName: string = "";
     public categorySelected?: string | number;
@@ -73,7 +73,7 @@ export class ExercisePage {
 
     async OnClick() {
         let functionResult: Promise<any> = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
-        await this.router.navigate(["/exercise-list"]);
+        await this.router.navigate(["/exercise-form-list"]);
         if(!AppInfoService.AppInfo?.isOnline){
             await this.alertService.ShowToast("Dispositivo não esta conectado a internet", undefined, "danger");
             return;

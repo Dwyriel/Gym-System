@@ -5,11 +5,11 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Practitioner} from "../../classes/practitioner";
 
 @Component({
-    selector: 'app-create-practitioner',
-    templateUrl: './create-practitioner.page.html',
-    styleUrls: ['./create-practitioner.page.scss'],
+    selector: 'app-practitioner-form',
+    templateUrl: './practitioner-form.page.html',
+    styleUrls: ['./practitioner-form.page.scss'],
 })
-export class CreatePractitionerPage {
+export class PractitionerFormPage {
 
     public practitioner: Practitioner = new Practitioner();
     public isLoading: boolean = false;
