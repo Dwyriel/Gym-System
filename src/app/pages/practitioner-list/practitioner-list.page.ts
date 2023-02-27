@@ -7,11 +7,11 @@ import {Practitioner} from "../../classes/practitioner";
 import {waitForFirebaseResponse} from "../../services/app.utility";
 
 @Component({
-    selector: 'app-practitioners',
-    templateUrl: './practitioners.page.html',
-    styleUrls: ['./practitioners.page.scss'],
+    selector: 'app-practitioner-list',
+    templateUrl: './practitioner-list.page.html',
+    styleUrls: ['./practitioner-list.page.scss'],
 })
-export class PractitionersPage {
+export class PractitionerListPage {
     public allPractitioners?: Array<Practitioner>;
     private allPractitionersAsString: string = "";
 

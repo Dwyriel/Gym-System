@@ -12,11 +12,11 @@ interface ExercisesByCategory {
 }
 
 @Component({
-    selector: 'app-exercises',
-    templateUrl: './exercises.page.html',
-    styleUrls: ['./exercises.page.scss'],
+    selector: 'app-exercise-list',
+    templateUrl: './exercises-list.page.html',
+    styleUrls: ['./exercises-list.page.scss'],
 })
-export class ExercisesPage {
+export class ExercisesListPage {
     private allExercises?: Array<ExerciseTemplate>;
     private exercisesByCategoryAsString: string = "";
 

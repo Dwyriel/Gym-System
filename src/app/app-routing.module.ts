@@ -20,20 +20,20 @@ const routes: Routes = [
         loadChildren: () => import('./pages/config/config.module').then(m => m.ConfigPageModule)
     },
     {
-        path: 'practitioners',
-        loadChildren: () => import('./pages/practitioners/practitioners.module').then(m => m.PractitionersPageModule)
+        path: 'practitioner-list',
+        loadChildren: () => import('./pages/practitioner-list/practitioner-list.module').then(m => m.PractitionerListPageModule)
     },
     {
-        path: 'exercises',
-        loadChildren: () => import('./pages/exercises/exercises.module').then(m => m.ExercisesPageModule)
+        path: 'exercise-list',
+        loadChildren: () => import('./pages/exercise-list/exercises-list.module').then(m => m.ExerciseListPageModule)
     },
     {
-        path: 'create-exercise',
-        loadChildren: () => import('./pages/create-exercise/create-exercise.module').then(m => m.CreateExercisePageModule)
+        path: 'exercise',
+        loadChildren: () => import('./pages/exercise/exercise.module').then(m => m.ExercisePageModule)
     },
     {
-        path: 'create-exercise/:id',
-        loadChildren: () => import('./pages/create-exercise/create-exercise.module').then(m => m.CreateExercisePageModule)
+        path: 'exercise/:id',
+        loadChildren: () => import('./pages/exercise/exercise.module').then(m => m.ExercisePageModule)
     },
     {
         path: 'create-practitioner',
