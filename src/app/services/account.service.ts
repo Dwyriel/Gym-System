@@ -22,14 +22,14 @@ export class AccountService {
     /**
      * @returns the current value of the user object.
      */
-    public GetCurrentUser() {
+    public get CurrentUser() {
         return this.user.value;
     }
 
     /**
      * @returns the firebase authenticator's current user.
      */
-    public GetAuthCurrentUser() {
+    public get AuthCurrentUser() {
         return this.auth.currentUser;
     }
 

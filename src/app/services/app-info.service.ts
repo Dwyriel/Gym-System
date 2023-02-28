@@ -32,7 +32,7 @@ export class AppInfoService {
     /**
      * @returns the current value of the appInfo object.
      */
-    public static GetAppInfo(): AppInfo | null {
+    public static get AppInfo(): AppInfo | null {
         return this.appInfo.value;
     }
 
@@ -71,7 +71,7 @@ export class AppInfoService {
     /**
      * @returns the current value of the appConfig object.
      */
-    public static GetAppConfig(): AppConfig {
+    public static get AppConfig(): AppConfig {
         return this.appConfig.value;
     }
 }

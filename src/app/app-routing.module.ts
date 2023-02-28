@@ -20,20 +20,36 @@ const routes: Routes = [
         loadChildren: () => import('./pages/config/config.module').then(m => m.ConfigPageModule)
     },
     {
-        path: 'practitioners',
-        loadChildren: () => import('./pages/practitioners/practitioners.module').then(m => m.PractitionersPageModule)
+        path: 'practitioner-list',
+        loadChildren: () => import('./pages/practitioner-list/practitioner-list.module').then(m => m.PractitionerListPageModule)
     },
     {
-        path: 'exercises',
-        loadChildren: () => import('./pages/exercises/exercises.module').then(m => m.ExercisesPageModule)
+        path: 'exercise-list',
+        loadChildren: () => import('./pages/exercise-list/exercise-list.module').then(m => m.ExerciseListPageModule)
     },
     {
-        path: 'create-exercise',
-        loadChildren: () => import('./pages/create-exercise/create-exercise.module').then(m => m.CreateExercisePageModule)
+        path: 'exercise-form',
+        loadChildren: () => import('./pages/exercise-form/exercise-form.module').then(m => m.ExerciseFormPageModule)
     },
     {
-        path: 'create-exercise/:id',
-        loadChildren: () => import('./pages/create-exercise/create-exercise.module').then(m => m.CreateExercisePageModule)
+        path: 'exercise-form/:id',
+        loadChildren: () => import('./pages/exercise-form/exercise-form.module').then(m => m.ExerciseFormPageModule)
+    },
+    {
+        path: 'practitioner-form',
+        loadChildren: () => import('./pages/practitioner-form/practitioner-form.module').then(m => m.PractitionerFormPageModule)
+    },
+    {
+        path: 'practitioner-form/:id',
+        loadChildren: () => import('./pages/practitioner-form/practitioner-form.module').then(m => m.PractitionerFormPageModule)
+    },
+    {
+        path: 'practitioner-profile',
+        redirectTo: 'practitioner-list'
+    },
+    {
+        path: 'practitioner-profile/:id',
+        loadChildren: () => import('./pages/practitioner-profile/practitioner-profile.module').then(m => m.PractitionerProfilePageModule)
     },
 ];
 

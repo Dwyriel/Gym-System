@@ -5,17 +5,18 @@ import {ExercisesService} from "../../services/exercises.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertService} from "../../services/alert.service";
 import {AccountService} from "../../services/account.service";
+import {AppInfoService} from "../../services/app-info.service";
 
 @Component({
-    selector: 'app-create-exercise',
-    templateUrl: './create-exercise.page.html',
-    styleUrls: ['./create-exercise.page.scss'],
+    selector: 'app-exercise-form',
+    templateUrl: './exercise-form.page.html',
+    styleUrls: ['./exercise-form.page.scss'],
 })
-export class CreateExercisePage {
+export class ExerciseFormPage {
     public readonly categoryCreationValue = 1;
     public exerciseName: string = "";
-    public possibleCategories: Array<string> = new Array<string>();
     public categorySelected?: string | number;
+    public possibleCategories: Array<string> = new Array<string>();
     public newCategoryName: string = "";
 
     public idToChangeExercise: string | null = null;
@@ -24,19 +25,14 @@ export class CreateExercisePage {
 
     constructor(private exercisesService: ExercisesService, private router: Router, private activatedRoute: ActivatedRoute, private alertService: AlertService, private accountService: AccountService) { }
 
-    IsInsertingCategory() {
-        this.hideCategoryInsertion = typeof this.categorySelected != "number";
-    }
-
     async ionViewWillEnter() {
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         await this.GetUniqueCategories();
-        this.idToChangeExercise = this.activatedRoute.snapshot.paramMap.get("id")
-        if (this.idToChangeExercise) {
+        this.idToChangeExercise = this.activatedRoute.snapshot.paramMap.get("id");
+        if (this.idToChangeExercise)
             await this.GetExerciseFromFirebase();
-        }
         this.isLoading = false;
     }
 
@@ -55,23 +51,39 @@ export class CreateExercisePage {
     }
 
     async GetExerciseFromFirebase() {
-        let exerciseToChange = await this.exercisesService.GetExercise(this.idToChangeExercise!);
-        this.exerciseName = exerciseToChange.name;
-        this.categorySelected = exerciseToChange.category;
+        await this.exercisesService.GetExercise(this.idToChangeExercise!).then(exercise => {
+            this.exerciseName = exercise.name;
+            this.categorySelected = exercise.category;
+        }).catch(() => {
+            this.exerciseName = "";
+            this.categorySelected = undefined;
+            this.idToChangeExercise = null;
+        });
+    }
+
+    IsInsertingCategory() {
+        this.newCategoryName = "";
+        this.hideCategoryInsertion = typeof this.categorySelected != "number";
     }
 
     async EnterPressed() {
-        if (!(!this.exerciseName || (!this.hideCategoryInsertion && !this.newCategoryName)))
-            await this.CreateExercise();
+        if (this.exerciseName && (this.newCategoryName || typeof this.categorySelected == "string"))
+            await this.OnClick();
     }
 
     async OnClick() {
+        if(!AppInfoService.AppInfo?.isOnline){
+            await this.alertService.ShowToast("Dispositivo não esta conectado a internet", undefined, "danger");
+            return;
+        }
         let functionResult: Promise<any> = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
-        await this.router.navigate(["/exercises"]);
-        this.isLoading = false;
-        functionResult
-            .then(async () => await this.alertService.ShowToast((this.idToChangeExercise) ? "Exercício alterado com sucesso" : "Exercício criado com sucesso", undefined, "primary"))
-            .catch(async () => await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger"));
+        await functionResult.then(async () => {
+            await this.alertService.ShowToast((this.idToChangeExercise) ? "Exercício alterado com sucesso" : "Exercício criado com sucesso", undefined, "primary");
+            await this.router.navigate(["/exercise-list"]);
+        }).catch(async () => {
+            this.isLoading = false;
+            await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger");
+        });
     }
 
     async CreateExercise() {
@@ -87,5 +99,4 @@ export class CreateExercisePage {
             this.categorySelected = this.newCategoryName;
         return this.exercisesService.UpdateExercise(this.idToChangeExercise!, {name: this.exerciseName, category: this.categorySelected!});
     }
-
 }

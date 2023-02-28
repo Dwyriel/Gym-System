@@ -12,16 +12,18 @@ interface ExercisesByCategory {
 }
 
 @Component({
-    selector: 'app-exercises',
-    templateUrl: './exercises.page.html',
-    styleUrls: ['./exercises.page.scss'],
+    selector: 'app-exercise-list',
+    templateUrl: './exercise-list.page.html',
+    styleUrls: ['./exercise-list.page.scss'],
 })
-export class ExercisesPage {
+export class ExerciseListPage {
     private allExercises?: Array<ExerciseTemplate>;
     private exercisesByCategoryAsString: string = "";
 
     public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
     public searchFilter: string = "";
+    public exercisesArrayIsEmpty = true;
+    public fetchingData = true;
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
@@ -36,9 +38,11 @@ export class ExercisesPage {
         this.exercisesByCategory = new Array<ExercisesByCategory>();
         this.allExercises = new Array<ExerciseTemplate>();
         this.searchFilter = "";
+        this.fetchingData = true;
     }
 
     async PopulateInterface() {
+        this.fetchingData = true;
         this.allExercises = await this.exercisesService.GetAllExercises();
         let categories: Array<string> = await this.exercisesService.GetAllCategories(this.allExercises);
         categories.forEach(categoryName => this.exercisesByCategory.push({categoryName, exercises: new Array<ExerciseTemplate>()}));
@@ -50,6 +54,8 @@ export class ExercisesPage {
             });
         }
         this.exercisesByCategoryAsString = JSON.stringify(this.exercisesByCategory);
+        this.exercisesArrayIsEmpty = this.exercisesByCategory.length < 1;
+        this.fetchingData = false;
     }
 
     async DeleteExerciseBtn(exercise: ExerciseTemplate) {

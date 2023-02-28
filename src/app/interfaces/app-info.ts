@@ -4,4 +4,5 @@ export interface AppInfo {
     userAgent: string;
     isMobile: boolean;
     maxMobileWidth: number;
+    isOnline: boolean;
 }

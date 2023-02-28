@@ -56,10 +56,6 @@ export function UnsubscribeIfSubscribed(subscription?: Subscription) {
 }
 
 export async function waitForFirebaseResponse(accountService: AccountService) {
-    while (true) {
-        if (typeof accountService.GetCurrentUser() != "boolean")
-            break;
-        await new Promise(resolve => setTimeout(resolve, 10));
-    }
-    return Boolean(accountService.GetCurrentUser());
+    do await new Promise(resolve => setTimeout(resolve, 10)); while (typeof accountService.CurrentUser == "boolean");
+    return Boolean(accountService.CurrentUser);
 }

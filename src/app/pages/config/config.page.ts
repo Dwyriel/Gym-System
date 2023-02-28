@@ -31,7 +31,7 @@ export class ConfigPage {
     }
 
     ReadColorTheme() {
-        switch (AppInfoService.GetAppConfig().theme) {
+        switch (AppInfoService.AppConfig.theme) {
             case Themes.MatchSystem:
                 this.colorTheme = "MatchSystem";
                 break;
