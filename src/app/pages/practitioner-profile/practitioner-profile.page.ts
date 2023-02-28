@@ -22,8 +22,8 @@ export class PractitionerProfilePage {
         let id = await this.alertService.PresentLoading("Carregando");
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         this.practitionerService.GetPractitioner(this.practitionerID!)
-            .then( result => {this.practitionerInfo = result; this.isLoading = false;})
-            .catch( async () => await this.router.navigate(['practitioner-list']));
+            .then(result => { this.practitionerInfo = result; this.isLoading = false; })
+            .catch(async () => await this.router.navigate(['practitioner-list']));
         await this.alertService.DismissLoading(id);
     }
 

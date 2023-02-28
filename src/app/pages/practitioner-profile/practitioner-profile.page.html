@@ -19,9 +19,22 @@
 <ion-content>
     <div class="webbrowser" *ngIf="!isLoading">
         <ion-list class="ion-padding">
-            <h1 class="ion-text-center ion-margin-bottom"> {{practitionerInfo?.name}} </h1>
-            <p> {{practitionerInfo?.objectives}} </p>
-            <p> {{practitionerInfo?.observations}} </p>
+            <div class="flex">
+                <div class="text-div">
+                    <h1 class="ion-margin-bottom"> {{practitionerInfo?.name}} </h1>
+                    <p class="bold-text">Objetivos</p>
+                    <p class="pre-wrap">{{practitionerInfo?.objectives}}</p>
+                    <p class="bold-text">Observações</p>
+                    <p class="pre-wrap">{{practitionerInfo?.observations}}</p>
+                </div>
+                <div>
+                    <ion-button class="side-btn-margin">Marcar</ion-button>
+                </div>
+            </div>
         </ion-list>
+        <ion-row class="ion-justify-content-center">
+            <ion-button class="full-width margin-top-1">Presenças</ion-button>
+            <ion-button class="full-width margin-top-1">Exercícios</ion-button>
+        </ion-row>
     </div>
 </ion-content>
