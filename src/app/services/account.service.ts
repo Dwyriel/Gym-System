@@ -8,8 +8,14 @@ import {BehaviorSubject} from "rxjs";
 export class AccountService {
     private user = new BehaviorSubject<User | null | false>(false);
 
+    public static CurrentUserUID: string = "";
+
     constructor(private auth: Auth) {
-        onAuthStateChanged(this.auth, user => this.user.next(user));
+        onAuthStateChanged(this.auth, user => {
+            this.user.next(user)
+            if(user)
+                AccountService.CurrentUserUID = user.uid;
+        });
     }
 
     /**

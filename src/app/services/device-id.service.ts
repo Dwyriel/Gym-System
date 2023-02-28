@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {collection, doc, Firestore, getCountFromServer, getDoc, setDoc} from "@angular/fire/firestore";
 import {Preferences} from '@capacitor/preferences';
 import {BehaviorSubject} from "rxjs";
+import {AccountService} from "./account.service";
 
 @Injectable({
     providedIn: 'root'
@@ -16,11 +17,11 @@ export class DeviceIDService {
     constructor(private firestore: Firestore) { }
 
     private docShort(id: string) {
-        return doc(this.firestore, this.collectionName, id);
+        return doc(this.firestore, this.collectionName + AccountService.CurrentUserUID, id);
     }
 
     private colShort() {
-        return collection(this.firestore, this.collectionName);
+        return collection(this.firestore, this.collectionName + AccountService.CurrentUserUID);
     }
 
     public async SetDeviceName() {

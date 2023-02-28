@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData, query, startAt, endAt, limit, where, orderBy} from "@angular/fire/firestore";
 import {ExerciseTemplate} from "../interfaces/exercise";
+import {AccountService} from "./account.service";
 
 @Injectable({
     providedIn: 'root'
@@ -11,11 +12,11 @@ export class ExercisesService {
     constructor(private firestore: Firestore) { }
 
     private docShort(id: string) {
-        return doc(this.firestore, this.collectionName, id);
+        return doc(this.firestore, this.collectionName + AccountService.CurrentUserUID, id);
     }
 
     private colShort() {
-        return collection(this.firestore, this.collectionName);
+        return collection(this.firestore, this.collectionName + AccountService.CurrentUserUID);
     }
 
     /**

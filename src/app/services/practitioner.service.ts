@@ -4,6 +4,7 @@ import {Practitioner} from "../classes/practitioner";
 import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
 import {ExercisesService} from "./exercises.service";
+import {AccountService} from "./account.service";
 
 @Injectable({
     providedIn: 'root'
@@ -16,27 +17,27 @@ export class PractitionerService {
     constructor(private firestore: Firestore, private exercisesService: ExercisesService) { }
 
     private docPracShort(id: string) {
-        return doc(this.firestore, this.practitionerCollectionName, id);
+        return doc(this.firestore, this.practitionerCollectionName + AccountService.CurrentUserUID, id);
     }
 
     private docExerShort(id: string) {
-        return doc(this.firestore, this.practitionerExerciseCollectionName, id);
+        return doc(this.firestore, this.practitionerExerciseCollectionName + AccountService.CurrentUserUID, id);
     }
 
     private docPresShort(id: string) {
-        return doc(this.firestore, this.practitionerPresenceCollectionName, id);
+        return doc(this.firestore, this.practitionerPresenceCollectionName + AccountService.CurrentUserUID, id);
     }
 
     private colPracShort() {
-        return collection(this.firestore, this.practitionerCollectionName);
+        return collection(this.firestore, this.practitionerCollectionName + AccountService.CurrentUserUID);
     }
 
     private colExerShort() {
-        return collection(this.firestore, this.practitionerExerciseCollectionName);
+        return collection(this.firestore, this.practitionerExerciseCollectionName + AccountService.CurrentUserUID);
     }
 
     private colFreqShort() {
-        return collection(this.firestore, this.practitionerPresenceCollectionName);
+        return collection(this.firestore, this.practitionerPresenceCollectionName + AccountService.CurrentUserUID);
     }
 
     /**
