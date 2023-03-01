@@ -30,13 +30,23 @@ ion-popover {
     --max-width: 320px;
 }
 
-.full-width {
-    width: 100%;
-}
-
 .webbrowser {
     max-width: var(--mobile-max-width);
     margin: 0 auto;
     padding-top: var(--desktop-padding-top);
     padding-bottom: var(--desktop-padding-top);
+}
+
+.full-width {
+    width: 100%;
+}
+
+.margin-top-1 {
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .bottom-items-margin {
+        margin: 0 .5rem;
+    }
 }

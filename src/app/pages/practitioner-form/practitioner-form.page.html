@@ -24,8 +24,8 @@
                 <ion-textarea autoGrow=true [(ngModel)]="practitioner.observations"></ion-textarea>
             </ion-item>
         </ion-list>
-        <ion-row class="ion-justify-content-center">
-            <ion-button class="full-width" [disabled]="!practitioner.name" (click)="OnClick()"> {{(practitionerID) ? "Alterar" : "Criar"}} </ion-button>
+        <ion-row class="ion-justify-content-center bottom-items-margin">
+            <ion-button class="full-width margin-top-1" [disabled]="!practitioner.name" (click)="OnClick()"> {{(practitionerID) ? "Alterar" : "Criar"}} </ion-button>
         </ion-row>
     </div>
     <div class="spinner-div" *ngIf="isLoading">
