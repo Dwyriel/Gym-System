@@ -10,7 +10,7 @@
 
 <ion-content scrollX="true">
     <div class="webbrowser" *ngIf="!isLoading">
-        <ion-item button="true" (click)="addExerciseBtn()">
+        <ion-item button="true" (click)="onClick()">
             <ion-label>Adicionar exercício</ion-label>
             <ion-icon name="add-outline"></ion-icon>
         </ion-item>
@@ -30,7 +30,7 @@
 
                 <ion-row *ngFor="let exercise of practitionerExercises" style="flex-wrap: nowrap">
                     <ion-col class="align-text-middle" size="6">
-                        <ion-item (click)="removeExerciseBtn(exercise)" button="true" lines="none">
+                        <ion-item (click)="onClick(exercise)" button="true" lines="none">
                             {{exercise.exercise!.name}}
                         </ion-item>
                     </ion-col>

@@ -56,7 +56,21 @@ export class PractitionerExercisePage {
         this.practitionerID = null;
     }
 
-    public async addExerciseBtn() {
+    public async onClick(exercise?: Exercise) {
+        if (!exercise) {
+            await this.addExerciseBtn();
+            return;
+        }
+        const selection = await this.alertService.ConfirmationAlertThreeButtons("Editar ou excluir?", undefined, "Editar", "Excluir", "Cancelar");
+        if (selection == 0)
+            return;
+        else if (selection == 2)
+            await this.editExerciseBtn(exercise);
+        else if (selection == 1)
+            await this.removeExerciseBtn(exercise);
+    }
+
+    private async addExerciseBtn() {
         const unusedExercises = this.removeRepeatedExercises();
         const addExercisePopover = await this.popoverController.create({
             component: SelectExerciseAndWorkloadComponent,
@@ -73,6 +87,34 @@ export class PractitionerExercisePage {
             }
         });
         await addExercisePopover.present();
+    }
+
+    private async editExerciseBtn(oldExercise: Exercise) {
+        let newWorkload = {series: undefined, repetitions: undefined, rest: undefined, load: undefined};
+        const editExercisePopover = await this.popoverController.create({
+            component: SelectExerciseAndWorkloadComponent,
+            mode: 'md',
+            componentProps: {workloadInput: newWorkload},
+            animated: true
+        });
+        editExercisePopover.onDidDismiss().then(async value => {
+            if (value.data) {
+                let id = await this.alertService.PresentLoading("Carregando");
+                let newExercise: Exercise = {
+                    exerciseID: oldExercise.exerciseID,
+                    exercise: oldExercise.exercise,
+                    series: value.data.updatedWorkload!.series,
+                    repetition: value.data.updatedWorkload!.repetition,
+                    rest: value.data.updatedWorkload!.rest,
+                    load: value.data.updatedWorkload!.load
+                };
+                await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise)
+                await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise);
+                await this.populateExerciseList();
+                await this.alertService.DismissLoading(id);
+            }
+        });
+        await editExercisePopover.present();
     }
 
     public async removeExerciseBtn(exercise: Exercise) {
