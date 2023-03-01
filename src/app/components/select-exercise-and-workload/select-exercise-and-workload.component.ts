@@ -1,8 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PopoverController} from "@ionic/angular";
-import {Exercise, ExerciseTemplate} from "../../interfaces/exercise";
+import {ExerciseTemplate} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {acceptOnlyInteger} from "../../services/app.utility";
+
+interface Workload {
+    series?: number;
+    repetition?: number;
+    rest?: number;
+    load?: number;
+}
 
 @Component({
     selector: 'app-select-exercise-and-workload',
@@ -11,20 +18,21 @@ import {acceptOnlyInteger} from "../../services/app.utility";
 })
 export class SelectExerciseAndWorkloadComponent implements OnInit {
     @Input("exercisesInput") private exercisesInput: Array<ExerciseTemplate> = [];
+    @Input("workloadInput") public workloadInput?: Workload;
 
+    public isEditing: boolean = false;
     public categories: string[] = [];
     public exercises: Array<ExerciseTemplate> = []
     public selectedCategory: string = "";
     public selectedExerciseTemplate?: ExerciseTemplate;
-    public series?: number;
-    public repetition?: number;
-    public rest?: number;
-    public load?: number;
-    public selectedExercise?: Exercise;
 
     constructor(private popoverController: PopoverController, private exerciseService: ExercisesService) { }
 
     async ngOnInit() {
+        this.isEditing = this.workloadInput != undefined;
+        if (this.isEditing)
+            return;
+        this.workloadInput = {series: undefined, repetition: undefined, rest: undefined, load: undefined};
         this.categories = await this.exerciseService.GetAllCategories(this.exercisesInput);
     }
 
@@ -46,13 +54,15 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
     }
 
     EnterPressed() {
-        if (!this.selectedCategory || !this.selectedExerciseTemplate || !this.series || !this.repetition || !this.rest || !this.load)
+        if (!this.selectedCategory || !this.selectedExerciseTemplate || !this.workloadInput!.series || !this.workloadInput!.repetition || !this.workloadInput!.rest || !this.workloadInput!.load)
             return;
         this.onButtonClick();
     }
 
     onButtonClick() {
-        this.selectedExercise = {exerciseID: this.selectedExerciseTemplate!.thisObjectID!, exercise: this.selectedExerciseTemplate, series: this.series!, repetition: this.repetition!, rest: this.rest!, load: this.load!};
-        this.popoverController.dismiss({selectedExercise: this.selectedExercise});
+        this.popoverController.dismiss({
+            selectedExercise: !this.isEditing ? {exerciseID: this.selectedExerciseTemplate!.thisObjectID!, exercise: this.selectedExerciseTemplate, series: this.workloadInput!.series, repetition: this.workloadInput!.repetition, rest: this.workloadInput!.rest, load: this.workloadInput!.load} : null,
+            updatedWorkload: this.isEditing ? this.workloadInput : null
+        });
     }
 }
