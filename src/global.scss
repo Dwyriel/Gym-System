@@ -37,6 +37,14 @@ ion-popover {
     padding-bottom: var(--desktop-padding-top);
 }
 
+.flex {
+    display: flex;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
 .full-width {
     width: 100%;
 }
