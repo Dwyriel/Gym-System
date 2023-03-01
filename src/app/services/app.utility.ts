@@ -59,3 +59,9 @@ export async function waitForFirebaseResponse(accountService: AccountService) {
     do await new Promise(resolve => setTimeout(resolve, 10)); while (typeof accountService.CurrentUser == "boolean");
     return Boolean(accountService.CurrentUser);
 }
+
+export function acceptOnlyInteger(event: any){
+    const invalidChars = ['-', '+', 'e', 'E', '.'];
+    if (invalidChars.includes(event.key))
+        event.preventDefault();
+}

@@ -25,8 +25,9 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
-.full-width {
-    width: 100%;
+ion-popover {
+    --width: 80% !important;
+    --max-width: 320px;
 }
 
 .webbrowser {
@@ -34,4 +35,18 @@
     margin: 0 auto;
     padding-top: var(--desktop-padding-top);
     padding-bottom: var(--desktop-padding-top);
+}
+
+.full-width {
+    width: 100%;
+}
+
+.margin-top-1 {
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .bottom-items-margin {
+        margin: 0 .5rem;
+    }
 }
