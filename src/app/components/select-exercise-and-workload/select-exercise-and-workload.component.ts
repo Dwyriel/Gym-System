@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {PopoverController} from "@ionic/angular";
 import {Exercise, ExerciseTemplate} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
+import {acceptOnlyInteger} from "../../services/app.utility";
 
 @Component({
     selector: 'app-select-exercise-and-workload',
@@ -9,7 +10,6 @@ import {ExercisesService} from "../../services/exercises.service";
     styleUrls: ['./select-exercise-and-workload.component.scss'],
 })
 export class SelectExerciseAndWorkloadComponent implements OnInit {
-
     @Input("exercisesInput") private exercisesInput: Array<ExerciseTemplate> = [];
 
     public categories: string[] = [];
@@ -28,6 +28,10 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
         this.categories = await this.exerciseService.GetAllCategories(this.exercisesInput);
     }
 
+    closePopover() {
+        this.popoverController.dismiss();
+    }
+
     selectedCategoryChanged() {
         this.exercises = [];
         this.selectedExerciseTemplate = undefined;
@@ -35,6 +39,10 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
             if (exercise.category == this.selectedCategory)
                 this.exercises.push(exercise);
         })
+    }
+
+    public checkForInvalidCharacters(event: KeyboardEvent) {
+        acceptOnlyInteger(event);
     }
 
     EnterPressed() {

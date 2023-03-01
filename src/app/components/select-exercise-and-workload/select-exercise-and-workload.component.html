@@ -1,29 +1,37 @@
 <ion-item-group class="ion-margin">
-    <ion-item color="none" lines="none">
-        <ion-select interface="popover" placeholder="Selecione uma categoria" [(ngModel)]="selectedCategory" (ionChange)="selectedCategoryChanged()">
-            <ion-select-option *ngFor="let category of categories" [value]="category"> {{category}} </ion-select-option>
-        </ion-select>
-    </ion-item>
-    <ion-item *ngIf="selectedCategory" color="none" lines="none">
-        <ion-select interface="popover" placeholder="Selecione um exercicio" [(ngModel)]="selectedExerciseTemplate">
-            <ion-select-option *ngFor="let exercise of exercises" [value]="exercise"> {{exercise.name}} </ion-select-option>
-        </ion-select>
-    </ion-item>
-    <ion-item color="none" lines="none">
-        <ion-label position="floating">Série</ion-label>
-        <ion-input type="number" [(ngModel)]="series" (keyup.enter)="EnterPressed()" clearInput=true></ion-input>
-    </ion-item>
-    <ion-item color="none" lines="none">
-        <ion-label position="floating">Repetições</ion-label>
-        <ion-input type="number" [(ngModel)]="repetition" (keyup.enter)="EnterPressed()" clearInput=true></ion-input>
-    </ion-item>
-    <ion-item color="none" lines="none">
-        <ion-label position="floating">Descanço</ion-label>
-        <ion-input type="number" [(ngModel)]="rest" (keyup.enter)="EnterPressed()" clearInput=true></ion-input>
-    </ion-item>
-    <ion-item color="none" lines="none">
-        <ion-label position="floating">Carga</ion-label>
-        <ion-input type="number" [(ngModel)]="load" (keyup.enter)="EnterPressed()" clearInput=true></ion-input>
-    </ion-item>
-    <ion-button class="ion-margin-top" expand="block" [disabled]="!selectedCategory || !selectedExerciseTemplate || !series || !repetition || !rest || !load" (click)="onButtonClick()">Adicionar</ion-button>
+    <div *ngIf="categories.length === 0">
+        <ion-item color="none" lines="none">
+            Nenhum exercicio para adicionar
+        </ion-item>
+        <ion-button expand="block" (click)="closePopover()">Fechar</ion-button>
+    </div>
+    <div *ngIf="categories.length > 0">
+        <ion-item color="none" lines="none">
+            <ion-select interface="popover" placeholder="Selecione uma categoria" [(ngModel)]="selectedCategory" (ionChange)="selectedCategoryChanged()">
+                <ion-select-option *ngFor="let category of categories" [value]="category"> {{category}} </ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item *ngIf="selectedCategory" color="none" lines="none">
+            <ion-select interface="popover" placeholder="Selecione um exercicio" [(ngModel)]="selectedExerciseTemplate">
+                <ion-select-option *ngFor="let exercise of exercises" [value]="exercise"> {{exercise.name}} </ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item color="none" lines="none">
+            <ion-label position="floating">Série</ion-label>
+            <ion-input inputmode="numeric" type="number" [(ngModel)]="series" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
+        </ion-item>
+        <ion-item color="none" lines="none">
+            <ion-label position="floating">Repetições</ion-label>
+            <ion-input inputmode="numeric" type="number" [(ngModel)]="repetition" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
+        </ion-item>
+        <ion-item color="none" lines="none">
+            <ion-label position="floating">Descanço</ion-label>
+            <ion-input inputmode="numeric" type="number" [(ngModel)]="rest" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
+        </ion-item>
+        <ion-item color="none" lines="none">
+            <ion-label position="floating">Carga</ion-label>
+            <ion-input inputmode="numeric" type="number" [(ngModel)]="load" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
+        </ion-item>
+        <ion-button class="ion-margin-top" expand="block" [disabled]="!selectedCategory || !selectedExerciseTemplate || !series || !repetition || !rest || !load" (click)="onButtonClick()">Adicionar</ion-button>
+    </div>
 </ion-item-group>
