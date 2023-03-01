@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Practitioner} from "../../classes/practitioner";
 import {PractitionerService} from "../../services/practitioner.service";

@@ -37,8 +37,8 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
         })
     }
 
-    EnterPressed(){
-        if(!this.selectedCategory || !this.selectedExerciseTemplate || !this.series || !this.repetition || !this.rest || !this.load)
+    EnterPressed() {
+        if (!this.selectedCategory || !this.selectedExerciseTemplate || !this.series || !this.repetition || !this.rest || !this.load)
             return;
         this.onButtonClick();
     }

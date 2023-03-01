@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MenuController, Platform} from "@ionic/angular";
+import {Platform} from "@ionic/angular";
 import {Router} from "@angular/router";
 import {Network} from '@capacitor/network';
 import {Subscription} from "rxjs";
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
     public menuId: string = "menu";
     public isLoadingDeviceName: boolean = true;
 
-    constructor(private platform: Platform, private deviceIDService: DeviceIDService, private router: Router, private accountService: AccountService, private menuController: MenuController) {}
+    constructor(private platform: Platform, private deviceIDService: DeviceIDService, private router: Router, private accountService: AccountService) {}
 
     ngOnInit() {
         this.SetPlatformInfo();
@@ -130,10 +130,5 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
             if (this.router.url == "/" || this.router.url == "/login")
                 await this.router.navigate(["/home"]);
         });
-    }
-
-    async ConfigBtn() {
-        await this.menuController.close(this.menuId)
-        await this.router.navigate(["/config"]);
     }
 }
