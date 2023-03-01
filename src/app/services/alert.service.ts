@@ -73,6 +73,48 @@ export class AlertService {
         return returned;
     }
 
+    /**Creates and presents an alert message with 3 buttons and a return.
+     * @param title the title shown on the top of the alert message
+     * @param description the text shown in the middle of the alert message
+     * @param buttonFirstOptionText (Optional) the text shown for the "Yes" button, return 2 if clicked
+     * @param buttonSecondOptionText (Optional) the text shown for the "No" button, return 1 if clicked
+     * @param buttonCancelText (Optional) the text shown for the "Cancel" button, return 0 if clicked
+     * @returns a number based on the button the user pressed. check button descriptions.
+     */
+    async ConfirmationAlertThreeButtons(title: string, description?: string, buttonFirstOptionText?: string | null | undefined, buttonSecondOptionText?: string | null | undefined, buttonCancelText?: string | null | undefined): Promise<number> {
+        const alert = await this.alertController.create({
+            header: title,
+            message: description ? description : "",
+            buttons: [
+                {
+                    text: buttonFirstOptionText ? buttonFirstOptionText : 'Yes',
+                    handler: () => {
+                        alert.dismiss(2);
+                        return false;
+                    }
+                },
+                {
+                    text: buttonSecondOptionText ? buttonSecondOptionText : 'No',
+                    handler: () => {
+                        alert.dismiss(1);
+                        return false;
+                    }
+                },
+                {
+                    text: buttonCancelText ? buttonCancelText : 'Cancel',
+                    handler: () => {
+                        alert.dismiss(0);
+                        return false;
+                    }
+                }
+            ]
+        });
+        let returned = 0;
+        await alert.present();
+        await alert.onDidDismiss().then((data) => { returned = data.data as number; });
+        return returned;
+    }
+
     async TextInputAlert(title: string, placeholder: string, buttonOkText?: string | null | undefined) {
         const alert = await this.alertController.create({
             header: title,
