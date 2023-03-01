@@ -20,18 +20,18 @@
     <div class="webbrowser" *ngIf="!isLoading">
         <ion-list class="ion-padding">
             <div class="flex">
-                <div class="text-div">
-                    <h1 class="ion-margin-bottom"> {{practitionerInfo?.name}} </h1>
-                    <p class="bold-text">Objetivos</p>
-                    <p class="pre-wrap" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
-                    <ion-note *ngIf="!practitionerInfo?.objectives">Nenhum objetivo listado</ion-note>
-                    <p class="bold-text">Observações</p>
-                    <p class="pre-wrap" *ngIf="practitionerInfo?.observations">{{practitionerInfo?.observations}}</p>
-                    <ion-note *ngIf="!practitionerInfo?.observations">Nenhuma observação listada</ion-note>
-                </div>
+                <h1 class="ion-margin-bottom text-div"> {{practitionerInfo?.name}} </h1>
                 <div>
                     <ion-button class="side-btn-margin">Marcar</ion-button>
                 </div>
+            </div>
+            <div>
+                <p class="bold-text">Objetivos</p>
+                <p class="pre-wrap" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
+                <ion-note *ngIf="!practitionerInfo?.objectives">Nenhum objetivo listado</ion-note>
+                <p class="bold-text">Observações</p>
+                <p class="pre-wrap" *ngIf="practitionerInfo?.observations">{{practitionerInfo?.observations}}</p>
+                <ion-note *ngIf="!practitionerInfo?.observations">Nenhuma observação listada</ion-note>
             </div>
         </ion-list>
         <ion-row class="ion-justify-content-center">
