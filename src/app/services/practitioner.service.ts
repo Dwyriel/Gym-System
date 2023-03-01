@@ -176,7 +176,7 @@ export class PractitionerService {
 
     /**
      * Gets all the exercises of a practitioner
-     * @param id the id of the array of exercises (aka practitioner.presenceLogID)
+     * @param id the id of the array of exercises (aka practitioner.exercisesID)
      */
     public async GetPractitionersExercises(id: string) {
         const doc = await getDoc(this.docExerShort(id));
