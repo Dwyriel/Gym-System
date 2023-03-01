@@ -10,10 +10,9 @@ import {AlertService} from "../../services/alert.service";
     styleUrls: ['./practitioner-profile.page.scss'],
 })
 export class PractitionerProfilePage {
-    private practitionerID?: string | null;
-
     public practitionerInfo?: Practitioner;
     public isLoading: boolean = false;
+    public practitionerID?: string | null;
 
     constructor(private activatedRoute: ActivatedRoute, private practitionerService: PractitionerService, private alertService: AlertService, private router: Router) { }
 
@@ -31,5 +30,19 @@ export class PractitionerProfilePage {
         this.isLoading = false;
         this.practitionerID = null;
         this.practitionerInfo = undefined;
+    }
+
+    public async deletePracBtn() {
+        let confirmation = await this.alertService.ConfirmationAlert("Deseja deletar este aluno?", `"${this.practitionerInfo?.name}" desaparecerá para sempre`, "Não", "Sim");
+        if (!confirmation)
+            return;
+        this.practitionerService.DeletePractitioner(this.practitionerID!)
+            .then(async () => {
+            this.isLoading = true;
+            await this.router.navigate(["/practitioner-list"])
+            await this.alertService.ShowToast("Aluno apagado com sucesso", undefined, "primary");
+            this.isLoading = false;
+            })
+            .catch(async () => await this.alertService.ShowToast("Aluno não pode ser apagado", undefined, "danger"));
     }
 }

@@ -6,10 +6,10 @@
         </ion-buttons>
         <ion-title>Aluno</ion-title>
         <ion-buttons slot="end">
-            <ion-button>
+            <ion-button routerLink="/practitioner-form/{{practitionerID}}">
                 <ion-icon name="pencil-outline"></ion-icon>
             </ion-button>
-            <ion-button>
+            <ion-button (click)="deletePracBtn()">
                 <ion-icon name="trash-outline"></ion-icon>
             </ion-button>
         </ion-buttons>
@@ -23,9 +23,11 @@
                 <div class="text-div">
                     <h1 class="ion-margin-bottom"> {{practitionerInfo?.name}} </h1>
                     <p class="bold-text">Objetivos</p>
-                    <p class="pre-wrap">{{practitionerInfo?.objectives}}</p>
+                    <p class="pre-wrap" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
+                    <ion-note *ngIf="!practitionerInfo?.objectives">Nenhum objetivo listado</ion-note>
                     <p class="bold-text">Observações</p>
-                    <p class="pre-wrap">{{practitionerInfo?.observations}}</p>
+                    <p class="pre-wrap" *ngIf="practitionerInfo?.observations">{{practitionerInfo?.observations}}</p>
+                    <ion-note *ngIf="!practitionerInfo?.observations">Nenhuma observação listada</ion-note>
                 </div>
                 <div>
                     <ion-button class="side-btn-margin">Marcar</ion-button>
