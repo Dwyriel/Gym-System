@@ -57,8 +57,8 @@ export class PractitionerFormPage {
         }
         let functionResult: Promise<any> = (this.practitionerID) ? this.UpdatePractitioner() : this.CreatePractitioner();
         await functionResult.then(async () => {
-            await this.alertService.ShowToast((this.practitionerID) ? "Aluno alterado com sucesso" : "Aluno criado com sucesso", undefined, "primary");
             await this.router.navigate([(this.practitionerID) ?  "/practitioner-profile/"+this.practitionerID : "/practitioner-list"]);
+            await this.alertService.ShowToast((this.practitionerID) ? "Aluno alterado com sucesso" : "Aluno criado com sucesso", undefined, "primary");
         }).catch(async () => {
             this.isLoading = false;
             await this.alertService.ShowToast((this.practitionerID) ? "Não foi possível alterar o aluno" : "Não foi possível criar o aluno", undefined, "danger");
