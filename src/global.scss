@@ -41,6 +41,10 @@ ion-popover {
     display: flex;
 }
 
+.flex-no-wrap {
+    flex-wrap: nowrap;
+}
+
 .bold-text {
     font-weight: bold;
 }
