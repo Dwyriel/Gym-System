@@ -32,19 +32,12 @@ export class PractitionerExercisePage {
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
-        let id = await this.alertService.PresentLoading("Carregando");
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-
-        await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => {
-            this.practitionerInfo = result;
-            this.isLoading = false;
-        }).catch(async () => await this.router.navigate(['practitioner-list']));
-
-        await this.populateExerciseList();
-
+        await this.practitionerService.GetPractitioner(this.practitionerID!)
+            .then(result => this.practitionerInfo = result)
+            .catch(async () => await this.router.navigate(['practitioner-list']));
         this.allExercises = await this.exercisesService.GetAllExercises();
-        this.isLoading = false;
-        await this.alertService.DismissLoading(id);
+        await this.populateExerciseList();
     }
 
     ionViewDidLeave() {
@@ -80,10 +73,9 @@ export class PractitionerExercisePage {
         });
         addExercisePopover.onDidDismiss().then(async value => {
             if (value.data) {
-                let id = await this.alertService.PresentLoading("Carregando");
+                this.isLoading = true;
                 await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, value.data.selectedExercise);
                 await this.populateExerciseList();
-                await this.alertService.DismissLoading(id);
             }
         });
         await addExercisePopover.present();
@@ -99,7 +91,7 @@ export class PractitionerExercisePage {
         });
         editExercisePopover.onDidDismiss().then(async value => {
             if (value.data) {
-                let id = await this.alertService.PresentLoading("Carregando");
+                this.isLoading = true;
                 let newExercise: Exercise = {
                     exerciseID: oldExercise.exerciseID,
                     exercise: oldExercise.exercise,
@@ -111,7 +103,6 @@ export class PractitionerExercisePage {
                 await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise)
                 await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise);
                 await this.populateExerciseList();
-                await this.alertService.DismissLoading(id);
             }
         });
         await editExercisePopover.present();
@@ -121,15 +112,17 @@ export class PractitionerExercisePage {
         let confirmation = await this.alertService.ConfirmationAlert("Deseja remover este exercício?", undefined, "Não", "Sim");
         if (!this.practitionerInfo?.exercisesID || !confirmation)
             return;
-        let id = await this.alertService.PresentLoading("Carregando");
+        this.isLoading = true;
         await this.practitionerService.RemoveExercise(this.practitionerInfo?.exercisesID, exercise);
         await this.populateExerciseList();
-        await this.alertService.DismissLoading(id);
+        this.isLoading = false;
     }
 
     private async populateExerciseList() {
+        this.isLoading = true;
         this.practitionerExercises = await this.practitionerService.GetPractitionersExercises(this.practitionerInfo!.exercisesID);
         this.hasExercises = (typeof this.practitionerExercises != "undefined" && this.practitionerExercises.length > 0);
+        this.isLoading = false;
     }
 
     private removeRepeatedExercises() {

@@ -8,14 +8,17 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content scrollX="true">
-    <div class="webbrowser" *ngIf="!isLoading">
+<ion-content fullscreen="true">
+    <div class="spinner-div" *ngIf="isLoading">
+        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
+    </div>
+    <div [hidden]="isLoading" class="webbrowser">
         <ion-item button="true" (click)="onClick()">
             <ion-label>Adicionar exercício</ion-label>
             <ion-icon name="add-outline"></ion-icon>
         </ion-item>
 
-        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!hasExercises">
+        <ion-row class="ion-padding ion-justify-content-center" *ngIf="!hasExercises">
             <ion-note>Não há nenhum exercício adicionado</ion-note>
         </ion-row>
         <ion-list *ngIf="hasExercises">
