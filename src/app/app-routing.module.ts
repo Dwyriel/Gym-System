@@ -1,9 +1,11 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
+import {RouteGuards} from "./classes/route-guards";
 
 const routes: Routes = [
     {
         path: '',
+        canActivate: [RouteGuards.startupPageGuard],
         loadChildren: () => import('./pages/startup/startup.module').then(m => m.StartupPageModule)
     },
     {
