@@ -74,7 +74,8 @@ export class PractitionerExercisePage {
         addExercisePopover.onDidDismiss().then(async value => {
             if (value.data) {
                 this.isLoading = true;
-                await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, value.data.selectedExercise);
+                await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, value.data.selectedExercise)
+                    .catch(async () => await this.alertService.ShowToast("Não foi possível adicionar o exercício", undefined, "danger"));
                 await this.populateExerciseList();
             }
         });
@@ -100,6 +101,7 @@ export class PractitionerExercisePage {
                     load: value.data.updatedWorkload!.load
                 };
                 await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise)
+                    .catch(async () => await this.alertService.ShowToast("Não foi possível editar o exercício", undefined, "danger"));
                 await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise);
                 await this.populateExerciseList();
             }
@@ -112,7 +114,8 @@ export class PractitionerExercisePage {
         if (!this.practitionerInfo?.exercisesID || !confirmation)
             return;
         this.isLoading = true;
-        await this.practitionerService.RemoveExercise(this.practitionerInfo?.exercisesID, exercise);
+        await this.practitionerService.RemoveExercise(this.practitionerInfo?.exercisesID, exercise)
+            .catch(async () => await this.alertService.ShowToast("Não foi possível remover o exercício", undefined, "danger"));
         await this.populateExerciseList();
         this.isLoading = false;
     }
