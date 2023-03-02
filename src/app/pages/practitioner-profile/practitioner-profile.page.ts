@@ -22,13 +22,12 @@ export class PractitionerProfilePage {
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
-        let id = await this.alertService.PresentLoading("Carregando");
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-        await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => {
-            this.practitionerInfo = result;
-            this.isLoading = false;
-        }).catch(async () => this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger"));
-        await this.alertService.DismissLoading(id);
+        await this.practitionerService.GetPractitioner(this.practitionerID!)
+            .then(result => this.practitionerInfo = result)
+            .catch(async () => this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger"));
+        this.isLoading = false;
+
     }
 
     ionViewDidLeave() {
@@ -41,13 +40,11 @@ export class PractitionerProfilePage {
         let confirmation = await this.alertService.ConfirmationAlert("Deseja deletar este aluno?", `"${this.practitionerInfo?.name}" desaparecerá para sempre`, "Não", "Sim");
         if (!confirmation)
             return;
-        let id = await this.alertService.PresentLoading("Carregando");
         this.isLoading = true;
         await this.practitionerService.DeletePractitioner(this.practitionerID!).then(async () => {
             await this.router.navigate(["/practitioner-list"])
             await this.alertService.ShowToast("Aluno apagado com sucesso", undefined, "primary");
         }).catch(async () => await this.alertService.ShowToast("Aluno não pode ser apagado", undefined, "danger"));
         this.isLoading = false;
-        await this.alertService.DismissLoading(id);
     }
 }

@@ -32,7 +32,6 @@ export class PractitionerExercisePage {
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
-        let id = await this.alertService.PresentLoading("Carregando");
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         let errorOccurred = false;
         await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => {
@@ -45,7 +44,6 @@ export class PractitionerExercisePage {
         });
         if (!errorOccurred)
             await this.populateExerciseList();
-        await this.alertService.DismissLoading(id);
     }
 
     ionViewDidLeave() {
