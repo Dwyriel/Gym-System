@@ -42,8 +42,9 @@ export class PractitionerExercisePage {
             errorOccurred = true;
             this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
         });
-        if (!errorOccurred)
-            await this.populateExerciseList();
+        if (errorOccurred)
+            return
+        await this.populateExerciseList();
     }
 
     ionViewDidLeave() {
