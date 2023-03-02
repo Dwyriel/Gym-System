@@ -34,11 +34,17 @@ export class PractitionerExercisePage {
             return;
         let id = await this.alertService.PresentLoading("Carregando");
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-        await this.practitionerService.GetPractitioner(this.practitionerID!)
-            .then(result => this.practitionerInfo = result)
-            .catch(async () => await this.router.navigate(['practitioner-list']));
-        this.allExercises = await this.exercisesService.GetAllExercises();
-        await this.populateExerciseList();
+        let errorOccurred = false;
+        await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => {
+            errorOccurred = true;
+            this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
+        });
+        await this.exercisesService.GetAllExercises().then(exercises => this.allExercises = exercises).catch(() => {
+            errorOccurred = true;
+            this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
+        });
+        if (!errorOccurred)
+            await this.populateExerciseList();
         await this.alertService.DismissLoading(id);
     }
 

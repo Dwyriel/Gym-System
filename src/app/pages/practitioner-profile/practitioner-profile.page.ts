@@ -27,7 +27,7 @@ export class PractitionerProfilePage {
         await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => {
             this.practitionerInfo = result;
             this.isLoading = false;
-        }).catch(async () => await this.router.navigate(['practitioner-list']));
+        }).catch(async () => this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger"));
         await this.alertService.DismissLoading(id);
     }
 
