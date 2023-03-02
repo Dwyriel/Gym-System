@@ -82,11 +82,10 @@ export class PractitionerExercisePage {
     }
 
     private async editExerciseBtn(oldExercise: Exercise) {
-        let newWorkload = {series: undefined, repetitions: undefined, rest: undefined, load: undefined};
         const editExercisePopover = await this.popoverController.create({
             component: SelectExerciseAndWorkloadComponent,
             mode: 'md',
-            componentProps: {workloadInput: newWorkload},
+            componentProps: {workloadInput: {series: oldExercise.series, repetition: oldExercise.repetition, rest: oldExercise.rest, load: oldExercise.load}},
             animated: true
         });
         editExercisePopover.onDidDismiss().then(async value => {
