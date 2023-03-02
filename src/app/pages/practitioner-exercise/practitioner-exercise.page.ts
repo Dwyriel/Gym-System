@@ -32,12 +32,14 @@ export class PractitionerExercisePage {
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
+        let id = await this.alertService.PresentLoading("Carregando");
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         await this.practitionerService.GetPractitioner(this.practitionerID!)
             .then(result => this.practitionerInfo = result)
             .catch(async () => await this.router.navigate(['practitioner-list']));
         this.allExercises = await this.exercisesService.GetAllExercises();
         await this.populateExerciseList();
+        await this.alertService.DismissLoading(id);
     }
 
     ionViewDidLeave() {
