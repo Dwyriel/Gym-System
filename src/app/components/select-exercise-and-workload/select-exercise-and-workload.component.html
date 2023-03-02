@@ -20,20 +20,20 @@
         </div>
         <ion-item color="none" lines="none">
             <ion-label position="floating">Série</ion-label>
-            <ion-input inputmode="numeric" type="number" [(ngModel)]="workloadInput!.series" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
+            <ion-input inputmode="numeric" type="number" min="1" [(ngModel)]="workloadInput!.series" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
         </ion-item>
         <ion-item color="none" lines="none">
             <ion-label position="floating">Repetições</ion-label>
-            <ion-input inputmode="numeric" type="number" [(ngModel)]="workloadInput!.repetition" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
+            <ion-input inputmode="numeric" type="number" min="1" [(ngModel)]="workloadInput!.repetition" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
         </ion-item>
         <ion-item color="none" lines="none">
             <ion-label position="floating">Descanço</ion-label>
-            <ion-input inputmode="numeric" type="number" [(ngModel)]="workloadInput!.rest" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
+            <ion-input inputmode="numeric" type="number" min="0" [(ngModel)]="workloadInput!.rest" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
         </ion-item>
         <ion-item color="none" lines="none">
             <ion-label position="floating">Carga</ion-label>
-            <ion-input inputmode="numeric" type="number" [(ngModel)]="workloadInput!.load" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
+            <ion-input inputmode="numeric" type="number" min="0" [(ngModel)]="workloadInput!.load" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
         </ion-item>
-        <ion-button class="ion-margin-top" expand="block" [disabled]="!isEditing && (!selectedCategory || !selectedExerciseTemplate) || !workloadInput!.series || !workloadInput!.repetition || !workloadInput!.rest || !workloadInput!.load" (click)="onButtonClick()">{{isEditing ? "Atualizar" : "Adicionar"}}</ion-button>
+        <ion-button class="ion-margin-top" expand="block" [disabled]="checkIfRequirementsArentMet" (click)="onButtonClick()">{{isEditing ? "Atualizar" : "Adicionar"}}</ion-button>
     </div>
 </ion-item-group>
