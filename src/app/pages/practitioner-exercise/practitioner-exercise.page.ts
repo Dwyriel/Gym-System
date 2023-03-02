@@ -32,7 +32,6 @@ export class PractitionerExercisePage {
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
-        let id = await this.alertService.PresentLoading("Carregando");
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         let errorOccurred = false;
         await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => {
@@ -43,9 +42,9 @@ export class PractitionerExercisePage {
             errorOccurred = true;
             this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
         });
-        if (!errorOccurred)
-            await this.populateExerciseList();
-        await this.alertService.DismissLoading(id);
+        if (errorOccurred)
+            return
+        await this.populateExerciseList();
     }
 
     ionViewDidLeave() {
