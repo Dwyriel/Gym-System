@@ -8,7 +8,10 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content fullscreen="true">
+    <div class="spinner-div" *ngIf="isLoading">
+        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
+    </div>
     <div [hidden]="isLoading" class="webbrowser">
         <ion-list>
             <ion-item class="ion-margin-horizontal">
@@ -28,7 +31,5 @@
             <ion-button class="full-width margin-top-1" [disabled]="!practitioner.name" (click)="OnClick()"> {{(practitionerID) ? "Alterar" : "Criar"}} </ion-button>
         </ion-row>
     </div>
-    <div class="spinner-div" *ngIf="isLoading">
-        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
-    </div>
+
 </ion-content>

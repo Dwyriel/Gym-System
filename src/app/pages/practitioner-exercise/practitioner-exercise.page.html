@@ -8,36 +8,39 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content scrollX="true">
-    <div class="webbrowser" *ngIf="!isLoading">
+<ion-content fullscreen="true">
+    <div class="spinner-div" *ngIf="isLoading">
+        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
+    </div>
+    <div [hidden]="isLoading" class="webbrowser">
         <ion-item button="true" (click)="onClick()">
             <ion-label>Adicionar exercício</ion-label>
             <ion-icon name="add-outline"></ion-icon>
         </ion-item>
 
-        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!hasExercises">
+        <ion-row class="ion-padding ion-justify-content-center" *ngIf="!hasExercises">
             <ion-note>Não há nenhum exercício adicionado</ion-note>
         </ion-row>
         <ion-list *ngIf="hasExercises">
             <ion-grid>
-                <ion-row class="bold-text">
-                    <ion-col size="6" class="ion-padding-start">Exercício</ion-col>
-                    <ion-col size="1.5">{{(appWidth!.appWidth > minWidthForFullText) ? "Séries" : "S"}}</ion-col>
-                    <ion-col size="1.5">{{(appWidth!.appWidth > minWidthForFullText) ? "Repet." : "R"}}</ion-col>
-                    <ion-col size="1.5">{{(appWidth!.appWidth > minWidthForFullText) ? "Desc." : "D"}}</ion-col>
-                    <ion-col size="1.5">{{(appWidth!.appWidth > minWidthForFullText) ? "Carga" : "C"}}</ion-col>
+                <ion-row>
+                    <ion-item lines="none" class="bold-text full-width">
+                        <div class="big-cell">Exercício</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appWidth!.appWidth > minWidthForFullText) ? "Séries" : "S"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appWidth!.appWidth > minWidthForFullText) ? "Repet." : "R"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appWidth!.appWidth > minWidthForFullText) ? "Desc." : "D"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appWidth!.appWidth > minWidthForFullText) ? "Carga" : "C"}}</div>
+                    </ion-item>
                 </ion-row>
 
-                <ion-row *ngFor="let exercise of practitionerExercises" style="flex-wrap: nowrap">
-                    <ion-col class="align-text-middle" size="6">
-                        <ion-item (click)="onClick(exercise)" button="true" lines="none">
-                            {{exercise.exercise!.name}}
-                        </ion-item>
-                    </ion-col>
-                    <ion-col class="align-text-middle" size="1.5"> {{exercise.series}} </ion-col>
-                    <ion-col class="align-text-middle" size="1.5"> {{exercise.repetition}} </ion-col>
-                    <ion-col class="align-text-middle" size="1.5"> {{exercise.rest}} </ion-col>
-                    <ion-col class="align-text-middle" size="1.5"> {{exercise.load}} </ion-col>
+                <ion-row *ngFor="let exercise of practitionerExercises" class="flex-no-wrap">
+                    <ion-item class="full-width" (click)="onClick(exercise)" button="true" lines="full">
+                        <div class="align-text-middle big-cell"> {{exercise.exercise!.name}} </div>
+                        <div class="align-text-middle small-cell hor-text-center"> {{exercise.series}} </div>
+                        <div class="align-text-middle small-cell hor-text-center"> {{exercise.repetition}} </div>
+                        <div class="align-text-middle small-cell hor-text-center"> {{exercise.rest}} </div>
+                        <div class="align-text-middle small-cell hor-text-center"> {{exercise.load}} </div>
+                    </ion-item>
                 </ion-row>
             </ion-grid>
         </ion-list>

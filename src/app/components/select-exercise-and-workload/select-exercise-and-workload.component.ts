@@ -49,12 +49,12 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
         })
     }
 
-    public checkForInvalidCharacters(event: KeyboardEvent) {
+    checkForInvalidCharacters(event: KeyboardEvent) {
         acceptOnlyInteger(event);
     }
 
     EnterPressed() {
-        if (!this.selectedCategory || !this.selectedExerciseTemplate || !this.workloadInput!.series || !this.workloadInput!.repetition || !this.workloadInput!.rest || !this.workloadInput!.load)
+        if (this.checkIfRequirementsArentMet)
             return;
         this.onButtonClick();
     }
@@ -64,5 +64,9 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
             selectedExercise: !this.isEditing ? {exerciseID: this.selectedExerciseTemplate!.thisObjectID!, exercise: this.selectedExerciseTemplate, series: this.workloadInput!.series, repetition: this.workloadInput!.repetition, rest: this.workloadInput!.rest, load: this.workloadInput!.load} : null,
             updatedWorkload: this.isEditing ? this.workloadInput : null
         });
+    }
+
+    get checkIfRequirementsArentMet() {
+        return !this.isEditing && (!this.selectedCategory || !this.selectedExerciseTemplate) || !this.workloadInput!.series || !this.workloadInput!.repetition || (!this.workloadInput!.rest && this.workloadInput!.rest !== 0) || (!this.workloadInput!.load && this.workloadInput!.load !== 0);
     }
 }

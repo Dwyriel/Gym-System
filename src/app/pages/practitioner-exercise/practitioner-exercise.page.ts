@@ -32,19 +32,15 @@ export class PractitionerExercisePage {
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
-        let id = await this.alertService.PresentLoading("Carregando");
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-
-        await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => {
-            this.practitionerInfo = result;
-            this.isLoading = false;
-        }).catch(async () => await this.router.navigate(['practitioner-list']));
-
+        let errorOccurred = false;
+        await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
+        await this.exercisesService.GetAllExercises().then(exercises => this.allExercises = exercises).catch(() => errorOccurred = true);
+        if (errorOccurred) {
+            await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
+            return
+        }
         await this.populateExerciseList();
-
-        this.allExercises = await this.exercisesService.GetAllExercises();
-        this.isLoading = false;
-        await this.alertService.DismissLoading(id);
     }
 
     ionViewDidLeave() {
@@ -80,26 +76,25 @@ export class PractitionerExercisePage {
         });
         addExercisePopover.onDidDismiss().then(async value => {
             if (value.data) {
-                let id = await this.alertService.PresentLoading("Carregando");
-                await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, value.data.selectedExercise);
+                this.isLoading = true;
+                await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, value.data.selectedExercise)
+                    .catch(async () => await this.alertService.ShowToast("Não foi possível adicionar o exercício", undefined, "danger"));
                 await this.populateExerciseList();
-                await this.alertService.DismissLoading(id);
             }
         });
         await addExercisePopover.present();
     }
 
     private async editExerciseBtn(oldExercise: Exercise) {
-        let newWorkload = {series: undefined, repetitions: undefined, rest: undefined, load: undefined};
         const editExercisePopover = await this.popoverController.create({
             component: SelectExerciseAndWorkloadComponent,
             mode: 'md',
-            componentProps: {workloadInput: newWorkload},
+            componentProps: {workloadInput: {series: oldExercise.series, repetition: oldExercise.repetition, rest: oldExercise.rest, load: oldExercise.load}},
             animated: true
         });
         editExercisePopover.onDidDismiss().then(async value => {
             if (value.data) {
-                let id = await this.alertService.PresentLoading("Carregando");
+                this.isLoading = true;
                 let newExercise: Exercise = {
                     exerciseID: oldExercise.exerciseID,
                     exercise: oldExercise.exercise,
@@ -109,9 +104,9 @@ export class PractitionerExercisePage {
                     load: value.data.updatedWorkload!.load
                 };
                 await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise)
+                    .catch(async () => await this.alertService.ShowToast("Não foi possível editar o exercício", undefined, "danger"));
                 await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise);
                 await this.populateExerciseList();
-                await this.alertService.DismissLoading(id);
             }
         });
         await editExercisePopover.present();
@@ -121,15 +116,18 @@ export class PractitionerExercisePage {
         let confirmation = await this.alertService.ConfirmationAlert("Deseja remover este exercício?", undefined, "Não", "Sim");
         if (!this.practitionerInfo?.exercisesID || !confirmation)
             return;
-        let id = await this.alertService.PresentLoading("Carregando");
-        await this.practitionerService.RemoveExercise(this.practitionerInfo?.exercisesID, exercise);
+        this.isLoading = true;
+        await this.practitionerService.RemoveExercise(this.practitionerInfo?.exercisesID, exercise)
+            .catch(async () => await this.alertService.ShowToast("Não foi possível remover o exercício", undefined, "danger"));
         await this.populateExerciseList();
-        await this.alertService.DismissLoading(id);
+        this.isLoading = false;
     }
 
     private async populateExerciseList() {
+        this.isLoading = true;
         this.practitionerExercises = await this.practitionerService.GetPractitionersExercises(this.practitionerInfo!.exercisesID);
         this.hasExercises = (typeof this.practitionerExercises != "undefined" && this.practitionerExercises.length > 0);
+        this.isLoading = false;
     }
 
     private removeRepeatedExercises() {

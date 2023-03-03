@@ -17,6 +17,9 @@
 </ion-header>
 
 <ion-content>
+    <div class="spinner-div" *ngIf="isLoading">
+        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
+    </div>
     <div class="webbrowser" *ngIf="!isLoading">
         <ion-list class="ion-padding">
             <div class="flex">

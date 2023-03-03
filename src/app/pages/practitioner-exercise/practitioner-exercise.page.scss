@@ -2,6 +2,10 @@
     align-self: center;
 }
 
+.hor-text-center {
+    text-align: center;
+}
+
 .btn-max-width {
     max-width: 24px;
 }
@@ -9,4 +13,12 @@
 .icon-size {
     min-height: 32px;
     min-width: 32px;
+}
+
+.small-cell {
+    width: 12.5% !important;
+}
+
+.big-cell {
+    width: 50% !important;
 }

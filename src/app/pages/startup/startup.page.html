@@ -4,3 +4,8 @@
         <ion-spinner name="crescent" class="big-spinner ion-justify-content-center"></ion-spinner>
     </div>
 </ion-content>
+<ion-footer class="ion-padding-bottom ion-margin-bottom">
+    <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-button *ngIf="shouldShowRedirectButton" size="large" (click)="redirectToHomePage()">Ir para página inicial</ion-button>
+    </ion-row>
+</ion-footer>

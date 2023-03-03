@@ -62,6 +62,7 @@ export class ExerciseListPage {
         let answer = await this.alertService.ConfirmationAlert("Apagar este exercício?", `"${exercise.name}" desaparecerá para sempre`, "Não", "Sim");
         if (!answer)
             return;
+        let id = await this.alertService.PresentLoading("Carregando");
         if (await this.DeleteExercise(exercise.thisObjectID!)) {
             await this.alertService.ShowToast("Exercício apagado com sucesso", undefined, "primary");
             this.exercisesByCategory = JSON.parse(this.exercisesByCategoryAsString);
@@ -79,6 +80,7 @@ export class ExerciseListPage {
             await this.SearchNames(false);
         } else
             await this.alertService.ShowToast("Exercício não pode ser apagado", undefined, "danger");
+        await this.alertService.DismissLoading(id);
     }
 
     async DeleteExercise(exerciseId: string): Promise<boolean> {

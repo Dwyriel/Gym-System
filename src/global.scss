@@ -41,6 +41,10 @@ ion-popover {
     display: flex;
 }
 
+.flex-no-wrap {
+    flex-wrap: nowrap;
+}
+
 .bold-text {
     font-weight: bold;
 }
@@ -51,6 +55,19 @@ ion-popover {
 
 .margin-top-1 {
     margin-top: 1rem;
+}
+
+.big-spinner {
+    transform: scale(2.3);
+}
+
+.spinner-div {
+    max-width: 500px;
+    position: absolute;
+    width: fit-content;
+    top: 50%;
+    left: 50%;
+    transform: translate(var(-64.4px), var(-64.4px));
 }
 
 @media (max-width: 768px) {
