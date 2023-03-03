@@ -9,5 +9,32 @@
 </ion-header>
 
 <ion-content>
+    <div class="webbrowser">
+        <ion-grid style="max-width: 400px">
+            <ion-row class="flex-no-wrap">
+                <ion-item class="full-width" button="true">
+                    <div class="full-width ion-text-center bold-text">
+                        Marcar presença
+                    </div>
+                </ion-item>
+            </ion-row>
+            <ion-row class="flex-no-wrap">
+                <ion-item lines="none" class="bold-text full-width" >
+                    <div class="big-cell">Data</div>
+                    <div class="ion-text-center align-text-middle small-cell">Presença</div>
+                    <div class="align-text-middle flex-grow-1"></div>
+                </ion-item>
+            </ion-row>
 
+            <ion-row *ngFor="let presence of presenceLog" class="flex-no-wrap">
+                <ion-item class="full-width" lines="none" (click)="editPresence(presence)">
+                    <div class="align-text-middle big-cell"> {{presence.date.toLocaleDateString()}} </div>
+                    <div class="ion-text-center align-text-middle small-cell"> {{presence.wasPresent ? 'P' : 'F'}} </div>
+                    <ion-item lines="none" button="true" class="ion-text-center align-text-middle flex-grow-1" (click)="deletePresence($event, presence)">
+                        <ion-icon name="trash-outline"></ion-icon>
+                    </ion-item>
+                </ion-item>
+            </ion-row>
+        </ion-grid>
+    </div>
 </ion-content>

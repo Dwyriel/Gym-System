@@ -26,8 +26,7 @@ export class PractitionerPresencePage {
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         if (!(await this.getPractitioner()))
             return;
-        await this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, true).then(returnedValue => this.presenceLog = returnedValue);//todo catch
-        console.log(this.presenceLog);
+        await this.getPresences(true);
     }
 
     async getPractitioner() {
@@ -36,5 +35,26 @@ export class PractitionerPresencePage {
         if (cacheError)
             await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitioner = result).catch(() => errorOccurred = true);
         return !errorOccurred;
+    }
+
+    async deletePresence(event: any, presence: Presence) {
+        event.stopPropagation();
+        console.log(presence);
+        console.log(presence.date.getTime())
+        await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence);
+        await this.getPresences();
+    }
+
+    async editPresence(presence: Presence) {
+        let editedPresence = {date: new Date(), wasPresent: true};//todo actual edited presence;
+        await this.practitionerService.AddPresence(this.practitioner.presenceLogID, editedPresence);//if error, return;
+        await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence);
+        await this.getPresences();
+    }
+
+    async getPresences(fromCache: boolean = false){
+        await this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, fromCache).then(returnedValue => {
+            this.presenceLog = returnedValue.sort((firstElement, secondElement) => secondElement.date.getTime() - firstElement.date.getTime());
+        });//todo catch
     }
 }
