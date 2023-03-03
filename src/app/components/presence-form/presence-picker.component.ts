@@ -24,9 +24,11 @@ export class PresencePickerComponent implements OnInit {
         this.maxDay = new Date().toISOString();
         if (this.prevPresence !== undefined)
             this.wasPresent = this.prevPresence;
-        if(this.date !== undefined)
+        if (this.date !== undefined)
             this.dateAsString = this.date.toISOString();
         PresencePickerComponent.dates = this.datesToRestrict;
+        for (let restrictDate of PresencePickerComponent.dates!)
+            console.log(restrictDate.toISOString())
     }
 
     ngOnDestroy() {
@@ -47,10 +49,11 @@ export class PresencePickerComponent implements OnInit {
 
     disableSpecificDays(dateString: string) {
         const date = new Date(dateString);
+        const dateStr = date.toISOString().split('T')[0];
         if (!PresencePickerComponent.dates)
             return true;
         for (let restrictDate of PresencePickerComponent.dates)
-            if (date.toDateString() === restrictDate.toDateString())
+            if (dateStr === restrictDate.toISOString().split('T')[0])
                 return false;
         return true;
     }
