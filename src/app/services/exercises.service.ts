@@ -65,12 +65,16 @@ export class ExercisesService {
      * @param id the id of the exercise
      */
     public async GetExerciseFromCache(id: string) {
-        const doc = await getDocFromCache(this.docShort(id));
-        if (!doc.exists())
+        try {
+            const doc = await getDocFromCache(this.docShort(id));
+            if (!doc.exists())
+                return Promise.reject();
+            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            exercise.thisObjectID = doc.id;
+            return Promise.resolve(exercise);
+        } catch (exception) {
             return Promise.reject();
-        let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
-        exercise.thisObjectID = doc.id;
-        return Promise.resolve(exercise);
+        }
     }
 
     /**
@@ -171,14 +175,18 @@ export class ExercisesService {
      * @return the result of the query as ExerciseTemplate[]
      */
     public async GetAllExercisesFromCache(maxEntries?: number) {
-        const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colShort(), limit(maxEntries))) : await getDocsFromCache(this.colShort());
-        let arrayOfExercises: (ExerciseTemplate)[] = [];
-        allDocs.forEach(doc => {
-            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
-            exercise.thisObjectID = doc.id;
-            arrayOfExercises.push(exercise);
-        });
-        return arrayOfExercises;
+        try {
+            const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colShort(), limit(maxEntries))) : await getDocsFromCache(this.colShort());
+            let arrayOfExercises: (ExerciseTemplate)[] = [];
+            allDocs.forEach(doc => {
+                let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+                exercise.thisObjectID = doc.id;
+                arrayOfExercises.push(exercise);
+            });
+            return arrayOfExercises;
+        } catch (exception) {
+            return [];
+        }
     }
 
     /**

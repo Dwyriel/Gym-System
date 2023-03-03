@@ -179,12 +179,16 @@ export class PractitionerService {
      * @param id the id of the practitioner
      */
     public async GetPractitionerFromCache(id: string) {
-        const pracDoc = await getDocFromCache(this.docPracShort(id));
-        if (!pracDoc.exists())
+        try {
+            const pracDoc = await getDocFromCache(this.docPracShort(id));
+            if (!pracDoc.exists())
+                return Promise.reject();
+            let practitioner: Practitioner = pracDoc.data() as Practitioner;
+            practitioner.thisObjectID = pracDoc.id;
+            return Promise.resolve(practitioner);
+        } catch (exception) {
             return Promise.reject();
-        let practitioner: Practitioner = pracDoc.data() as Practitioner;
-        practitioner.thisObjectID = pracDoc.id;
-        return Promise.resolve(practitioner);
+        }
     }
 
     /**
@@ -193,17 +197,21 @@ export class PractitionerService {
      * @param fromCache if the doc should be loaded from cache or not
      */
     public async GetPractitionersExercises(id: string, fromCache: boolean = false) {
-        const doc = fromCache ? await getDocFromCache(this.docExerShort(id)) : await getDoc(this.docExerShort(id));
-        if (!doc.exists())
+        try {
+            const doc = fromCache ? await getDocFromCache(this.docExerShort(id)) : await getDoc(this.docExerShort(id));
+            if (!doc.exists())
+                return Promise.reject();
+            let exercises: Exercise[] = (doc.data() as { items: Exercise[] }).items;
+            for (let i = 0; i < exercises.length; i++) {
+                let errorOccurred = false;
+                await this.exercisesService.GetExerciseFromCache(exercises[i].exerciseID).then(value => exercises[i].exercise = value).catch(() => errorOccurred = true);
+                if (errorOccurred)
+                    exercises[i].exercise = await this.exercisesService.GetExercise(exercises[i].exerciseID);
+            }
+            return Promise.resolve(exercises);
+        } catch (exception) {
             return Promise.reject();
-        let exercises: Exercise[] = (doc.data() as { items: Exercise[] }).items;
-        for (let i = 0; i < exercises.length; i++) {
-            let errorOccurred = false;
-            await this.exercisesService.GetExerciseFromCache(exercises[i].exerciseID).then(value => exercises[i].exercise = value).catch(() => errorOccurred = true);
-            if (errorOccurred)
-                exercises[i].exercise = await this.exercisesService.GetExercise(exercises[i].exerciseID);
         }
-        return Promise.resolve(exercises);
     }
 
     /**
@@ -212,14 +220,18 @@ export class PractitionerService {
      * @param fromCache if the doc should be loaded from cache or not
      */
     public async GetPractitionersPresences(id: string, fromCache: boolean = false) {
-        const doc = fromCache ? await getDocFromCache(this.docPresShort(id)) : await getDoc(this.docPresShort(id));
-        if (!doc.exists())
+        try {
+            const doc = fromCache ? await getDocFromCache(this.docPresShort(id)) : await getDoc(this.docPresShort(id));
+            if (!doc.exists())
+                return Promise.reject();
+            let data = (doc.data() as { items: { date: number, wasPresent: boolean }[] }).items
+            let presences: Presence[] = [];
+            for (let i = 0; i < data.length; i++)
+                presences.push({date: new Date(data[i].date), wasPresent: data[i].wasPresent});
+            return Promise.resolve(presences);
+        } catch (exception) {
             return Promise.reject();
-        let data = (doc.data() as { items: { date: number, wasPresent: boolean }[] }).items
-        let presences: Presence[] = [];
-        for (let i = 0; i < data.length; i++)
-            presences.push({date: new Date(data[i].date), wasPresent: data[i].wasPresent});
-        return Promise.resolve(presences);
+        }
     }
 
     /**
@@ -271,13 +283,17 @@ export class PractitionerService {
      * @param maxEntries (optional) the total amount of entries to fetch
      */
     public async GetAllPractitionersFromCache(maxEntries?: number) {
-        const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colPracShort(), limit(maxEntries))) : await getDocsFromCache(this.colPracShort());
-        let arrayOfPractitioner: (Practitioner)[] = [];
-        allDocs.forEach(doc => {
-            let practitioner: Practitioner = doc.data() as Practitioner;
-            practitioner.thisObjectID = doc.id;
-            arrayOfPractitioner.push(practitioner)
-        });
-        return arrayOfPractitioner;
+        try {
+            const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colPracShort(), limit(maxEntries))) : await getDocsFromCache(this.colPracShort());
+            let arrayOfPractitioner: (Practitioner)[] = [];
+            allDocs.forEach(doc => {
+                let practitioner: Practitioner = doc.data() as Practitioner;
+                practitioner.thisObjectID = doc.id;
+                arrayOfPractitioner.push(practitioner)
+            });
+            return arrayOfPractitioner;
+        } catch (exception){
+            return [];
+        }
     }
 }

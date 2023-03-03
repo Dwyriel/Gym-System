@@ -26,7 +26,7 @@ export class PractitionerPresencePage {
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         if (!(await this.getPractitioner()))
             return;
-        await this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID).then(returnedValue => this.presenceLog = returnedValue);//todo catch
+        await this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, true).then(returnedValue => this.presenceLog = returnedValue);//todo catch
         console.log(this.presenceLog);
     }
 
