@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, docData, endAt, Firestore, getDoc, getDocs, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
+import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, docData, endAt, Firestore, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
 import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
@@ -175,6 +175,19 @@ export class PractitionerService {
     }
 
     /**
+     * Gets a practitioner from cache
+     * @param id the id of the practitioner
+     */
+    public async GetPractitionerFromCache(id: string) {
+        const pracDoc = await getDocFromCache(this.docPracShort(id));
+        if (!pracDoc.exists())
+            return Promise.reject();
+        let practitioner: Practitioner = pracDoc.data() as Practitioner;
+        practitioner.thisObjectID = pracDoc.id;
+        return Promise.resolve(practitioner);
+    }
+
+    /**
      * Gets all the exercises of a practitioner
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
      */
@@ -233,11 +246,26 @@ export class PractitionerService {
     }
 
     /**
-     * Gets all the practitioner, without any optional fields being filled
+     * Gets all practitioners, without any optional fields being filled
      * @param maxEntries (optional) the total amount of entries to fetch
      */
     public async GetAllPractitioners(maxEntries?: number) {
         const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colPracShort(), limit(maxEntries))) : await getDocs(this.colPracShort());
+        let arrayOfPractitioner: (Practitioner)[] = [];
+        allDocs.forEach(doc => {
+            let practitioner: Practitioner = doc.data() as Practitioner;
+            practitioner.thisObjectID = doc.id;
+            arrayOfPractitioner.push(practitioner)
+        });
+        return arrayOfPractitioner;
+    }
+
+    /**
+     * Gets all practitioners, without any optional fields being filled
+     * @param maxEntries (optional) the total amount of entries to fetch
+     */
+    public async GetAllPractitionersFromCache(maxEntries?: number) {
+        const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colPracShort(), limit(maxEntries))) : await getDocsFromCache(this.colPracShort());
         let arrayOfPractitioner: (Practitioner)[] = [];
         allDocs.forEach(doc => {
             let practitioner: Practitioner = doc.data() as Practitioner;
