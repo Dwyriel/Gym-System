@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData, query, startAt, endAt, limit, where, orderBy} from "@angular/fire/firestore";
+import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData, query, startAt, endAt, limit, where, orderBy, getDocsFromCache, getDocFromCache} from "@angular/fire/firestore";
 import {ExerciseTemplate} from "../interfaces/exercise";
 
 @Injectable({
@@ -53,6 +53,19 @@ export class ExercisesService {
      */
     public async GetExercise(id: string) {
         const doc = await getDoc(this.docShort(id));
+        if (!doc.exists())
+            return Promise.reject();
+        let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+        exercise.thisObjectID = doc.id;
+        return Promise.resolve(exercise);
+    }
+
+    /**
+     * Gets a specific exercise from cache
+     * @param id the id of the exercise
+     */
+    public async GetExerciseFromCache(id: string) {
+        const doc = await getDocFromCache(this.docShort(id));
         if (!doc.exists())
             return Promise.reject();
         let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
@@ -137,7 +150,7 @@ export class ExercisesService {
     }
 
     /**
-     * Gets all the exercises in the database
+     * Gets all the exercises from the database
      * @param maxEntries (optional) the total amount of entries to fetch
      * @return the result of the query as ExerciseTemplate[]
      */
@@ -153,7 +166,23 @@ export class ExercisesService {
     }
 
     /**
-     * Gets all the exercises in the database
+     * Gets all the exercises from cache
+     * @param maxEntries (optional) the total amount of entries to fetch
+     * @return the result of the query as ExerciseTemplate[]
+     */
+    public async GetAllExercisesFromCache(maxEntries?: number) {
+        const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colShort(), limit(maxEntries))) : await getDocsFromCache(this.colShort());
+        let arrayOfExercises: (ExerciseTemplate)[] = [];
+        allDocs.forEach(doc => {
+            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            exercise.thisObjectID = doc.id;
+            arrayOfExercises.push(exercise);
+        });
+        return arrayOfExercises;
+    }
+
+    /**
+     * Gets all the exercises from the database
      * @param field the field of the object to order by
      * @param direction the direction to order by (ascending or descending)
      * @param maxEntries (optional) the total amount of entries to fetch
