@@ -1,0 +1,15 @@
+<ion-datetime presentation="date" (ionChange)="onDateChange($event)"></ion-datetime>
+<ion-row class="ion-padding-horizontal ion-padding-top">
+    <ion-col size="6">
+        <ion-button [fill]="!wasPresent ? 'solid' : 'outline'" expand="block" (click)="wasPresent = false">Falta</ion-button>
+    </ion-col>
+    <ion-col size="6">
+        <ion-button [fill]="wasPresent ? 'solid' : 'outline'" expand="block" (click)="wasPresent = true">Presença</ion-button>
+    </ion-col>
+</ion-row>
+<ion-row class="ion-justify-content-end">
+    <ion-item color="none" lines="none">
+        <ion-button fill="clear" (click)="dismissPopover(false)">Cancelar</ion-button>
+        <ion-button fill="clear" (click)="dismissPopover(true)" style="width: 3rem" [disabled]="!dateAsString">Ok</ion-button>
+    </ion-item>
+</ion-row>
