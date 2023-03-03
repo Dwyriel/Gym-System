@@ -31,7 +31,7 @@ export class PractitionerProfilePage {
             await this.practitionerService.GetPractitionersPresences(this.practitionerInfo!.presenceLogID)
                 .then(result => this.practitionerInfo!.presenceLog = result).catch(() => errorOccurred = true);
         if (errorOccurred)
-            await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger")
+            await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
         this.isLoading = false;
     }
 

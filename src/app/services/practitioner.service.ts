@@ -190,9 +190,10 @@ export class PractitionerService {
     /**
      * Gets all the exercises of a practitioner
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
+     * @param fromCache if the doc should be loaded from cache or not
      */
-    public async GetPractitionersExercises(id: string) {
-        const doc = await getDoc(this.docExerShort(id));
+    public async GetPractitionersExercises(id: string, fromCache: boolean = false) {
+        const doc = fromCache ? await getDocFromCache(this.docExerShort(id)) : await getDoc(this.docExerShort(id));
         if (!doc.exists())
             return Promise.reject();
         let exercises: Exercise[] = (doc.data() as { items: Exercise[] }).items;
@@ -208,9 +209,10 @@ export class PractitionerService {
     /**
      * Gets all the presences of a practitioner
      * @param id the id of the array of presences (aka practitioner.presenceLogID)
+     * @param fromCache if the doc should be loaded from cache or not
      */
-    public async GetPractitionersPresences(id: string) {
-        const doc = await getDoc(this.docPresShort(id));
+    public async GetPractitionersPresences(id: string, fromCache: boolean = false) {
+        const doc = fromCache ? await getDocFromCache(this.docPresShort(id)) : await getDoc(this.docPresShort(id));
         if (!doc.exists())
             return Promise.reject();
         let data = (doc.data() as { items: { date: number, wasPresent: boolean }[] }).items
