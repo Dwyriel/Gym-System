@@ -35,11 +35,11 @@ export class PractitionerExercisePage {
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         let errorOccurred = false;
         await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
-        await this.exercisesService.GetAllExercises().then(exercises => this.allExercises = exercises).catch(() => errorOccurred = true);
         if (errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
             return
         }
+        this.allExercises = await this.exercisesService.GetAllExercises();
         await this.populateExerciseList();
     }
 
