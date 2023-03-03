@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, docData, endAt, Firestore, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
+import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, Firestore, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
 import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
@@ -196,8 +196,12 @@ export class PractitionerService {
         if (!doc.exists())
             return Promise.reject();
         let exercises: Exercise[] = (doc.data() as { items: Exercise[] }).items;
-        for (let i = 0; i < exercises.length; i++)
-            exercises[i].exercise = await this.exercisesService.GetExercise(exercises[i].exerciseID);
+        for (let i = 0; i < exercises.length; i++) {
+            let errorOccurred = false;
+            await this.exercisesService.GetExerciseFromCache(exercises[i].exerciseID).then(value => exercises[i].exercise = value).catch(() => errorOccurred = true);
+            if (errorOccurred)
+                exercises[i].exercise = await this.exercisesService.GetExercise(exercises[i].exerciseID);
+        }
         return Promise.resolve(exercises);
     }
 
