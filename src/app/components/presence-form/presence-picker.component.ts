@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {PopoverController} from "@ionic/angular";
 
 @Component({
@@ -8,12 +8,18 @@ import {PopoverController} from "@ionic/angular";
 })
 export class PresencePickerComponent implements OnInit {
 
+    @Input("date") public date?: Date;
+    @Input("wasPresent") public prevPresence?: boolean;
+
     public wasPresent = true;
     public dateAsString?: string;
 
     constructor(private popoverController: PopoverController) { }
 
-    ngOnInit() {}
+    ngOnInit() {
+        if(this.prevPresence !== undefined)
+            this.wasPresent = this.prevPresence;
+    }
 
     dismissPopover(sendData: boolean) {
         if(!sendData) {

@@ -1,4 +1,4 @@
-<ion-datetime presentation="date" (ionChange)="onDateChange($event)"></ion-datetime>
+<ion-datetime presentation="date" (ionChange)="onDateChange($event)" [value]="date?.toISOString()"></ion-datetime>
 <ion-row class="ion-padding-horizontal ion-padding-top">
     <ion-col size="6">
         <ion-button [fill]="!wasPresent ? 'solid' : 'outline'" expand="block" (click)="wasPresent = false">Falta</ion-button>
