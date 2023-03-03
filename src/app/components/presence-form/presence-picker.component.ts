@@ -24,6 +24,8 @@ export class PresencePickerComponent implements OnInit {
         this.maxDay = new Date().toISOString();
         if (this.prevPresence !== undefined)
             this.wasPresent = this.prevPresence;
+        if(this.date !== undefined)
+            this.dateAsString = this.date.toISOString();
         PresencePickerComponent.dates = this.datesToRestrict;
     }
 
