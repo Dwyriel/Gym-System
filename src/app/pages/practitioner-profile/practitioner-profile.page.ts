@@ -16,6 +16,7 @@ export class PractitionerProfilePage {
     public isLoading: boolean = false;
     public practitionerID: string | null = null;
 
+    //todo load presences, change button icon accordingly to today's checkin
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private alertService: AlertService) { }
 
     async ionViewWillEnter() {
@@ -23,11 +24,15 @@ export class PractitionerProfilePage {
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
+        let errorOccurred = false;
         await this.practitionerService.GetPractitioner(this.practitionerID!)
-            .then(result => this.practitionerInfo = result)
-            .catch(async () => this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger"));
+            .then(result => this.practitionerInfo = result).catch(async () => errorOccurred = true);
+        if (!errorOccurred)
+            await this.practitionerService.GetPractitionersPresences(this.practitionerInfo!.presenceLogID)
+                .then(result => this.practitionerInfo!.presenceLog = result).catch(() => errorOccurred = true);
+        if (errorOccurred)
+            await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger")
         this.isLoading = false;
-
     }
 
     ionViewDidLeave() {
@@ -46,5 +51,10 @@ export class PractitionerProfilePage {
             await this.alertService.ShowToast("Aluno apagado com sucesso", undefined, "primary");
         }).catch(async () => await this.alertService.ShowToast("Aluno não pode ser apagado", undefined, "danger"));
         this.isLoading = false;
+    }
+
+    async addPresence() {
+        await this.practitionerService.AddPresence(this.practitionerInfo!.presenceLogID, {date: new Date(Date.now()), wasPresent: true});
+        //todo popover, check if checkin already happened, delete older checkin if so then replace it
     }
 }
