@@ -9,27 +9,47 @@ import {PopoverController} from "@ionic/angular";
 export class PresencePickerComponent implements OnInit {
 
     @Input("date") public date?: Date;
+    @Input("datesToRestrict") public datesToRestrict?: Date[];
     @Input("wasPresent") public prevPresence?: boolean;
+
+    public static dates?: Date[];
 
     public wasPresent = true;
     public dateAsString?: string;
+    public maxDay?: string;
 
     constructor(private popoverController: PopoverController) { }
 
     ngOnInit() {
-        if(this.prevPresence !== undefined)
+        this.maxDay = new Date().toISOString();
+        if (this.prevPresence !== undefined)
             this.wasPresent = this.prevPresence;
+        PresencePickerComponent.dates = this.datesToRestrict;
+    }
+
+    ngOnDestroy() {
+        PresencePickerComponent.dates = undefined;
     }
 
     dismissPopover(sendData: boolean) {
-        if(!sendData) {
+        if (!sendData) {
             this.popoverController.dismiss();
             return;
         }
         this.popoverController.dismiss({presence: {date: new Date(Date.parse(this.dateAsString!)), wasPresent: this.wasPresent}});
     }
 
-    onDateChange(event: any){
+    onDateChange(event: any) {
         this.dateAsString = event.detail.value;
+    }
+
+    disableSpecificDays(dateString: string) {
+        const date = new Date(dateString);
+        if (!PresencePickerComponent.dates)
+            return true;
+        for (let restrictDate of PresencePickerComponent.dates)
+            if (date.toDateString() === restrictDate.toDateString())
+                return false;
+        return true;
     }
 }
