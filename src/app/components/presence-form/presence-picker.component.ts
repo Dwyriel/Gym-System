@@ -27,8 +27,6 @@ export class PresencePickerComponent implements OnInit {
         if (this.date !== undefined)
             this.dateAsString = this.date.toISOString();
         PresencePickerComponent.dates = this.datesToRestrict;
-        for (let restrictDate of PresencePickerComponent.dates!)
-            console.log(restrictDate.toISOString())
     }
 
     ngOnDestroy() {
