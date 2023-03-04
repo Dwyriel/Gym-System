@@ -103,9 +103,11 @@ export class PractitionerExercisePage {
                     rest: value.data.updatedWorkload!.rest,
                     load: value.data.updatedWorkload!.load
                 };
-                await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise)
-                    .catch(async () => await this.alertService.ShowToast("Não foi possível editar o exercício", undefined, "danger"));
-                await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise);
+                let errorOcurred = false;
+                await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise).catch(() => errorOcurred = true);
+                await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise).catch(() => errorOcurred = true);
+                if (errorOcurred)
+                    await this.alertService.ShowToast("Não foi possível editar o exercício", undefined, "danger");
                 await this.populateExerciseList();
             }
         });
