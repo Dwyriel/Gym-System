@@ -57,7 +57,7 @@ export class PractitionerPresencePage {
         else if (selection == 1)
             await this.deletePresenceBtn(presence);
         else if (selection == 2)
-            return;
+            await this.editPresenceBtn(presence);
     }
 
     private async deletePresenceBtn(presence: Presence) {
@@ -70,15 +70,35 @@ export class PractitionerPresencePage {
     }
 
     async editPresenceBtn(presence: Presence) {
-        let editedPresence = {date: new Date(), wasPresent: true};//todo actual edited presence;
-        await this.practitionerService.AddPresence(this.practitioner.presenceLogID, editedPresence);//if error, return;
-        await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence);
-        await this.refreshListAfterChange();
+        let datesToRestrict = this.restrictedCalendarDates();
+        const editPresencePopover = await this.popoverController.create({
+            component: PresencePickerComponent,
+            mode: 'md',
+            componentProps: {
+                showOnlyPresence: true,
+                wasPresent: presence.wasPresent,
+                datesToRestrict: datesToRestrict
+            },
+            animated: true
+        });
+
+        editPresencePopover.onDidDismiss().then(async value => {
+            if (value.data) {
+                let editedPresence: Presence = {date: presence.date, wasPresent: value.data.presence.wasPresent};
+                let errorOcurred = false;
+                await this.practitionerService.AddPresence(this.practitioner.presenceLogID, editedPresence).catch(() => errorOcurred = true);
+                await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence).catch(() => errorOcurred = true);
+                if (errorOcurred)
+                    return; //TODO: make a toast to inform the error
+                await this.refreshListAfterChange();
+            }
+        });
+
+        await editPresencePopover.present();
     }
 
     public async createPresenceBtn() {
-        let datesToRestrict: Date[] = [];
-        this.presenceLog.forEach(presence => datesToRestrict.push(presence.date));
+        let datesToRestrict = this.restrictedCalendarDates();
         const createPresencePopover = await this.popoverController.create({
             component: PresencePickerComponent,
             mode: 'md',
@@ -114,7 +134,13 @@ export class PractitionerPresencePage {
     private async getPresences(fromCache: boolean = false){
         await this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, fromCache).then(returnedValue => {
             this.presenceLog = returnedValue.sort((firstElement, secondElement) => secondElement.date.getTime() - firstElement.date.getTime());
-        });//todo catch
+        });//TODO: catch
+    }
+
+    private restrictedCalendarDates() {
+        let datesToRestrict: Date[] = [];
+        this.presenceLog.forEach(presence => datesToRestrict.push(presence.date));
+        return datesToRestrict;
     }
 
     private async refreshListAfterChange() {
