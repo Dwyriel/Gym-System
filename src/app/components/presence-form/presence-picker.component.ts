@@ -11,6 +11,8 @@ export class PresencePickerComponent implements OnInit {
     @Input("date") public date?: Date;
     @Input("datesToRestrict") public datesToRestrict?: Date[];
     @Input("wasPresent") public prevPresence?: boolean;
+    @Input("showOnlyDate") public showOnlyDate?: boolean;
+    @Input("showOnlyPresence") public showOnlyPresence?: boolean;
 
     public static dates?: Date[];
 
@@ -22,11 +24,17 @@ export class PresencePickerComponent implements OnInit {
 
     ngOnInit() {
         this.maxDay = new Date().toISOString();
-        if (this.prevPresence !== undefined)
-            this.wasPresent = this.prevPresence;
         if (this.date !== undefined)
             this.dateAsString = this.date.toISOString();
         PresencePickerComponent.dates = this.datesToRestrict;
+        if (this.prevPresence !== undefined)
+            this.wasPresent = this.prevPresence;
+        this.showOnlyDate = this.showOnlyDate !== undefined ? this.showOnlyDate : false;
+        this.showOnlyPresence = this.showOnlyPresence !== undefined ? this.showOnlyPresence : false;
+        if (this.showOnlyDate && this.showOnlyPresence) {
+            this.showOnlyDate = false;
+            this.showOnlyPresence = false;
+        }
     }
 
     ngOnDestroy() {
@@ -38,7 +46,12 @@ export class PresencePickerComponent implements OnInit {
             this.popoverController.dismiss();
             return;
         }
-        this.popoverController.dismiss({presence: {date: new Date(Date.parse(this.dateAsString!)), wasPresent: this.wasPresent}});
+        this.popoverController.dismiss({
+            presence: {
+                date: this.dateAsString ? new Date(Date.parse(this.dateAsString!)) : undefined,
+                wasPresent: !this.showOnlyDate ? this.wasPresent : undefined
+            }
+        });
     }
 
     onDateChange(event: any) {
