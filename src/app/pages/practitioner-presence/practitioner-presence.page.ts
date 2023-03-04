@@ -5,7 +5,6 @@ import {AccountService} from "../../services/account.service";
 import {PractitionerService} from "../../services/practitioner.service";
 import {Practitioner} from "../../classes/practitioner";
 import {Presence} from "../../interfaces/frequency-log";
-import {SelectExerciseAndWorkloadComponent} from "../../components/select-exercise-and-workload/select-exercise-and-workload.component";
 import {PopoverController} from "@ionic/angular";
 import {PresencePickerComponent} from "../../components/presence-form/presence-picker.component";
 import {AlertService} from "../../services/alert.service";
