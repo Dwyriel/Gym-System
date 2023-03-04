@@ -73,7 +73,7 @@ export class PractitionerService {
     }
 
     /**
-     * Updates an existing practitioner's exercise array on the database.
+     * Updates an existing practitioner's exercise array on the database, adding a new entry.
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
      * @param exercise the exercise that will be added
      */
@@ -90,11 +90,12 @@ export class PractitionerService {
     }
 
     /**
-     * Updates an existing practitioner's presence array on the database.
+     * Updates an existing practitioner's presence array on the database, adding a new entry. time will always be changed to 12pm before running the query.
      * @param id the id of the array of presences (aka practitioner.presenceLogID)
      * @param presence the presence that will be added
      */
     public async AddPresence(id: string, presence: Presence) {
+        presence.date.setHours(12, 0, 0);
         return updateDoc(this.docPresShort(id), {
             items: arrayUnion({
                 date: presence.date.getTime(),
