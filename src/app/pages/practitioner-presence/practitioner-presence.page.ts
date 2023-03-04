@@ -83,8 +83,7 @@ export class PractitionerPresencePage {
             component: PresencePickerComponent,
             mode: 'md',
             componentProps: {
-                date: new Date(Date.now()),
-                wasPresent: false,
+                wasPresent: true,
                 datesToRestrict: datesToRestrict
             },
             animated: true
