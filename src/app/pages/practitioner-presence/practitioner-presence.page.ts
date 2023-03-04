@@ -8,6 +8,7 @@ import {Presence} from "../../interfaces/frequency-log";
 import {PopoverController} from "@ionic/angular";
 import {PresencePickerComponent} from "../../components/presence-form/presence-picker.component";
 import {AlertService} from "../../services/alert.service";
+import {AppInfoService} from "../../services/app-info.service";
 
 @Component({
     selector: 'app-practitioner-presence',
@@ -18,6 +19,7 @@ export class PractitionerPresencePage {
     private practitioner: Practitioner = new Practitioner();
     private practitionerID: string | null = null;
 
+    public appInfo = AppInfoService.AppInfo
     public monthFilter?: string;
     public yearFilter?: string;
     public availableYearsToFilter: string[] = [];
@@ -58,11 +60,12 @@ export class PractitionerPresencePage {
             return;
     }
 
-    async deletePresenceBtn(presence: Presence) {
+    private async deletePresenceBtn(presence: Presence) {
         let confirmation = await this.alertService.ConfirmationAlert("Deseja remover esta presença?", undefined, "Não", "Sim");
         if (!confirmation)
             return;
-        await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence);
+        await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence)
+            .catch(async () => await this.alertService.ShowToast("Não foi possível remover presença", undefined, "danger"));
         await this.refreshListAfterChange();
     }
 
@@ -96,7 +99,20 @@ export class PractitionerPresencePage {
         await createPresencePopover.present();
     }
 
-    async getPresences(fromCache: boolean = false){
+    public filterPresenceLog() {
+        this.filteredPresenceLog = [];
+        let monthFilteredLogs: Presence[] = [];
+        this.presenceLog.forEach(presence => {
+            if (presence.date.getMonth() == Number(this.monthFilter))
+                monthFilteredLogs.push(presence);
+        });
+        monthFilteredLogs.forEach(presence => {
+            if (presence.date.getFullYear() == Number(this.yearFilter))
+                this.filteredPresenceLog.push(presence);
+        });
+    }
+
+    private async getPresences(fromCache: boolean = false){
         await this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, fromCache).then(returnedValue => {
             this.presenceLog = returnedValue.sort((firstElement, secondElement) => secondElement.date.getTime() - firstElement.date.getTime());
         });//todo catch
@@ -121,19 +137,6 @@ export class PractitionerPresencePage {
         const todayDate = new Date;
         this.monthFilter = (todayDate.getMonth()).toString();
         this.yearFilter = (todayDate.getFullYear()).toString();
-    }
-
-    public filterPresenceLog() {
-        this.filteredPresenceLog = [];
-        let monthFilteredLogs: Presence[] = [];
-        this.presenceLog.forEach(presence => {
-            if (presence.date.getMonth() == Number(this.monthFilter))
-                monthFilteredLogs.push(presence);
-        });
-        monthFilteredLogs.forEach(presence => {
-            if (presence.date.getFullYear() == Number(this.yearFilter))
-                this.filteredPresenceLog.push(presence);
-        });
     }
 
     public getDayOfWeek(num: number): string {

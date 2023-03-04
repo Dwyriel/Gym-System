@@ -4,16 +4,11 @@
             <ion-back-button defaultHref="/practitioner-list" text="">
             </ion-back-button>
         </ion-buttons>
-        <ion-buttons slot="end">
-            <ion-button (click)="createPresenceBtn()">
-                <ion-icon name="add-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
         <ion-title>Registro de Presenças</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content fullscreen="true">
     <div class="webbrowser">
             <ion-item>
                 <ion-item lines="none">
@@ -32,10 +27,14 @@
                         <ion-select-option value="11">Dezembro</ion-select-option>
                     </ion-select>
                 </ion-item>
-                <ion-item lines="none" style="margin-left: auto">
+                <ion-item lines="none">
                     <ion-select [(ngModel)]="yearFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()">
                         <ion-select-option *ngFor="let year of availableYearsToFilter" value="{{year}}">{{year}}</ion-select-option>
                     </ion-select>
+                </ion-item>
+                <ion-item lines="none" button="true" (click)="createPresenceBtn()" style="margin-left: auto;">
+                    <ion-text style="padding: 0 4px" *ngIf="appInfo!.appWidth > 360">Marcar dia</ion-text>
+                    <ion-icon name="add-outline"></ion-icon>
                 </ion-item>
             </ion-item>
             <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!(filteredPresenceLog.length > 0)">
