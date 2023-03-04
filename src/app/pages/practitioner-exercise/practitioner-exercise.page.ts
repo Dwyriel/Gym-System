@@ -33,8 +33,10 @@ export class PractitionerExercisePage {
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-        let errorOccurred = false;
-        await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);//TODO from cache
+        let cacheError = false, errorOccurred = false;
+        await this.practitionerService.GetPractitionerFromCache(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => cacheError = true);
+        if(cacheError)
+            await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
         if (errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
             return
@@ -110,13 +112,13 @@ export class PractitionerExercisePage {
     }
 
     async updateEditedExercise(oldExercise: Exercise, newExercise: Exercise) {
-        let errorOcurred = false;
+        let errorOccurred = false;
         if (oldExercise.series == newExercise.series && oldExercise.repetition == newExercise.repetition && oldExercise.rest == newExercise.rest && oldExercise.load == newExercise.load)
             return;
-        await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise).catch(() => errorOcurred = true);
-        if (!errorOcurred)
-            await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise).catch(() => errorOcurred = true);
-        if (errorOcurred)
+        await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise).catch(() => errorOccurred = true);
+        if (!errorOccurred)
+            await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise).catch(() => errorOccurred = true);
+        if (errorOccurred)
             await this.alertService.ShowToast("Não foi possível editar o exercício", undefined, "danger");
         await this.populateExerciseList();
     }
@@ -132,7 +134,7 @@ export class PractitionerExercisePage {
         this.isLoading = false;
     }
 
-    private async populateExerciseList(fromCache = false) {//TODO from cache
+    private async populateExerciseList() {
         this.isLoading = true;
         this.practitionerExercises = await this.practitionerService.GetPractitionersExercises(this.practitionerInfo!.exercisesID);
         this.hasExercises = (typeof this.practitionerExercises != "undefined" && this.practitionerExercises.length > 0);
