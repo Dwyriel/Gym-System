@@ -82,11 +82,12 @@ export class PractitionerPresencePage {
             animated: true
         });
         editPresencePopover.onDidDismiss().then(async value => {
-            if (value.data) {
+            if (value.data && value.data.presence.wasPresent != presence.wasPresent) {
                 let editedPresence: Presence = {date: presence.date, wasPresent: value.data.presence.wasPresent};
                 let errorOcurred = false;
                 await this.practitionerService.AddPresence(this.practitioner.presenceLogID, editedPresence).catch(() => errorOcurred = true);
-                await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence).catch(() => errorOcurred = true);
+                if (!errorOcurred)
+                    await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence).catch(() => errorOcurred = true);
                 if (errorOcurred)
                     await this.alertService.ShowToast("Não foi possível editar a marcação da data", undefined, "danger");
                 await this.refreshListAfterChange();
