@@ -26,7 +26,7 @@ export class PractitionerPresencePage {
     public presenceLog: Presence[] = [];
     public filteredPresenceLog: Presence[] = [];
 
-    constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService,  private popoverController: PopoverController, private alertService: AlertService) { }
+    constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private popoverController: PopoverController, private alertService: AlertService) { }
 
     async ionViewWillEnter() {
         if (!(await waitForFirebaseResponse(this.accountService)))
@@ -34,7 +34,14 @@ export class PractitionerPresencePage {
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         if (!(await this.getPractitioner()))
             return;
-        await this.getPresences(true);
+        let cacheError = false, errorOccurred = false;
+        await this.getPresences(true).catch(() => cacheError = true);
+        if (cacheError)
+            await this.getPresences().catch(() => errorOccurred = true);
+        if (errorOccurred) {
+            await this.alertService.ShowToast("Um erro ocorreu ao receber dados, atualize a pagina", undefined, "danger");
+            return;
+        }
         this.getPossibleYearsToFilters();
         this.startFilters();
         this.filterPresenceLog();
@@ -130,10 +137,10 @@ export class PractitionerPresencePage {
         });
     }
 
-    private async getPresences(fromCache: boolean = false){
-        await this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, fromCache).then(returnedValue => {
+    private async getPresences(fromCache: boolean = false) {
+        return this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, fromCache).then(returnedValue => {
             this.presenceLog = returnedValue.sort((firstElement, secondElement) => secondElement.date.getTime() - firstElement.date.getTime());
-        });//TODO: catch
+        });
     }
 
     private restrictedCalendarDates() {
@@ -143,7 +150,12 @@ export class PractitionerPresencePage {
     }
 
     private async refreshListAfterChange() {
-        await this.getPresences();
+        let errorOccurred = false;
+        await this.getPresences().catch(() => errorOccurred = true);
+        if (errorOccurred) {
+            await this.alertService.ShowToast("Um erro ocorreu ao receber dados, atualize a pagina", undefined, "danger");
+            return;
+        }
         this.getPossibleYearsToFilters();
         this.filterPresenceLog();
     }
