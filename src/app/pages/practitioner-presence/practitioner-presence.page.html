@@ -4,37 +4,49 @@
             <ion-back-button defaultHref="/practitioner-list" text="">
             </ion-back-button>
         </ion-buttons>
+        <ion-buttons slot="end">
+            <ion-button (click)="createPresenceBtn()">
+                <ion-icon name="add-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
         <ion-title>Registro de Presenças</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
     <div class="webbrowser">
-        <ion-grid style="max-width: 400px">
-            <ion-row class="flex-no-wrap">
-                <ion-item class="full-width" button="true">
-                    <div class="full-width ion-text-center bold-text">
-                        Marcar presença
-                    </div>
+            <ion-item>
+                <ion-item lines="none">
+                    <ion-select [(ngModel)]="monthFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()">
+                        <ion-select-option value="0">Janeiro</ion-select-option>
+                        <ion-select-option value="1">Fevereiro</ion-select-option>
+                        <ion-select-option value="2">Março</ion-select-option>
+                        <ion-select-option value="3">Abril</ion-select-option>
+                        <ion-select-option value="4">Maio</ion-select-option>
+                        <ion-select-option value="5">Junho</ion-select-option>
+                        <ion-select-option value="6">Julho</ion-select-option>
+                        <ion-select-option value="7">Agosto</ion-select-option>
+                        <ion-select-option value="8">Setembro</ion-select-option>
+                        <ion-select-option value="9">Outubro</ion-select-option>
+                        <ion-select-option value="10">Novembro</ion-select-option>
+                        <ion-select-option value="11">Dezembro</ion-select-option>
+                    </ion-select>
                 </ion-item>
-            </ion-row>
-            <ion-row class="flex-no-wrap">
-                <ion-item lines="none" class="bold-text full-width" >
-                    <div class="big-cell">Data</div>
-                    <div class="ion-text-center align-text-middle small-cell">Presença</div>
-                    <div class="align-text-middle flex-grow-1"></div>
+                <ion-item lines="none" style="margin-left: auto">
+                    <ion-select [(ngModel)]="yearFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()">
+                        <ion-select-option *ngFor="let year of availableYearsToFilter" value="{{year}}">{{year}}</ion-select-option>
+                    </ion-select>
                 </ion-item>
+            </ion-item>
+            <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!(filteredPresenceLog.length > 0)">
+                <ion-note class="ion-margin-top">Nenhuma presença ou falta neste período</ion-note>
             </ion-row>
-
-            <ion-row *ngFor="let presence of presenceLog" class="flex-no-wrap">
-                <ion-item class="full-width" lines="none" (click)="editPresence(presence)">
-                    <div class="align-text-middle big-cell"> {{presence.date.toLocaleDateString()}} </div>
-                    <div class="ion-text-center align-text-middle small-cell"> {{presence.wasPresent ? 'P' : 'F'}} </div>
-                    <ion-item lines="none" button="true" class="ion-text-center align-text-middle flex-grow-1" (click)="deletePresence($event, presence)">
-                        <ion-icon name="trash-outline"></ion-icon>
-                    </ion-item>
+            <ion-list *ngIf="filteredPresenceLog.length > 0">
+                <ion-item button="true" lines="full" *ngFor="let presence of filteredPresenceLog" (click)="OnClick(presence)">
+                    <ion-note slot="start">{{getDayOfWeek(presence.date.getDay())}}</ion-note>
+                    <ion-text>Dia {{presence.date.getDate()}}/{{presence.date.getMonth()+1}}</ion-text>
+                    <ion-note slot="end">{{presence.wasPresent ? "Presente" : "Falta"}}</ion-note>
                 </ion-item>
-            </ion-row>
-        </ion-grid>
+            </ion-list>
     </div>
 </ion-content>
