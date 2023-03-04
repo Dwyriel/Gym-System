@@ -52,9 +52,4 @@ export class PractitionerProfilePage {
         }).catch(async () => await this.alertService.ShowToast("Aluno não pode ser apagado", undefined, "danger"));
         this.isLoading = false;
     }
-
-    async addPresence() {
-        await this.practitionerService.AddPresence(this.practitionerInfo!.presenceLogID, {date: new Date(Date.now()), wasPresent: true});
-        //todo popover, check if checkin already happened, delete older checkin if so then replace it
-    }
 }

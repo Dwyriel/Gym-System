@@ -18,9 +18,6 @@
                 <h1 class="ion-margin-bottom text-div"> {{practitionerInfo?.name}} </h1>
                 <div class="side-btn-margin">
                     <ion-buttons>
-                        <ion-button (click)="addPresence()">
-                            <ion-icon [name]="true ? 'clipboard-outline' : 'checkmark-circle-outline'"></ion-icon>
-                        </ion-button>
                         <ion-button routerLink="/practitioner-form/{{practitionerID}}">
                             <ion-icon name="pencil-outline"></ion-icon>
                         </ion-button>
