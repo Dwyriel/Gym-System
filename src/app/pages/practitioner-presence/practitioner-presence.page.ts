@@ -65,7 +65,7 @@ export class PractitionerPresencePage {
         if (!confirmation)
             return;
         await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence)
-            .catch(async () => await this.alertService.ShowToast("Não foi possível remover presença", undefined, "danger"));
+            .catch(async () => await this.alertService.ShowToast("Não foi possível remover a marcação da data", undefined, "danger"));
         await this.refreshListAfterChange();
     }
 
@@ -81,7 +81,6 @@ export class PractitionerPresencePage {
             },
             animated: true
         });
-
         editPresencePopover.onDidDismiss().then(async value => {
             if (value.data) {
                 let editedPresence: Presence = {date: presence.date, wasPresent: value.data.presence.wasPresent};
@@ -89,11 +88,10 @@ export class PractitionerPresencePage {
                 await this.practitionerService.AddPresence(this.practitioner.presenceLogID, editedPresence).catch(() => errorOcurred = true);
                 await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence).catch(() => errorOcurred = true);
                 if (errorOcurred)
-                    return; //TODO: make a toast to inform the error
+                    await this.alertService.ShowToast("Não foi possível editar a marcação da data", undefined, "danger");
                 await this.refreshListAfterChange();
             }
         });
-
         await editPresencePopover.present();
     }
 
@@ -108,10 +106,10 @@ export class PractitionerPresencePage {
             },
             animated: true
         });
-
         createPresencePopover.onDidDismiss().then(async value => {
             if (value.data) {
-                await this.practitionerService.AddPresence(this.practitioner.presenceLogID, value.data.presence);
+                await this.practitionerService.AddPresence(this.practitioner.presenceLogID, value.data.presence)
+                    .catch(async () => await this.alertService.ShowToast("Não foi possível criar a marcação da data", undefined, "danger"));
                 await this.refreshListAfterChange();
             }
         });
