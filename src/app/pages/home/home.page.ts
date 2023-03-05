@@ -1,4 +1,6 @@
 import {Component} from '@angular/core';
+import {PractitionerService} from "../../services/practitioner.service";
+import {ExercisesService} from "../../services/exercises.service";
 
 @Component({
     selector: 'app-home',
@@ -6,7 +8,16 @@ import {Component} from '@angular/core';
     styleUrls: ['./home.page.scss'],
 })
 export class HomePage {
+    public numberOfPractitioners?: number;
+    public numberOfExercises?: number;
+    public isLoading = false;
 
-    constructor() { }
+    constructor(private practitionerService: PractitionerService, private exercisesService: ExercisesService) { }
 
+    async ionViewWillEnter() {
+        this.isLoading = true;
+        this.numberOfPractitioners = await this.practitionerService.GetPractitionerCount();
+        this.numberOfExercises = await this.exercisesService.GetExerciseCount();
+        this.isLoading = false;
+    }
 }

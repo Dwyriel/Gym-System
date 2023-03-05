@@ -9,36 +9,49 @@
 </ion-header>
 
 <ion-content>
-    <div class="spinner-div" *ngIf="isLoading">
-        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
-    </div>
-    <div class="webbrowser" *ngIf="!isLoading">
+    <div class="webbrowser">
         <ion-list class="ion-padding">
             <div class="flex">
-                <h1 class="ion-margin-bottom text-div"> {{practitionerInfo?.name}} </h1>
+                <ion-skeleton-text animated="true" class="ion-margin-bottom text-div header-skeleton" *ngIf="isLoading"></ion-skeleton-text>
+                <h1 class="ion-margin-bottom text-div" *ngIf="!isLoading"> {{practitionerInfo?.name}} </h1>
                 <div class="side-btn-margin">
                     <ion-buttons>
-                        <ion-button routerLink="/practitioner-form/{{practitionerID}}">
+                        <ion-button routerLink="/practitioner-form/{{practitionerID}}" [disabled]="isLoading">
                             <ion-icon name="pencil-outline"></ion-icon>
                         </ion-button>
-                        <ion-button (click)="deletePracBtn()">
+                        <ion-button (click)="deletePracBtn()" [disabled]="isLoading">
                             <ion-icon name="trash-outline"></ion-icon>
                         </ion-button>
                     </ion-buttons>
                 </div>
             </div>
+
             <div>
                 <p class="bold-text">Objetivos</p>
-                <p class="pre-wrap" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
-                <ion-note *ngIf="!practitionerInfo?.objectives">Nenhum objetivo listado</ion-note>
+                <div *ngIf="isLoading">
+                    <ion-skeleton-text animated="true" class="big-text-skeleton" ></ion-skeleton-text>
+                    <ion-skeleton-text animated="true" class="small-text-skeleton" ></ion-skeleton-text>
+                </div>
+                <div *ngIf="!isLoading">
+                    <p class="pre-wrap" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
+                    <ion-note *ngIf="!practitionerInfo?.objectives">Nenhum objetivo listado</ion-note>
+                </div>
+
                 <p class="bold-text">Observações</p>
-                <p class="pre-wrap" *ngIf="practitionerInfo?.observations">{{practitionerInfo?.observations}}</p>
-                <ion-note *ngIf="!practitionerInfo?.observations">Nenhuma observação listada</ion-note>
+                <div *ngIf="isLoading">
+                    <ion-skeleton-text animated="true" class="big-text-skeleton" ></ion-skeleton-text>
+                    <ion-skeleton-text animated="true" class="small-text-skeleton" ></ion-skeleton-text>
+                    <ion-skeleton-text animated="true" class="smallest-text-skeleton" ></ion-skeleton-text>
+                </div>
+                <div *ngIf="!isLoading">
+                    <p class="pre-wrap" *ngIf="practitionerInfo?.observations">{{practitionerInfo?.observations}}</p>
+                    <ion-note *ngIf="!practitionerInfo?.observations">Nenhuma observação listada</ion-note>
+                </div>
             </div>
         </ion-list>
         <ion-row class="ion-justify-content-center bottom-items-margin">
-            <ion-button class="full-width margin-top-1" routerLink="/practitioner-exercise/{{practitionerID}}">Exercícios</ion-button>
-            <ion-button class="full-width margin-top-1" routerLink="/practitioner-presence/{{practitionerID}}">Registro de Presenças</ion-button>
+            <ion-button class="full-width margin-top-1" routerLink="/practitioner-exercise/{{practitionerID}}" [disabled]="isLoading">Exercícios</ion-button>
+            <ion-button class="full-width margin-top-1" routerLink="/practitioner-presence/{{practitionerID}}" [disabled]="isLoading">Registro de Presenças</ion-button>
         </ion-row>
     </div>
 </ion-content>
