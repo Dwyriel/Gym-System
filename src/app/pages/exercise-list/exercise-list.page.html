@@ -9,7 +9,7 @@
     </ion-header>
     <ion-content>
         <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesArrayIsEmpty && !fetchingData">
-            <ion-note>Não há nenhum exercício registrado</ion-note>
+            <ion-note class="ion-margin-top">Não há nenhum exercício registrado</ion-note>
         </ion-row>
         <div class="webbrowser has-add-fab-on-bottom" *ngIf="!exercisesArrayIsEmpty && !fetchingData">
             <ion-item>
@@ -19,7 +19,7 @@
                 <ion-input lines="full" placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
             </ion-item>
             <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesByCategory && exercisesByCategory.length < 1">
-                <ion-note>Nenhum exercício encontrado</ion-note>
+                <ion-note class="ion-margin-top">Nenhum exercício encontrado</ion-note>
             </ion-row>
             <ion-list *ngFor="let category of exercisesByCategory" lines="full">
                 <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
