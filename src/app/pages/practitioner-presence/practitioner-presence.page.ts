@@ -17,6 +17,7 @@ import {AppInfoService} from "../../services/app-info.service";
 })
 export class PractitionerPresencePage {
     private practitioner: Practitioner = new Practitioner();
+    private presenceLog: Presence[] = [];
 
     public readonly minWidthForFullText = 400;
     public practitionerID: string | null = null;
@@ -25,7 +26,7 @@ export class PractitionerPresencePage {
     public yearFilter?: string;
     public availableYears: string[] = [];
     public availableMonthsInYear: string[] = [];
-    public presenceLog: Presence[] = [];
+    public filteredPresenceLogByYear: Presence[] = [];
     public filteredPresenceLog: Presence[] = [];
 
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private popoverController: PopoverController, private alertService: AlertService) { }
@@ -44,9 +45,7 @@ export class PractitionerPresencePage {
             await this.alertService.ShowToast("Um erro ocorreu ao receber dados, atualize a pagina", undefined, "danger");
             return;
         }
-        this.startFilters();
         this.getPossibleYearsToFilter();
-        this.filterPresenceLog();
     }
 
     async getPractitioner() {
@@ -57,16 +56,69 @@ export class PractitionerPresencePage {
         return !errorOccurred;
     }
 
-    public async OnClick(presence?: Presence) {
-        if (!presence)
-            return;
+    private async getPresences(fromCache: boolean = false) {
+        return this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, fromCache).then(returnedValue => {
+            this.presenceLog = returnedValue.sort((firstElement, secondElement) => secondElement.date.getTime() - firstElement.date.getTime());
+        });
+    }
+
+    private getPossibleYearsToFilter() {
+        let years: string[] = [];
+        for (let presence of this.presenceLog)
+            if (!years.includes(presence.date.getFullYear().toString()))
+                years.push(presence.date.getFullYear().toString());
+        this.availableYears = years;
+        if (years.length > 0)
+            this.yearFilter = years[0];
+        this.yearFilterChanged();
+    }
+
+    private getPossibleMonthsToFilterInYear(presencesInYear: Presence[]) {
+        let monthsInYear: string[] = [];
+        for (let presenceInYear of presencesInYear) {
+            let monthNotPresent = true;
+            for (let month of monthsInYear)
+                if (month == presenceInYear.date.getMonth().toString()) {
+                    monthNotPresent = false;
+                    break;
+                }
+            if (monthNotPresent)
+                monthsInYear.push(presenceInYear.date.getMonth().toString());
+        }
+        this.availableMonthsInYear = monthsInYear;
+        if (monthsInYear.length > 0)
+            this.monthFilter = monthsInYear[0];
+    }
+
+    /* --- UI related events --- */
+    public yearFilterChanged() {
+        this.filteredPresenceLogByYear = [];
+        for (let presence of this.presenceLog)
+            if (presence.date.getFullYear() == Number(this.yearFilter))
+                this.filteredPresenceLogByYear.push(presence);
+        this.getPossibleMonthsToFilterInYear(this.filteredPresenceLogByYear);
+        this.monthFilterChanged();
+    }
+
+    public monthFilterChanged() {
+        this.filteredPresenceLog = [];
+        for (let presence of this.filteredPresenceLogByYear)
+            if (presence.date.getMonth() == Number(this.monthFilter))
+                this.filteredPresenceLog.push(presence);
+    }
+
+    public async onPresenceClick(presence: Presence) {
         const selection = await this.alertService.ConfirmationAlertThreeButtons("Editar ou excluir?", undefined, "Editar", "Excluir", "Cancelar");
-        if (selection == 0)
-            return;
-        else if (selection == 1)
-            await this.deletePresenceBtn(presence);
-        else if (selection == 2)
-            await this.editPresenceBtn(presence);
+        switch (selection) {
+            case 0:
+                return;
+            case 1:
+                await this.deletePresenceBtn(presence);
+                break;
+            case 2:
+                await this.editPresenceBtn(presence);
+                break;
+        }
     }
 
     private async deletePresenceBtn(presence: Presence) {
@@ -126,29 +178,9 @@ export class PractitionerPresencePage {
         await createPresencePopover.present();
     }
 
-    public filterPresenceLog() {
-        this.filteredPresenceLog = [];
-        let yearFilteredLogs: Presence[] = [];
-        this.presenceLog.forEach(presence => {
-            if (presence.date.getFullYear() == Number(this.yearFilter))
-                yearFilteredLogs.push(presence);
-        });
-        this.getPossibleMonthsToFilterInYear(yearFilteredLogs);
-        yearFilteredLogs.forEach(presence => {
-            if (presence.date.getMonth() == Number(this.monthFilter))
-                this.filteredPresenceLog.push(presence);
-        });
-    }
-
-    private async getPresences(fromCache: boolean = false) {
-        return this.practitionerService.GetPractitionersPresences(this.practitioner.presenceLogID, fromCache).then(returnedValue => {
-            this.presenceLog = returnedValue.sort((firstElement, secondElement) => secondElement.date.getTime() - firstElement.date.getTime());
-        });
-    }
-
     private restrictedCalendarDates() {
         let datesToRestrict: Date[] = [];
-        this.presenceLog.forEach(presence => datesToRestrict.push(presence.date));
+        for (let presence of this.presenceLog) datesToRestrict.push(presence.date);
         return datesToRestrict;
     }
 
@@ -160,72 +192,57 @@ export class PractitionerPresencePage {
             return;
         }
         this.getPossibleYearsToFilter();
-        this.filterPresenceLog();
-    }
-
-    private getPossibleYearsToFilter() {
-        let years: string[] = [];
-        this.presenceLog.forEach(presence => {
-            if (!years.includes(presence.date.getFullYear().toString()))
-                years.push(presence.date.getFullYear().toString());
-        });
-        this.availableYears = years;
-        if (!years.includes(this.yearFilter!))
-            this.yearFilter = years[years.length-1];
-    }
-
-    private getPossibleMonthsToFilterInYear(presencesInYear: Presence[]) {
-        let monthsInYear: string[] = [];
-        presencesInYear.forEach(presenceInYear => {
-            let monthNotPresent = true;
-            monthsInYear.forEach(month => {
-                if (month == presenceInYear.date.getMonth().toString()) {
-                    monthNotPresent = false;
-                    return;
-                }
-            });
-            if (monthNotPresent)
-                monthsInYear.push(presenceInYear.date.getMonth().toString());
-        });
-        this.availableMonthsInYear = monthsInYear;
-        if (!monthsInYear.includes(this.monthFilter!))
-            this.monthFilter = monthsInYear[monthsInYear.length-1];
-    }
-
-    private startFilters() {
-        const todayDate = new Date;
-        this.monthFilter = todayDate.getMonth().toString();
-        this.yearFilter = todayDate.getFullYear().toString();
     }
 
     public getDayOfWeekName(num: number): string {
         switch (num) {
-            case 0: return "Dom";
-            case 1: return "Seg";
-            case 2: return "Ter";
-            case 3: return "Qua";
-            case 4: return "Qui";
-            case 5: return "Sex";
-            case 6: return "Sáb";
-            default: return "";
+            case 0:
+                return "Dom";
+            case 1:
+                return "Seg";
+            case 2:
+                return "Ter";
+            case 3:
+                return "Qua";
+            case 4:
+                return "Qui";
+            case 5:
+                return "Sex";
+            case 6:
+                return "Sáb";
+            default:
+                return "";
         }
     }
 
     public getMonthName(num: string): string {
         switch (Number(num)) {
-            case 0: return "Janeiro";
-            case 1: return "Fevereiro";
-            case 2: return "Março";
-            case 3: return "Abril";
-            case 4: return "Maio";
-            case 5: return "Junho";
-            case 6: return "Julho";
-            case 7: return "Agosto";
-            case 8: return "Setembro";
-            case 9: return "Outubro";
-            case 10: return "Novembro";
-            case 11: return "Dezembro";
-            default: return "";
+            case 0:
+                return "Janeiro";
+            case 1:
+                return "Fevereiro";
+            case 2:
+                return "Março";
+            case 3:
+                return "Abril";
+            case 4:
+                return "Maio";
+            case 5:
+                return "Junho";
+            case 6:
+                return "Julho";
+            case 7:
+                return "Agosto";
+            case 8:
+                return "Setembro";
+            case 9:
+                return "Outubro";
+            case 10:
+                return "Novembro";
+            case 11:
+                return "Dezembro";
+            default:
+                return "";
         }
     }
 }

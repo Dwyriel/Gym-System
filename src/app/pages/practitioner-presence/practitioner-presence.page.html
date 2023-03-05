@@ -12,12 +12,12 @@
     <div class="webbrowser">
             <ion-item lines="full">
                 <ion-item lines="none">
-                    <ion-select [(ngModel)]="monthFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()" [disabled]="!(availableMonthsInYear.length > 0)" placeholder="Mês">
+                    <ion-select [(ngModel)]="monthFilter" cancelText="Cancelar" (ionChange)="monthFilterChanged()" [disabled]="!(availableMonthsInYear.length > 0)" placeholder="Mês">
                         <ion-select-option *ngFor="let month of availableMonthsInYear" value="{{month}}">{{getMonthName(month)}}</ion-select-option>
                     </ion-select>
                 </ion-item>
                 <ion-item lines="none">
-                    <ion-select [(ngModel)]="yearFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()" [disabled]="!(availableYears.length > 0)" placeholder="Ano">
+                    <ion-select [(ngModel)]="yearFilter" cancelText="Cancelar" (ionChange)="yearFilterChanged()" [disabled]="!(availableYears.length > 0)" placeholder="Ano">
                         <ion-select-option *ngFor="let year of availableYears" value="{{year}}">{{year}}</ion-select-option>
                     </ion-select>
                 </ion-item>
@@ -30,7 +30,7 @@
                 <ion-note class="ion-margin-top">Nenhuma presença ou falta neste período</ion-note>
             </ion-row>
             <ion-list *ngIf="filteredPresenceLog.length > 0">
-                <ion-item button="true" lines="full" *ngFor="let presence of filteredPresenceLog" (click)="OnClick(presence)">
+                <ion-item button="true" lines="full" *ngFor="let presence of filteredPresenceLog" (click)="onPresenceClick(presence)">
                     <ion-note slot="start">{{getDayOfWeekName(presence.date.getDay())}}</ion-note>
                     <ion-text>Dia {{presence.date.getDate()}}/{{presence.date.getMonth()+1}}</ion-text>
                     <ion-note slot="end">{{presence.wasPresent ? "Presente" : "Falta"}}</ion-note>
