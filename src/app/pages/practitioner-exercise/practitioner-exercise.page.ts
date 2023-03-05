@@ -64,7 +64,7 @@ export class PractitionerExercisePage {
     setSkeletonText(){
         this.skeletonTextItems = [];
         for (let i = 0; i < this.skeletonTextNumOfItems; i++)
-            this.skeletonTextItems.push("width: " + ((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize) + "px");
+            this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px`);
     }
 
     public async onClick(exercise?: Exercise) {
