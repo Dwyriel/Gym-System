@@ -34,6 +34,26 @@
                 </ion-item>
             </ion-list>
         </div>
+        <div class="webbrowser has-add-fab-on-bottom" *ngIf="fetchingData">
+            <ion-item>
+                <ion-item lines="none">
+                    <ion-icon name="search-outline"></ion-icon>
+                </ion-item>
+                <ion-input lines="full" disabled="true" placeholder="Pesquisar"></ion-input>
+            </ion-item>
+            <ion-list lines="full">
+                <ion-list-header class="ion-text-center"><ion-skeleton-text [animated]="true" style="width: 200px"></ion-skeleton-text></ion-list-header>
+                <ion-item *ngFor="let ske of skeletonTextItems">
+                    <ion-label class="ion-padding-start"><ion-skeleton-text [animated]="true" [style]="ske"></ion-skeleton-text></ion-label>
+                    <ion-item lines="none" button="true" detail="false">
+                        <ion-icon name="pencil-outline"></ion-icon>
+                    </ion-item>
+                    <ion-item lines="none" button="true" detail="false">
+                        <ion-icon name="trash"></ion-icon>
+                    </ion-item>
+                </ion-item>
+            </ion-list>
+        </div>
         <ion-fab slot="fixed" vertical="bottom" horizontal="end">
             <ion-fab-button routerLink="/exercise-form">
                 <ion-icon name="add"></ion-icon>
