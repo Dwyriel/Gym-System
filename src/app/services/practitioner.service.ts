@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, Firestore, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
+import {Firestore, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
 import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
