@@ -12,12 +12,12 @@
     <div class="webbrowser">
             <ion-item>
                 <ion-item lines="none">
-                    <ion-select [(ngModel)]="monthFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()">
+                    <ion-select [(ngModel)]="monthFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()" [disabled]="!(availableMonthsInYear.length > 0)" placeholder="Mês">
                         <ion-select-option *ngFor="let month of availableMonthsInYear" value="{{month}}">{{getMonthName(month)}}</ion-select-option>
                     </ion-select>
                 </ion-item>
                 <ion-item lines="none">
-                    <ion-select [(ngModel)]="yearFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()">
+                    <ion-select [(ngModel)]="yearFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()" [disabled]="!(availableYears.length > 0)" placeholder="Ano">
                         <ion-select-option *ngFor="let year of availableYears" value="{{year}}">{{year}}</ion-select-option>
                     </ion-select>
                 </ion-item>
