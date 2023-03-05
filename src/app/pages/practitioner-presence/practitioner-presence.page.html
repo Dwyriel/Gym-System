@@ -13,23 +13,12 @@
             <ion-item>
                 <ion-item lines="none">
                     <ion-select [(ngModel)]="monthFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()">
-                        <ion-select-option value="0">Janeiro</ion-select-option>
-                        <ion-select-option value="1">Fevereiro</ion-select-option>
-                        <ion-select-option value="2">Março</ion-select-option>
-                        <ion-select-option value="3">Abril</ion-select-option>
-                        <ion-select-option value="4">Maio</ion-select-option>
-                        <ion-select-option value="5">Junho</ion-select-option>
-                        <ion-select-option value="6">Julho</ion-select-option>
-                        <ion-select-option value="7">Agosto</ion-select-option>
-                        <ion-select-option value="8">Setembro</ion-select-option>
-                        <ion-select-option value="9">Outubro</ion-select-option>
-                        <ion-select-option value="10">Novembro</ion-select-option>
-                        <ion-select-option value="11">Dezembro</ion-select-option>
+                        <ion-select-option *ngFor="let month of availableMonthsInYear" value="{{month}}">{{getMonthName(month)}}</ion-select-option>
                     </ion-select>
                 </ion-item>
                 <ion-item lines="none">
                     <ion-select [(ngModel)]="yearFilter" cancelText="Cancelar" (ionChange)="filterPresenceLog()">
-                        <ion-select-option *ngFor="let year of availableYearsToFilter" value="{{year}}">{{year}}</ion-select-option>
+                        <ion-select-option *ngFor="let year of availableYears" value="{{year}}">{{year}}</ion-select-option>
                     </ion-select>
                 </ion-item>
                 <ion-item lines="none" button="true" (click)="createPresenceBtn()" style="margin-left: auto;">
@@ -42,7 +31,7 @@
             </ion-row>
             <ion-list *ngIf="filteredPresenceLog.length > 0">
                 <ion-item button="true" lines="full" *ngFor="let presence of filteredPresenceLog" (click)="OnClick(presence)">
-                    <ion-note slot="start">{{getDayOfWeek(presence.date.getDay())}}</ion-note>
+                    <ion-note slot="start">{{getDayOfWeekName(presence.date.getDay())}}</ion-note>
                     <ion-text>Dia {{presence.date.getDate()}}/{{presence.date.getMonth()+1}}</ion-text>
                     <ion-note slot="end">{{presence.wasPresent ? "Presente" : "Falta"}}</ion-note>
                 </ion-item>

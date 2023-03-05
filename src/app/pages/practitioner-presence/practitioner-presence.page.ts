@@ -22,7 +22,8 @@ export class PractitionerPresencePage {
     public appInfo = AppInfoService.AppInfo
     public monthFilter?: string;
     public yearFilter?: string;
-    public availableYearsToFilter: string[] = [];
+    public availableYears: string[] = [];
+    public availableMonthsInYear: string[] = [];
     public presenceLog: Presence[] = [];
     public filteredPresenceLog: Presence[] = [];
 
@@ -42,8 +43,8 @@ export class PractitionerPresencePage {
             await this.alertService.ShowToast("Um erro ocorreu ao receber dados, atualize a pagina", undefined, "danger");
             return;
         }
-        this.getPossibleYearsToFilters();
         this.startFilters();
+        this.getPossibleYearsToFilter();
         this.filterPresenceLog();
     }
 
@@ -126,13 +127,14 @@ export class PractitionerPresencePage {
 
     public filterPresenceLog() {
         this.filteredPresenceLog = [];
-        let monthFilteredLogs: Presence[] = [];
+        let yearFilteredLogs: Presence[] = [];
         this.presenceLog.forEach(presence => {
-            if (presence.date.getMonth() == Number(this.monthFilter))
-                monthFilteredLogs.push(presence);
-        });
-        monthFilteredLogs.forEach(presence => {
             if (presence.date.getFullYear() == Number(this.yearFilter))
+                yearFilteredLogs.push(presence);
+        });
+        this.getPossibleMonthsToFilterInYear(yearFilteredLogs);
+        yearFilteredLogs.forEach(presence => {
+            if (presence.date.getMonth() == Number(this.monthFilter))
                 this.filteredPresenceLog.push(presence);
         });
     }
@@ -156,43 +158,73 @@ export class PractitionerPresencePage {
             await this.alertService.ShowToast("Um erro ocorreu ao receber dados, atualize a pagina", undefined, "danger");
             return;
         }
-        this.getPossibleYearsToFilters();
+        this.getPossibleYearsToFilter();
         this.filterPresenceLog();
     }
 
-    private getPossibleYearsToFilters() {
+    private getPossibleYearsToFilter() {
         let years: string[] = [];
         this.presenceLog.forEach(presence => {
             if (!years.includes(presence.date.getFullYear().toString()))
                 years.push(presence.date.getFullYear().toString());
         });
-        this.availableYearsToFilter = years;
+        this.availableYears = years;
+        if (!years.includes(this.yearFilter!))
+            this.yearFilter = years[years.length-1];
+    }
+
+    private getPossibleMonthsToFilterInYear(presencesInYear: Presence[]) {
+        let monthsInYear: string[] = [];
+        presencesInYear.forEach(presenceInYear => {
+            let monthNotPresent = true;
+            monthsInYear.forEach(month => {
+                if (month == presenceInYear.date.getMonth().toString()) {
+                    monthNotPresent = false;
+                    return;
+                }
+            });
+            if (monthNotPresent)
+                monthsInYear.push(presenceInYear.date.getMonth().toString());
+        });
+        this.availableMonthsInYear = monthsInYear;
+        if (!monthsInYear.includes(this.monthFilter!))
+            this.monthFilter = monthsInYear[monthsInYear.length-1];
     }
 
     private startFilters() {
         const todayDate = new Date;
-        this.monthFilter = (todayDate.getMonth()).toString();
-        this.yearFilter = (todayDate.getFullYear()).toString();
+        this.monthFilter = todayDate.getMonth().toString();
+        this.yearFilter = todayDate.getFullYear().toString();
     }
 
-    public getDayOfWeek(num: number): string {
+    public getDayOfWeekName(num: number): string {
         switch (num) {
-            case 0:
-                return "Dom";
-            case 1:
-                return "Seg";
-            case 2:
-                return "Ter";
-            case 3:
-                return "Qua";
-            case 4:
-                return "Qui";
-            case 5:
-                return "Sex";
-            case 6:
-                return "Sáb";
-            default:
-                return "";
+            case 0: return "Dom";
+            case 1: return "Seg";
+            case 2: return "Ter";
+            case 3: return "Qua";
+            case 4: return "Qui";
+            case 5: return "Sex";
+            case 6: return "Sáb";
+            default: return "";
+        }
+    }
+
+    public getMonthName(num: string): string {
+        switch (Number(num)) {
+            case 0: return "Janeiro";
+            case 1: return "Fevereiro";
+            case 2: return "Março";
+            case 3: return "Abril";
+            case 4: return "Maio";
+            case 5: return "Junho";
+            case 6: return "Julho";
+            case 7: return "Agosto";
+            case 8: return "Setembro";
+            case 9: return "Outubro";
+            case 10: return "Novembro";
+            case 11: return "Dezembro";
+            default: return "";
         }
     }
 }
