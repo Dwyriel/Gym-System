@@ -9,7 +9,7 @@
 <ion-content fullscreen="true">
     <div class="webbrowser">
         <ion-list>
-            <ion-item id="auto-trigger" detail="false">
+            <ion-item lines="full" id="auto-trigger" detail="false">
                 <ion-label>Tema</ion-label>
                 <ion-select interface="alert" (ionChange)="ChangeColorTheme()" [(ngModel)]="colorTheme" cancelText="Cancelar">
                     <ion-select-option value="MatchSystem">Padrão do Sistema</ion-select-option>
@@ -17,10 +17,10 @@
                     <ion-select-option value="Light">Claro</ion-select-option>
                 </ion-select>
             </ion-item>
-            <ion-item button="true" (click)="ChangeAccountName()">
+            <ion-item lines="full" button="true" (click)="ChangeAccountName()">
                 <ion-label>Alterar nome da conta</ion-label>
             </ion-item>
-            <ion-item button="true" (click)="LogoutBtn()">
+            <ion-item lines="full" button="true" (click)="LogoutBtn()">
                 <ion-label>Sair</ion-label>
             </ion-item>
         </ion-list>
