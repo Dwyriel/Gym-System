@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData, query, startAt, endAt, limit, where, orderBy, getDocsFromCache, getDocFromCache} from "@angular/fire/firestore";
+import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData, query, startAt, endAt, limit, where, orderBy, getDocsFromCache, getDocFromCache, getCountFromServer} from "@angular/fire/firestore";
 import {ExerciseTemplate} from "../interfaces/exercise";
 
 @Injectable({
@@ -205,5 +205,17 @@ export class ExercisesService {
             arrayOfExercises.push(exercise);
         });
         return arrayOfExercises;
+    }
+
+    /**
+     * Gets the amount of exercise docs currently created.
+     */
+    public async GetPractitionerCount() {
+        try {
+            const doc = await getCountFromServer(this.colShort());
+            return doc.data().count;
+        } catch (exception){
+            return Promise.reject();
+        }
     }
 }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Firestore, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
+import {Firestore, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc, getCountFromServer} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
 import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
@@ -297,4 +297,17 @@ export class PractitionerService {
             return [];
         }
     }
+
+    /**
+     * Gets the amount of practitioner docs currently created.
+     */
+    public async GetPractitionerCount() {
+        try {
+            const doc = await getCountFromServer(this.colPracShort());
+            return doc.data().count;
+        } catch (exception){
+            return Promise.reject();
+        }
+    }
+
 }
