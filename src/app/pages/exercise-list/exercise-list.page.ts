@@ -33,8 +33,7 @@ export class ExerciseListPage {
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
     async ionViewWillEnter() {
-        for (let i = 0; i < this.skeletonTextNumOfItems; i++)
-            this.skeletonTextItems.push("width: " + ((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize) + "px");
+        this.setSkeletonText();
         if (await waitForFirebaseResponse(this.accountService))
             await this.PopulateInterface();
     }
@@ -44,6 +43,11 @@ export class ExerciseListPage {
         this.allExercises = new Array<ExerciseTemplate>();
         this.searchFilter = "";
         this.fetchingData = true;
+    }
+
+    setSkeletonText(){
+        for (let i = 0; i < this.skeletonTextNumOfItems; i++)
+            this.skeletonTextItems.push("width: " + ((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize) + "px");
     }
 
     async PopulateInterface() {

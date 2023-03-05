@@ -34,6 +34,7 @@ ion-popover {
     max-width: var(--mobile-max-width);
     margin: 0 auto;
     padding-top: var(--desktop-padding-top);
+    padding-bottom: var(--desktop-padding-top);
 }
 
 .flex {
@@ -73,8 +74,10 @@ ion-popover {
     transform: translate(var(-64.4px), var(-64.4px));
 }
 
-.has-add-fab-on-bottom {
-    margin-bottom: 4.2rem;
+@media (max-width: 900px) {
+    .has-add-fab-on-bottom {
+        margin-bottom: 4.2rem;
+    }
 }
 
 @media (max-width: 768px) {

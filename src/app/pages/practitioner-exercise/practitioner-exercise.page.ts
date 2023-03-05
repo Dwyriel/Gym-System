@@ -17,18 +17,25 @@ import {AppInfoService} from "../../services/app-info.service";
     styleUrls: ['./practitioner-exercise.page.scss'],
 })
 export class PractitionerExercisePage {
-    public readonly minWidthForFullText = 700
+    private readonly minSkeletonTextSize = 100;
+    private readonly skeletonTextVariation = 250;
+    private readonly skeletonTextNumOfItems = 8;
+
+    public readonly minWidthForFullText = 700;
+
+    public skeletonTextItems: string[] = [];
     public practitionerInfo?: Practitioner;
     public practitionerExercises?: Exercise[];
     public allExercises?: ExerciseTemplate[];
     public isLoading = false;
     public hasExercises = true;
     public practitionerID: string | null = null;
-    public appWidth = AppInfoService.AppInfo;
+    public appInfo = AppInfoService.AppInfo;
 
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private exercisesService: ExercisesService, private popoverController: PopoverController, private alertService: AlertService) { }
 
     async ionViewWillEnter() {
+        this.setSkeletonText();
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
@@ -52,6 +59,11 @@ export class PractitionerExercisePage {
         this.practitionerExercises = undefined;
         this.allExercises = undefined;
         this.practitionerID = null;
+    }
+
+    setSkeletonText(){
+        for (let i = 0; i < this.skeletonTextNumOfItems; i++)
+            this.skeletonTextItems.push("width: " + ((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize) + "px");
     }
 
     public async onClick(exercise?: Exercise) {
