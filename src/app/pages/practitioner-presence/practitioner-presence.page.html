@@ -9,7 +9,7 @@
 </ion-header>
 
 <ion-content fullscreen="true">
-    <div class="webbrowser">
+    <div class="webbrowser" *ngIf="!isLoading">
             <ion-item lines="full">
                 <ion-item lines="none">
                     <ion-select [(ngModel)]="monthFilter" cancelText="Cancelar" (ionChange)="monthFilterChanged()" [disabled]="!(availableMonthsInYear.length > 0)" placeholder="Mês">
@@ -29,12 +29,35 @@
             <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!(filteredPresenceLog.length > 0)">
                 <ion-note class="ion-margin-top">Nenhuma presença ou falta neste período</ion-note>
             </ion-row>
-            <ion-list *ngIf="filteredPresenceLog.length > 0">
+            <ion-list class="ion-no-padding" *ngIf="filteredPresenceLog.length > 0">
                 <ion-item button="true" lines="full" *ngFor="let presence of filteredPresenceLog" (click)="onPresenceClick(presence)">
                     <ion-note slot="start">{{getDayOfWeekName(presence.date.getDay())}}</ion-note>
                     <ion-text>Dia {{presence.date.getDate()}}/{{presence.date.getMonth()+1}}</ion-text>
                     <ion-note slot="end">{{presence.wasPresent ? "Presente" : "Falta"}}</ion-note>
                 </ion-item>
             </ion-list>
+    </div>
+    <div class="webbrowser" *ngIf="isLoading">
+        <ion-item lines="full">
+            <ion-item lines="none">
+                <ion-select disabled="true" placeholder="Mês">
+                </ion-select>
+            </ion-item>
+            <ion-item lines="none">
+                <ion-select disabled="true" placeholder="Ano">
+                </ion-select>
+            </ion-item>
+            <ion-item disabled="true" lines="none" style="margin-left: auto;">
+                <ion-text style="padding: 0 4px" *ngIf="appInfo!.appWidth > minWidthForFullText">Marcar dia</ion-text>
+                <ion-icon name="add-outline"></ion-icon>
+            </ion-item>
+        </ion-item>
+        <ion-list class="ion-no-padding">
+            <ion-item lines="full" *ngFor="let skeletonStyle of skeletonTextItems">
+                <ion-note slot="start"><ion-skeleton-text [animated]="true" style="width: 24px"></ion-skeleton-text></ion-note>
+                <ion-text><ion-skeleton-text [animated]="true" [style]="skeletonStyle.styleDay"></ion-skeleton-text></ion-text>
+                <ion-note slot="end"><ion-skeleton-text [animated]="true" [style]="skeletonStyle.stylePresent"></ion-skeleton-text></ion-note>
+            </ion-item>
+        </ion-list>
     </div>
 </ion-content>

@@ -16,22 +16,28 @@ import {AppInfoService} from "../../services/app-info.service";
     styleUrls: ['./practitioner-presence.page.scss'],
 })
 export class PractitionerPresencePage {
+    private readonly minSkeletonTextSize = 50;
+    private readonly skeletonTextVariation = 20;
+    private readonly skeletonTextNumOfItems = 10;
     private practitioner: Practitioner = new Practitioner();
     private presenceLog: Presence[] = [];
 
     public readonly minWidthForFullText = 400;
+    public skeletonTextItems: { styleDay: string, stylePresent: string }[] = [];
     public practitionerID: string | null = null;
-    public appInfo = AppInfoService.AppInfo
     public monthFilter?: string;
     public yearFilter?: string;
     public availableYears: string[] = [];
     public availableMonthsInYear: string[] = [];
     public filteredPresenceLogByYear: Presence[] = [];
     public filteredPresenceLog: Presence[] = [];
+    public isLoading: boolean = true;
+    public appInfo = AppInfoService.AppInfo
 
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private popoverController: PopoverController, private alertService: AlertService) { }
 
     async ionViewWillEnter() {
+        this.setSkeletonText();
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
@@ -43,9 +49,33 @@ export class PractitionerPresencePage {
             await this.getPresences().catch(() => errorOccurred = true);
         if (errorOccurred) {
             await this.alertService.ShowToast("Um erro ocorreu ao receber dados, atualize a pagina", undefined, "danger");
+            this.isLoading = false;
             return;
         }
         this.getPossibleYearsToFilter();
+        this.isLoading = false;
+    }
+
+    ionViewWillLeave() {
+        this.isLoading = true;
+        this.practitionerID = null;
+        this.monthFilter = undefined;
+        this.yearFilter = undefined;
+        this.availableYears = [];
+        this.availableMonthsInYear = [];
+        this.filteredPresenceLogByYear = [];
+        this.filteredPresenceLog = [];
+        this.presenceLog = [];
+        this.practitioner = new Practitioner();
+    }
+
+    setSkeletonText() {
+        this.skeletonTextItems = [];
+        for (let i = 0; i < this.skeletonTextNumOfItems; i++)
+            this.skeletonTextItems.push({
+                styleDay: `width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px; height: 16px;`,
+                stylePresent: `width: ${Math.random() < .5 ? 50 : 35}px`
+            });
     }
 
     async getPractitioner() {

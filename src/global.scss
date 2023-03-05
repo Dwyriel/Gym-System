@@ -74,11 +74,12 @@ ion-popover {
     transform: translate(var(-64.4px), var(-64.4px));
 }
 
-@media (max-width: 850px) {
+@media (max-width: 900px) {
     .has-add-fab-on-bottom {
         margin-bottom: 4.2rem;
     }
 }
+
 @media (max-width: 768px) {
     .bottom-items-margin {
         margin: 0 .5rem;

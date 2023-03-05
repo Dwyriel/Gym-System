@@ -17,21 +17,25 @@ interface ExercisesByCategory {
     styleUrls: ['./exercise-list.page.scss'],
 })
 export class ExerciseListPage {
+    private readonly minSkeletonTextSize = 150;
+    private readonly skeletonTextVariation = 200;
+    private readonly skeletonTextNumOfItems = 8;
     private allExercises?: Array<ExerciseTemplate>;
     private exercisesByCategoryAsString: string = "";
 
+    public skeletonTextItems: string[] = [];
     public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
     public searchFilter: string = "";
     public exercisesArrayIsEmpty = true;
     public fetchingData = true;
+    public isLoading = true;
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
     async ionViewWillEnter() {
-        let id = await this.alertService.PresentLoading("Carregando");
+        this.setSkeletonText();
         if (await waitForFirebaseResponse(this.accountService))
             await this.PopulateInterface();
-        await this.alertService.DismissLoading(id);
     }
 
     ionViewDidLeave() {
@@ -39,6 +43,12 @@ export class ExerciseListPage {
         this.allExercises = new Array<ExerciseTemplate>();
         this.searchFilter = "";
         this.fetchingData = true;
+    }
+
+    setSkeletonText(){
+        this.skeletonTextItems = [];
+        for (let i = 0; i < this.skeletonTextNumOfItems; i++)
+            this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px`);
     }
 
     async PopulateInterface() {

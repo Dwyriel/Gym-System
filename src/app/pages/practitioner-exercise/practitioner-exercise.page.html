@@ -9,15 +9,11 @@
 </ion-header>
 
 <ion-content fullscreen="true">
-    <div class="spinner-div" *ngIf="isLoading">
-        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
-    </div>
     <div [hidden]="isLoading" class="webbrowser">
         <ion-item lines="full" button="true" (click)="onClick()">
             <ion-label>Adicionar exercício</ion-label>
             <ion-icon name="add-outline"></ion-icon>
         </ion-item>
-
         <ion-row class="ion-padding ion-justify-content-center" *ngIf="!hasExercises">
             <ion-note>Não há nenhum exercício adicionado</ion-note>
         </ion-row>
@@ -26,13 +22,12 @@
                 <ion-row>
                     <ion-item lines="none" class="bold-text full-width">
                         <div class="big-cell">Exercício</div>
-                        <div class="align-text-middle small-cell hor-text-center">{{(appWidth!.appWidth > minWidthForFullText) ? "Séries" : "S"}}</div>
-                        <div class="align-text-middle small-cell hor-text-center">{{(appWidth!.appWidth > minWidthForFullText) ? "Repet." : "R"}}</div>
-                        <div class="align-text-middle small-cell hor-text-center">{{(appWidth!.appWidth > minWidthForFullText) ? "Desc." : "D"}}</div>
-                        <div class="align-text-middle small-cell hor-text-center">{{(appWidth!.appWidth > minWidthForFullText) ? "Carga" : "C"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Séries" : "S"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Repet." : "R"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Desc." : "D"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Carga" : "C"}}</div>
                     </ion-item>
                 </ion-row>
-
                 <ion-row *ngFor="let exercise of practitionerExercises" class="flex-no-wrap">
                     <ion-item class="full-width" (click)="onClick(exercise)" button="true" lines="full">
                         <div class="align-text-middle big-cell"> {{exercise.exercise!.name}} </div>
@@ -40,6 +35,44 @@
                         <div class="align-text-middle small-cell hor-text-center"> {{exercise.repetition}} </div>
                         <div class="align-text-middle small-cell hor-text-center"> {{exercise.rest}} </div>
                         <div class="align-text-middle small-cell hor-text-center"> {{exercise.load}} </div>
+                    </ion-item>
+                </ion-row>
+            </ion-grid>
+        </ion-list>
+    </div>
+    <div [hidden]="!isLoading" class="webbrowser">
+        <ion-item lines="full" button="true" disabled="true">
+            <ion-label>Adicionar exercício</ion-label>
+            <ion-icon name="add-outline"></ion-icon>
+        </ion-item>
+        <ion-list>
+            <ion-grid>
+                <ion-row>
+                    <ion-item lines="none" class="bold-text full-width">
+                        <div class="big-cell">Exercício</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Séries" : "S"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Repet." : "R"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Desc." : "D"}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Carga" : "C"}}</div>
+                    </ion-item>
+                </ion-row>
+                <ion-row *ngFor="let skeletonStyle of skeletonTextItems" class="flex-no-wrap">
+                    <ion-item class="full-width" lines="full">
+                        <div class="big-cell">
+                            <ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text>
+                        </div>
+                        <div class="small-cell">
+                            <ion-skeleton-text [animated]="true" class="skeleton-text-numbers"></ion-skeleton-text>
+                        </div>
+                        <div class="small-cell">
+                            <ion-skeleton-text [animated]="true" class="skeleton-text-numbers"></ion-skeleton-text>
+                        </div>
+                        <div class="small-cell">
+                            <ion-skeleton-text [animated]="true" class="skeleton-text-numbers"></ion-skeleton-text>
+                        </div>
+                        <div class="small-cell">
+                            <ion-skeleton-text [animated]="true" class="skeleton-text-numbers"></ion-skeleton-text>
+                        </div>
                     </ion-item>
                 </ion-row>
             </ion-grid>
