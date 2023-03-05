@@ -3,9 +3,33 @@
 }
 
 .text-div {
+    margin-top: 0;
+    margin-bottom: 0;
     margin-right: auto;
 }
 
 .side-btn-margin {
     margin: auto 0
+}
+
+.big-text-skeleton {
+    height: 14px;
+    width: 65%;
+}
+
+.small-text-skeleton {
+    height: 14px;
+    width: 50%;
+}
+
+.smallest-text-skeleton {
+    height: 14px;
+    width: 40%;
+}
+
+.header-skeleton {
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 32px;
+    width: 75%;
 }
