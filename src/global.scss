@@ -45,6 +45,10 @@ ion-popover {
     flex-wrap: nowrap;
 }
 
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
 .bold-text {
     font-weight: bold;
 }
@@ -70,6 +74,11 @@ ion-popover {
     transform: translate(var(-64.4px), var(-64.4px));
 }
 
+@media (max-width: 850px) {
+    .has-add-fab-on-bottom {
+        margin-bottom: 4.2rem;
+    }
+}
 @media (max-width: 768px) {
     .bottom-items-margin {
         margin: 0 .5rem;

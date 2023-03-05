@@ -33,8 +33,10 @@ export class PractitionerExercisePage {
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-        let errorOccurred = false;
-        await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
+        let cacheError = false, errorOccurred = false;
+        await this.practitionerService.GetPractitionerFromCache(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => cacheError = true);
+        if(cacheError)
+            await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
         if (errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
             return
@@ -103,13 +105,22 @@ export class PractitionerExercisePage {
                     rest: value.data.updatedWorkload!.rest,
                     load: value.data.updatedWorkload!.load
                 };
-                await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise)
-                    .catch(async () => await this.alertService.ShowToast("Não foi possível editar o exercício", undefined, "danger"));
-                await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise);
-                await this.populateExerciseList();
+                await this.updateEditedExercise(oldExercise, newExercise);
             }
         });
         await editExercisePopover.present();
+    }
+
+    async updateEditedExercise(oldExercise: Exercise, newExercise: Exercise) {
+        let errorOccurred = false;
+        if (oldExercise.series == newExercise.series && oldExercise.repetition == newExercise.repetition && oldExercise.rest == newExercise.rest && oldExercise.load == newExercise.load)
+            return;
+        await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise).catch(() => errorOccurred = true);
+        if (!errorOccurred)
+            await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise).catch(() => errorOccurred = true);
+        if (errorOccurred)
+            await this.alertService.ShowToast("Não foi possível editar o exercício", undefined, "danger");
+        await this.populateExerciseList();
     }
 
     public async removeExerciseBtn(exercise: Exercise) {

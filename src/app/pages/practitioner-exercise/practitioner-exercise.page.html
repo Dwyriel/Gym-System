@@ -1,7 +1,7 @@
 <ion-header>
     <ion-toolbar>
         <ion-buttons slot="start">
-            <ion-back-button defaultHref="/practitioner-list" text="">
+            <ion-back-button defaultHref="/practitioner-profile/{{practitionerID}}" text="">
             </ion-back-button>
         </ion-buttons>
         <ion-title>Exercícios</ion-title>
@@ -13,7 +13,7 @@
         <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
     </div>
     <div [hidden]="isLoading" class="webbrowser">
-        <ion-item button="true" (click)="onClick()">
+        <ion-item lines="full" button="true" (click)="onClick()">
             <ion-label>Adicionar exercício</ion-label>
             <ion-icon name="add-outline"></ion-icon>
         </ion-item>

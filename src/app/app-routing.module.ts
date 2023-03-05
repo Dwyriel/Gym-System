@@ -61,6 +61,14 @@ const routes: Routes = [
         path: 'practitioner-exercise/:id',
         loadChildren: () => import('./pages/practitioner-exercise/practitioner-exercise.module').then(m => m.PractitionerExercisePageModule)
     },
+    {
+        path: 'practitioner-presence',
+        redirectTo: 'practitioner-list'
+    },
+    {
+        path: 'practitioner-presence/:id',
+        loadChildren: () => import('./pages/practitioner-presence/practitioner-presence.module').then(m => m.PractitionerPresencePageModule)
+    },
 ];
 
 @NgModule({

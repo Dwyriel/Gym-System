@@ -1,0 +1,40 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/practitioner-profile/{{practitionerID}}" text="">
+            </ion-back-button>
+        </ion-buttons>
+        <ion-title>Registro de Presenças</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen="true">
+    <div class="webbrowser">
+            <ion-item lines="full">
+                <ion-item lines="none">
+                    <ion-select [(ngModel)]="monthFilter" cancelText="Cancelar" (ionChange)="monthFilterChanged()" [disabled]="!(availableMonthsInYear.length > 0)" placeholder="Mês">
+                        <ion-select-option *ngFor="let month of availableMonthsInYear" value="{{month}}">{{getMonthName(month)}}</ion-select-option>
+                    </ion-select>
+                </ion-item>
+                <ion-item lines="none">
+                    <ion-select [(ngModel)]="yearFilter" cancelText="Cancelar" (ionChange)="yearFilterChanged()" [disabled]="!(availableYears.length > 0)" placeholder="Ano">
+                        <ion-select-option *ngFor="let year of availableYears" value="{{year}}">{{year}}</ion-select-option>
+                    </ion-select>
+                </ion-item>
+                <ion-item lines="none" button="true" (click)="createPresenceBtn()" style="margin-left: auto;">
+                    <ion-text style="padding: 0 4px" *ngIf="appInfo!.appWidth > minWidthForFullText">Marcar dia</ion-text>
+                    <ion-icon name="add-outline"></ion-icon>
+                </ion-item>
+            </ion-item>
+            <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!(filteredPresenceLog.length > 0)">
+                <ion-note class="ion-margin-top">Nenhuma presença ou falta neste período</ion-note>
+            </ion-row>
+            <ion-list *ngIf="filteredPresenceLog.length > 0">
+                <ion-item button="true" lines="full" *ngFor="let presence of filteredPresenceLog" (click)="onPresenceClick(presence)">
+                    <ion-note slot="start">{{getDayOfWeekName(presence.date.getDay())}}</ion-note>
+                    <ion-text>Dia {{presence.date.getDate()}}/{{presence.date.getMonth()+1}}</ion-text>
+                    <ion-note slot="end">{{presence.wasPresent ? "Presente" : "Falta"}}</ion-note>
+                </ion-item>
+            </ion-list>
+    </div>
+</ion-content>

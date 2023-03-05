@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, docData, endAt, Firestore, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
+import {Firestore, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
 import {Exercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
@@ -73,7 +73,7 @@ export class PractitionerService {
     }
 
     /**
-     * Updates an existing practitioner's exercise array on the database.
+     * Updates an existing practitioner's exercise array on the database, adding a new entry.
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
      * @param exercise the exercise that will be added
      */
@@ -90,11 +90,12 @@ export class PractitionerService {
     }
 
     /**
-     * Updates an existing practitioner's presence array on the database.
+     * Updates an existing practitioner's presence array on the database, adding a new entry. time will always be changed to 12pm before running the query.
      * @param id the id of the array of presences (aka practitioner.presenceLogID)
      * @param presence the presence that will be added
      */
     public async AddPresence(id: string, presence: Presence) {
+        presence.date.setHours(12, 0, 0);
         return updateDoc(this.docPresShort(id), {
             items: arrayUnion({
                 date: presence.date.getTime(),
@@ -179,41 +180,59 @@ export class PractitionerService {
      * @param id the id of the practitioner
      */
     public async GetPractitionerFromCache(id: string) {
-        const pracDoc = await getDocFromCache(this.docPracShort(id));
-        if (!pracDoc.exists())
+        try {
+            const pracDoc = await getDocFromCache(this.docPracShort(id));
+            if (!pracDoc.exists())
+                return Promise.reject();
+            let practitioner: Practitioner = pracDoc.data() as Practitioner;
+            practitioner.thisObjectID = pracDoc.id;
+            return Promise.resolve(practitioner);
+        } catch (exception) {
             return Promise.reject();
-        let practitioner: Practitioner = pracDoc.data() as Practitioner;
-        practitioner.thisObjectID = pracDoc.id;
-        return Promise.resolve(practitioner);
+        }
     }
 
     /**
      * Gets all the exercises of a practitioner
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
+     * @param fromCache if the doc should be loaded from cache or not
      */
-    public async GetPractitionersExercises(id: string) {
-        const doc = await getDoc(this.docExerShort(id));
-        if (!doc.exists())
+    public async GetPractitionersExercises(id: string, fromCache: boolean = false) {
+        try {
+            const doc = fromCache ? await getDocFromCache(this.docExerShort(id)) : await getDoc(this.docExerShort(id));
+            if (!doc.exists())
+                return Promise.reject();
+            let exercises: Exercise[] = (doc.data() as { items: Exercise[] }).items;
+            for (let i = 0; i < exercises.length; i++) {
+                let errorOccurred = false;
+                await this.exercisesService.GetExerciseFromCache(exercises[i].exerciseID).then(value => exercises[i].exercise = value).catch(() => errorOccurred = true);
+                if (errorOccurred)
+                    exercises[i].exercise = await this.exercisesService.GetExercise(exercises[i].exerciseID);
+            }
+            return Promise.resolve(exercises);
+        } catch (exception) {
             return Promise.reject();
-        let exercises: Exercise[] = (doc.data() as { items: Exercise[] }).items;
-        for (let i = 0; i < exercises.length; i++)
-            exercises[i].exercise = await this.exercisesService.GetExercise(exercises[i].exerciseID);
-        return Promise.resolve(exercises);
+        }
     }
 
     /**
      * Gets all the presences of a practitioner
      * @param id the id of the array of presences (aka practitioner.presenceLogID)
+     * @param fromCache if the doc should be loaded from cache or not
      */
-    public async GetPractitionersPresences(id: string) {
-        const doc = await getDoc(this.docPresShort(id));
-        if (!doc.exists())
+    public async GetPractitionersPresences(id: string, fromCache: boolean = false) {
+        try {
+            const doc = fromCache ? await getDocFromCache(this.docPresShort(id)) : await getDoc(this.docPresShort(id));
+            if (!doc.exists())
+                return Promise.reject();
+            let data = (doc.data() as { items: { date: number, wasPresent: boolean }[] }).items
+            let presences: Presence[] = [];
+            for (let i = 0; i < data.length; i++)
+                presences.push({date: new Date(data[i].date), wasPresent: data[i].wasPresent});
+            return Promise.resolve(presences);
+        } catch (exception) {
             return Promise.reject();
-        let data = (doc.data() as { items: { date: number, wasPresent: boolean }[] }).items
-        let presences: Presence[] = [];
-        for (let i = 0; i < data.length; i++)
-            presences.push({date: new Date(data[i].date), wasPresent: data[i].wasPresent});
-        return Promise.resolve(presences);
+        }
     }
 
     /**
@@ -265,13 +284,17 @@ export class PractitionerService {
      * @param maxEntries (optional) the total amount of entries to fetch
      */
     public async GetAllPractitionersFromCache(maxEntries?: number) {
-        const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colPracShort(), limit(maxEntries))) : await getDocsFromCache(this.colPracShort());
-        let arrayOfPractitioner: (Practitioner)[] = [];
-        allDocs.forEach(doc => {
-            let practitioner: Practitioner = doc.data() as Practitioner;
-            practitioner.thisObjectID = doc.id;
-            arrayOfPractitioner.push(practitioner)
-        });
-        return arrayOfPractitioner;
+        try {
+            const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colPracShort(), limit(maxEntries))) : await getDocsFromCache(this.colPracShort());
+            let arrayOfPractitioner: (Practitioner)[] = [];
+            allDocs.forEach(doc => {
+                let practitioner: Practitioner = doc.data() as Practitioner;
+                practitioner.thisObjectID = doc.id;
+                arrayOfPractitioner.push(practitioner)
+            });
+            return arrayOfPractitioner;
+        } catch (exception){
+            return [];
+        }
     }
 }
