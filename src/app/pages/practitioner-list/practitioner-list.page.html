@@ -12,8 +12,8 @@
             <ion-note>Não há nenhum aluno registrado</ion-note>
         </ion-row>
         <div class="webbrowser" *ngIf="!practitionerArrayIsEmpty && !fetchingData">
-            <ion-item>
-                <ion-item>
+            <ion-item lines="full">
+                <ion-item lines="none">
                     <ion-icon name="search-outline"></ion-icon>
                 </ion-item>
                 <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>

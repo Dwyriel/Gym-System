@@ -22,7 +22,7 @@
                     </ion-select>
                 </ion-item>
                 <ion-item lines="none" button="true" (click)="createPresenceBtn()" style="margin-left: auto;">
-                    <ion-text style="padding: 0 4px" *ngIf="appInfo!.appWidth > 360">Marcar dia</ion-text>
+                    <ion-text style="padding: 0 4px" *ngIf="appInfo!.appWidth > minWidthForFullText">Marcar dia</ion-text>
                     <ion-icon name="add-outline"></ion-icon>
                 </ion-item>
             </ion-item>

@@ -18,6 +18,7 @@ import {AppInfoService} from "../../services/app-info.service";
 export class PractitionerPresencePage {
     private practitioner: Practitioner = new Practitioner();
 
+    public readonly minWidthForFullText = 380;
     public practitionerID: string | null = null;
     public appInfo = AppInfoService.AppInfo
     public monthFilter?: string;
