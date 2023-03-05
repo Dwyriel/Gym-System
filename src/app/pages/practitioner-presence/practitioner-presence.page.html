@@ -21,8 +21,8 @@
                         <ion-select-option *ngFor="let year of availableYears" value="{{year}}">{{year}}</ion-select-option>
                     </ion-select>
                 </ion-item>
-                <ion-item lines="none" button="true" (click)="createPresenceBtn()" style="margin-left: auto;">
-                    <ion-text style="padding: 0 4px" *ngIf="appInfo!.appWidth > minWidthForFullText">Marcar dia</ion-text>
+                <ion-item lines="none" button="true" (click)="createPresenceBtn()" class="marcar-dia-item">
+                    <ion-text class="marcar-dia-button-text" *ngIf="appInfo!.appWidth > minWidthForFullText">Marcar dia</ion-text>
                     <ion-icon name="add-outline"></ion-icon>
                 </ion-item>
             </ion-item>
@@ -47,14 +47,14 @@
                 <ion-select disabled="true" placeholder="Ano">
                 </ion-select>
             </ion-item>
-            <ion-item disabled="true" lines="none" style="margin-left: auto;">
-                <ion-text style="padding: 0 4px" *ngIf="appInfo!.appWidth > minWidthForFullText">Marcar dia</ion-text>
+            <ion-item disabled="true" lines="none" class="marcar-dia-item">
+                <ion-text class="marcar-dia-button-text" *ngIf="appInfo!.appWidth > minWidthForFullText">Marcar dia</ion-text>
                 <ion-icon name="add-outline"></ion-icon>
             </ion-item>
         </ion-item>
         <ion-list class="ion-no-padding">
             <ion-item lines="full" *ngFor="let skeletonStyle of skeletonTextItems">
-                <ion-note slot="start"><ion-skeleton-text [animated]="true" style="width: 24px"></ion-skeleton-text></ion-note>
+                <ion-note slot="start"><ion-skeleton-text [animated]="true" class="skeleton-text-dayofweek"></ion-skeleton-text></ion-note>
                 <ion-text><ion-skeleton-text [animated]="true" [style]="skeletonStyle.styleDay"></ion-skeleton-text></ion-text>
                 <ion-note slot="end"><ion-skeleton-text [animated]="true" [style]="skeletonStyle.stylePresent"></ion-skeleton-text></ion-note>
             </ion-item>
