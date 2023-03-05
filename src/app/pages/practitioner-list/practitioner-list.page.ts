@@ -12,9 +12,13 @@ import {waitForFirebaseResponse} from "../../services/app.utility";
     styleUrls: ['./practitioner-list.page.scss'],
 })
 export class PractitionerListPage {
-    public allPractitioners?: Array<Practitioner>;
+    private readonly minSkeletonTextSize = 100;
+    private readonly skeletonTextVariation = 250;
+    private readonly skeletonTextNumOfItems = 7;
     private allPractitionersAsString: string = "";
 
+    public skeletonTextItems: string[] = [];
+    public allPractitioners?: Array<Practitioner>;
     public searchFilter: string = "";
     public practitionerArrayIsEmpty = true;
     public fetchingData = true;
@@ -22,16 +26,21 @@ export class PractitionerListPage {
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
     async ionViewWillEnter() {
-        let id = await this.alertService.PresentLoading("Carregando");
+        this.setSkeletonText();
         if (await waitForFirebaseResponse(this.accountService))
             await this.PopulateInterface();
-        await this.alertService.DismissLoading(id);
     }
 
     ionViewDidLeave() {
         this.allPractitioners = new Array<Practitioner>();
         this.searchFilter = "";
         this.fetchingData = true;
+    }
+
+    setSkeletonText(){
+        this.skeletonTextItems = [];
+        for (let i = 0; i < this.skeletonTextNumOfItems; i++)
+            this.skeletonTextItems.push("width: " + ((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize) + "px");
     }
 
     async PopulateInterface() {

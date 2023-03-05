@@ -40,7 +40,7 @@
             </ion-grid>
         </ion-list>
     </div>
-    <div [hidden]="isLoading" class="webbrowser">
+    <div [hidden]="!isLoading" class="webbrowser">
         <ion-item lines="full" button="true" disabled="true">
             <ion-label>Adicionar exercício</ion-label>
             <ion-icon name="add-outline"></ion-icon>
