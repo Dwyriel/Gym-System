@@ -32,7 +32,7 @@
             <ion-list class="ion-no-padding" *ngIf="filteredPresenceLog.length > 0">
                 <ion-item button="true" lines="full" *ngFor="let presence of filteredPresenceLog" (click)="onPresenceClick(presence)">
                     <ion-note slot="start">{{getDayOfWeekName(presence.date.getDay())}}</ion-note>
-                    <ion-text>Dia {{presence.date.getDate()}}/{{presence.date.getMonth()+1}}</ion-text>
+                    <ion-text>Dia {{presence.date.getDate()}}</ion-text>
                     <ion-note slot="end">{{presence.wasPresent ? "Presente" : "Falta"}}</ion-note>
                 </ion-item>
             </ion-list>
