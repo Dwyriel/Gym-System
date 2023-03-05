@@ -7,7 +7,40 @@
             <ion-title>Home</ion-title>
         </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
-
+    <ion-content>
+        <div class="webbrowser">
+            <ion-grid>
+                <ion-row>
+                    <ion-col>
+                        <ion-card>
+                            <img alt="Imagem de alunos" src="https://ionicframework.com/docs/img/demos/card-media.png"/>
+                            <ion-card-header>
+                                <ion-card-title>Alunos</ion-card-title>
+                                <ion-card-subtitle>Insira mais alunos no sistema</ion-card-subtitle>
+                            </ion-card-header>
+                            <ion-card-content>
+                                <ion-skeleton-text animated="true" *ngIf="isLoading"></ion-skeleton-text>
+                                <ion-text *ngIf="!isLoading && numberOfPractitioners">Há atualmente {{numberOfPractitioners}} alunos no sistema</ion-text>
+                            </ion-card-content>
+                            <ion-button fill="clear" routerLink="/practitioner-form">Adicionar Aluno</ion-button>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col>
+                        <ion-card>
+                            <img alt="Imagem de exercícios" src="https://ionicframework.com/docs/img/demos/card-media.png"/>
+                            <ion-card-header>
+                                <ion-card-title>Exercícios</ion-card-title>
+                                <ion-card-subtitle>Insira mais exercícios no sistema</ion-card-subtitle>
+                            </ion-card-header>
+                            <ion-card-content>
+                                <ion-skeleton-text animated="true" *ngIf="isLoading"></ion-skeleton-text>
+                                <ion-text *ngIf="!isLoading && numberOfExercises">Há atualmente {{numberOfExercises}} exercícios no sistema</ion-text>
+                            </ion-card-content>
+                            <ion-button fill="clear" routerLink="/exercise-form">Adicionar Exercício</ion-button>
+                        </ion-card>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
     </ion-content>
 </div>

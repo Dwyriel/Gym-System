@@ -210,7 +210,7 @@ export class ExercisesService {
     /**
      * Gets the amount of exercise docs currently created.
      */
-    public async GetPractitionerCount() {
+    public async GetExerciseCount() {
         try {
             const doc = await getCountFromServer(this.colShort());
             return doc.data().count;
