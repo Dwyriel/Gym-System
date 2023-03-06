@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 
-import {ExerciseTemplateFormPage} from './exercise-template-form.page';
+import {TemplateFormPage} from './template-form-page.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: ExerciseTemplateFormPage
+        component: TemplateFormPage
     }
 ];
 

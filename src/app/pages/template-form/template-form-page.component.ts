@@ -16,11 +16,11 @@ function sortByCategory(firstExerc: Exercise, secondExerc: Exercise) {
 }
 
 @Component({
-    selector: 'app-exercise-template-form',
-    templateUrl: './exercise-template-form.page.html',
-    styleUrls: ['./exercise-template-form.page.scss'],
+    selector: 'app-template-form',
+    templateUrl: './template-form-page.component.html',
+    styleUrls: ['./template-form-page.component.scss'],
 })
-export class ExerciseTemplateFormPage implements OnInit {
+export class TemplateFormPage implements OnInit {
     private allExercises: Exercise[] = [];
     private allExerciseTemplates: ExerciseTemplate[] = [];
 
@@ -127,7 +127,7 @@ export class ExerciseTemplateFormPage implements OnInit {
         let functionResult: Promise<any> = this.CreateOrUpdateExerciseTemplate(Boolean(this.exerciseTemplateID));
         await functionResult.then(async () => {
             await this.alertService.ShowToast((this.exerciseTemplateID) ? "Ciclo alterado com sucesso" : "Ciclo criado com sucesso", undefined, "primary");
-            await this.router.navigate(["/home"]);//todo verify
+            await this.router.navigate(["/template-list"]);//todo verify
         }).catch(async () => {
             this.isLoading = false;
             await this.alertService.ShowToast((this.exerciseTemplateID) ? "Não foi possível alterar o ciclo" : "Não foi possível criar o ciclo", undefined, "danger");

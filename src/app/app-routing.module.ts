@@ -74,12 +74,12 @@ const routes: Routes = [
         loadChildren: () => import('./pages/template-list/template-list.module').then(m => m.TemplateListPageModule)
     },
     {
-        path: 'exercise-template-form',
-        loadChildren: () => import('./pages/exercise-template-form/exercise-template-form.module').then(m => m.ExerciseTemplateFormPageModule)
+        path: 'template-form',
+        loadChildren: () => import('./pages/template-form/template-form.module').then(m => m.TemplateFormPageModule)
     },
     {
-        path: 'exercise-template-form/:id',
-        loadChildren: () => import('./pages/exercise-template-form/exercise-template-form.module').then(m => m.ExerciseTemplateFormPageModule)
+        path: 'template-form/:id',
+        loadChildren: () => import('./pages/template-form/template-form.module').then(m => m.TemplateFormPageModule)
     }
 ];
 

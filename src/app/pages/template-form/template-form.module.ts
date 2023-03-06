@@ -4,9 +4,9 @@ import {FormsModule} from '@angular/forms';
 
 import {IonicModule} from '@ionic/angular';
 
-import {ExerciseTemplateFormPageRoutingModule} from './exercise-template-form-routing.module';
+import {ExerciseTemplateFormPageRoutingModule} from './template-form-routing.module';
 
-import {ExerciseTemplateFormPage} from './exercise-template-form.page';
+import {TemplateFormPage} from './template-form-page.component';
 
 @NgModule({
     imports: [
@@ -15,6 +15,6 @@ import {ExerciseTemplateFormPage} from './exercise-template-form.page';
         IonicModule,
         ExerciseTemplateFormPageRoutingModule
     ],
-    declarations: [ExerciseTemplateFormPage]
+    declarations: [TemplateFormPage]
 })
-export class ExerciseTemplateFormPageModule {}
+export class TemplateFormPageModule {}

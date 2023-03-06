@@ -1,19 +1,19 @@
 import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
-import {ExerciseTemplateFormPage} from './exercise-template-form.page';
+import {TemplateFormPage} from './template-form-page.component';
 
 describe('ExerciseTemplateFormPage', () => {
-    let component: ExerciseTemplateFormPage;
-    let fixture: ComponentFixture<ExerciseTemplateFormPage>;
+    let component: TemplateFormPage;
+    let fixture: ComponentFixture<TemplateFormPage>;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [ExerciseTemplateFormPage],
+            declarations: [TemplateFormPage],
             imports: [IonicModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ExerciseTemplateFormPage);
+        fixture = TestBed.createComponent(TemplateFormPage);
         component = fixture.componentInstance;
         fixture.detectChanges();
     }));
