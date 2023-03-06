@@ -21,7 +21,7 @@
             <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!allPractitioners || (allPractitioners && allPractitioners.length < 1)">
                 <ion-note class="ion-margin-top">Nenhum aluno encontrado</ion-note>
             </ion-row>
-            <ion-list *ngIf="allPractitioners && allPractitioners.length > 0">
+            <ion-list *ngIf="allPractitioners && allPractitioners.length > 0" class="ion-no-padding">
                 <ion-item lines="full" button="true" *ngFor="let practitioner of allPractitioners" routerLink="/practitioner-profile/{{practitioner.thisObjectID}}">
                     <ion-label>{{practitioner.name}}</ion-label>
                 </ion-item>
@@ -34,7 +34,7 @@
                 </ion-item>
                 <ion-input disabled="true" placeholder="Pesquisar"></ion-input>
             </ion-item>
-            <ion-list>
+            <ion-list class="ion-no-padding">
                 <ion-item lines="full" *ngFor="let skeletonStyle of skeletonTextItems">
                     <ion-label><ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text></ion-label>
                 </ion-item>
