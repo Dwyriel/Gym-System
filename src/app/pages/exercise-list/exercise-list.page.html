@@ -1,63 +1,65 @@
-<div class="ion-page" id="main-content">
-    <ion-header>
-        <ion-toolbar>
-            <ion-buttons slot="start">
-                <ion-menu-button></ion-menu-button>
-            </ion-buttons>
-            <ion-title>Exercícios</ion-title>
-        </ion-toolbar>
-    </ion-header>
-    <ion-content>
-        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesArrayIsEmpty && !fetchingData">
-            <ion-note class="ion-margin-top">Não há nenhum exercício registrado</ion-note>
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Exercícios</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesArrayIsEmpty && !fetchingData">
+        <ion-note class="ion-margin-top">Não há nenhum exercício registrado</ion-note>
+    </ion-row>
+    <div class="webbrowser has-add-fab-on-bottom" *ngIf="!exercisesArrayIsEmpty && !fetchingData">
+        <ion-item>
+            <ion-item lines="none">
+                <ion-icon name="search-outline"></ion-icon>
+            </ion-item>
+            <ion-input lines="full" placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
+        </ion-item>
+        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesByCategory && exercisesByCategory.length < 1">
+            <ion-note class="ion-margin-top">Nenhum exercício encontrado</ion-note>
         </ion-row>
-        <div class="webbrowser has-add-fab-on-bottom" *ngIf="!exercisesArrayIsEmpty && !fetchingData">
-            <ion-item>
-                <ion-item lines="none">
-                    <ion-icon name="search-outline"></ion-icon>
+        <ion-list *ngFor="let category of exercisesByCategory" lines="full" class="ion-no-padding">
+            <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
+            <ion-item *ngFor="let exercise of category.exercises">
+                <ion-label class="ion-padding-start">{{exercise.name}}</ion-label>
+                <ion-item lines="none" button="true" routerLink="/exercise-form/{{exercise.thisObjectID}}" detail="false">
+                    <ion-icon name="pencil-outline"></ion-icon>
                 </ion-item>
-                <ion-input lines="full" placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
+                <ion-item lines="none" button="true" (click)="DeleteExerciseBtn(exercise!)" detail="false">
+                    <ion-icon name="trash"></ion-icon>
+                </ion-item>
             </ion-item>
-            <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesByCategory && exercisesByCategory.length < 1">
-                <ion-note class="ion-margin-top">Nenhum exercício encontrado</ion-note>
-            </ion-row>
-            <ion-list *ngFor="let category of exercisesByCategory" lines="full" class="ion-no-padding">
-                <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
-                <ion-item *ngFor="let exercise of category.exercises">
-                    <ion-label class="ion-padding-start">{{exercise.name}}</ion-label>
-                    <ion-item lines="none" button="true" routerLink="/exercise-form/{{exercise.thisObjectID}}" detail="false">
-                        <ion-icon name="pencil-outline"></ion-icon>
-                    </ion-item>
-                    <ion-item lines="none" button="true" (click)="DeleteExerciseBtn(exercise!)" detail="false">
-                        <ion-icon name="trash"></ion-icon>
-                    </ion-item>
-                </ion-item>
-            </ion-list>
-        </div>
-        <div class="webbrowser has-add-fab-on-bottom" *ngIf="fetchingData">
-            <ion-item>
-                <ion-item lines="none">
-                    <ion-icon name="search-outline"></ion-icon>
-                </ion-item>
-                <ion-input lines="full" disabled="true" placeholder="Pesquisar"></ion-input>
+        </ion-list>
+    </div>
+    <div class="webbrowser has-add-fab-on-bottom" *ngIf="fetchingData">
+        <ion-item>
+            <ion-item lines="none">
+                <ion-icon name="search-outline"></ion-icon>
             </ion-item>
-            <ion-list lines="full" class="ion-no-padding">
-                <ion-list-header class="ion-text-center"><ion-skeleton-text [animated]="true" style="width: 200px"></ion-skeleton-text></ion-list-header>
-                <ion-item *ngFor="let skeletonStyle of skeletonTextItems">
-                    <ion-label class="ion-padding-start"><ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text></ion-label>
-                    <ion-item lines="none" button="true" detail="false">
-                        <ion-icon name="pencil-outline"></ion-icon>
-                    </ion-item>
-                    <ion-item lines="none" button="true" detail="false">
-                        <ion-icon name="trash"></ion-icon>
-                    </ion-item>
+            <ion-input lines="full" disabled="true" placeholder="Pesquisar"></ion-input>
+        </ion-item>
+        <ion-list lines="full" class="ion-no-padding">
+            <ion-list-header class="ion-text-center">
+                <ion-skeleton-text [animated]="true" style="width: 200px"></ion-skeleton-text>
+            </ion-list-header>
+            <ion-item *ngFor="let skeletonStyle of skeletonTextItems">
+                <ion-label class="ion-padding-start">
+                    <ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text>
+                </ion-label>
+                <ion-item lines="none" button="true" detail="false">
+                    <ion-icon name="pencil-outline"></ion-icon>
                 </ion-item>
-            </ion-list>
-        </div>
-        <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-            <ion-fab-button routerLink="/exercise-form">
-                <ion-icon name="add"></ion-icon>
-            </ion-fab-button>
-        </ion-fab>
-    </ion-content>
-</div>
+                <ion-item lines="none" button="true" detail="false">
+                    <ion-icon name="trash"></ion-icon>
+                </ion-item>
+            </ion-item>
+        </ion-list>
+    </div>
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+        <ion-fab-button routerLink="/exercise-form">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>

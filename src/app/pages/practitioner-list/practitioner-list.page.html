@@ -1,49 +1,49 @@
-<div class="ion-page" id="main-content">
-    <ion-header>
-        <ion-toolbar>
-            <ion-buttons slot="start">
-                <ion-menu-button></ion-menu-button>
-            </ion-buttons>
-            <ion-title>Alunos</ion-title>
-        </ion-toolbar>
-    </ion-header>
-    <ion-content>
-        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="practitionerArrayIsEmpty && !fetchingData">
-            <ion-note class="ion-margin-top">Não há nenhum aluno registrado</ion-note>
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Alunos</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="practitionerArrayIsEmpty && !fetchingData">
+        <ion-note class="ion-margin-top">Não há nenhum aluno registrado</ion-note>
+    </ion-row>
+    <div class="webbrowser has-add-fab-on-bottom" *ngIf="!practitionerArrayIsEmpty && !fetchingData">
+        <ion-item lines="full">
+            <ion-item lines="none">
+                <ion-icon name="search-outline"></ion-icon>
+            </ion-item>
+            <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
+        </ion-item>
+        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!allPractitioners || (allPractitioners && allPractitioners.length < 1)">
+            <ion-note class="ion-margin-top">Nenhum aluno encontrado</ion-note>
         </ion-row>
-        <div class="webbrowser has-add-fab-on-bottom" *ngIf="!practitionerArrayIsEmpty && !fetchingData">
-            <ion-item lines="full">
-                <ion-item lines="none">
-                    <ion-icon name="search-outline"></ion-icon>
-                </ion-item>
-                <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
+        <ion-list *ngIf="allPractitioners && allPractitioners.length > 0" class="ion-no-padding">
+            <ion-item lines="full" button="true" *ngFor="let practitioner of allPractitioners" routerLink="/practitioner-profile/{{practitioner.thisObjectID}}">
+                <ion-label>{{practitioner.name}}</ion-label>
             </ion-item>
-            <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="!allPractitioners || (allPractitioners && allPractitioners.length < 1)">
-                <ion-note class="ion-margin-top">Nenhum aluno encontrado</ion-note>
-            </ion-row>
-            <ion-list *ngIf="allPractitioners && allPractitioners.length > 0" class="ion-no-padding">
-                <ion-item lines="full" button="true" *ngFor="let practitioner of allPractitioners" routerLink="/practitioner-profile/{{practitioner.thisObjectID}}">
-                    <ion-label>{{practitioner.name}}</ion-label>
-                </ion-item>
-            </ion-list>
-        </div>
-        <div class="webbrowser has-add-fab-on-bottom" *ngIf="fetchingData">
-            <ion-item lines="full">
-                <ion-item lines="none">
-                    <ion-icon name="search-outline"></ion-icon>
-                </ion-item>
-                <ion-input disabled="true" placeholder="Pesquisar"></ion-input>
+        </ion-list>
+    </div>
+    <div class="webbrowser has-add-fab-on-bottom" *ngIf="fetchingData">
+        <ion-item lines="full">
+            <ion-item lines="none">
+                <ion-icon name="search-outline"></ion-icon>
             </ion-item>
-            <ion-list class="ion-no-padding">
-                <ion-item lines="full" *ngFor="let skeletonStyle of skeletonTextItems">
-                    <ion-label><ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text></ion-label>
-                </ion-item>
-            </ion-list>
-        </div>
-        <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-            <ion-fab-button routerLink="/practitioner-form">
-                <ion-icon name="add"></ion-icon>
-            </ion-fab-button>
-        </ion-fab>
-    </ion-content>
-</div>
+            <ion-input disabled="true" placeholder="Pesquisar"></ion-input>
+        </ion-item>
+        <ion-list class="ion-no-padding">
+            <ion-item lines="full" *ngFor="let skeletonStyle of skeletonTextItems">
+                <ion-label>
+                    <ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text>
+                </ion-label>
+            </ion-item>
+        </ion-list>
+    </div>
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+        <ion-fab-button routerLink="/practitioner-form">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>
