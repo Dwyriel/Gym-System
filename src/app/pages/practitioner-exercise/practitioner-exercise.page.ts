@@ -131,8 +131,10 @@ export class PractitionerExercisePage {
 
     async updateEditedExercise(oldExercise: Exercise, newExercise: Exercise) {
         let errorOccurred = false;
-        if (oldExercise.series == newExercise.series && oldExercise.repetition == newExercise.repetition && oldExercise.rest == newExercise.rest && oldExercise.load == newExercise.load)
+        if (oldExercise.series == newExercise.series && oldExercise.repetition == newExercise.repetition && oldExercise.rest == newExercise.rest && oldExercise.load == newExercise.load) {
+            await this.alertService.ShowToast("Nada foi alterado", undefined, "warning");
             return;
+        }
         await this.practitionerService.RemoveExercise(this.practitionerInfo!.exercisesID, oldExercise).catch(() => errorOccurred = true);
         if (!errorOccurred)
             await this.practitionerService.AddExercise(this.practitionerInfo!.exercisesID, newExercise).catch(() => errorOccurred = true);
