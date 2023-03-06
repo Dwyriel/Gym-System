@@ -300,7 +300,7 @@ export class PractitionerService {
             });
             return arrayOfPractitioner;
         } catch (exception){
-            return [];
+            return Promise.reject();
         }
     }
 
