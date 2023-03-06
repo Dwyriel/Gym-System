@@ -54,7 +54,7 @@ export class PractitionerService {
         if (!presRef)
             return undefined;
         return addDoc(this.colPracShort(), {
-            formCreationDate: practitioner.formCreationDate.getTime(),
+            formCreationDate: new Date().getTime(),
             name: practitioner.name.trim(),
             objectives: practitioner.objectives.trim(),
             observations: practitioner.observations.trim(),
