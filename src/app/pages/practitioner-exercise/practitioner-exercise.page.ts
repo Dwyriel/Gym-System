@@ -5,7 +5,7 @@ import {AccountService} from "../../services/account.service";
 import {PractitionerService} from "../../services/practitioner.service";
 import {AlertService} from "../../services/alert.service";
 import {Practitioner} from "../../classes/practitioner";
-import {Exercise, ExerciseTemplate} from "../../interfaces/exercise";
+import {PractitionerExercise, Exercise} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {PopoverController} from "@ionic/angular";
 import {SelectExerciseAndWorkloadComponent} from "../../components/select-exercise-and-workload/select-exercise-and-workload.component";
@@ -25,8 +25,8 @@ export class PractitionerExercisePage {
 
     public skeletonTextItems: string[] = [];
     public practitionerInfo?: Practitioner;
-    public practitionerExercises?: Exercise[];
-    public allExercises?: ExerciseTemplate[];
+    public practitionerExercises?: PractitionerExercise[];
+    public allExercises?: Exercise[];
     public isLoading = false;
     public hasExercises = true;
     public practitionerID: string | null = null;
@@ -68,7 +68,7 @@ export class PractitionerExercisePage {
             this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px; max-width: 80%`);
     }
 
-    public async onClick(exercise?: Exercise) {
+    public async onClick(exercise?: PractitionerExercise) {
         if (!exercise) {
             await this.addExerciseBtn();
             return;
@@ -103,7 +103,7 @@ export class PractitionerExercisePage {
         await addExercisePopover.present();
     }
 
-    private async editExerciseBtn(oldExercise: Exercise) {
+    private async editExerciseBtn(oldExercise: PractitionerExercise) {
         const editExercisePopover = await this.popoverController.create({
             component: SelectExerciseAndWorkloadComponent,
             mode: 'md',
@@ -112,7 +112,7 @@ export class PractitionerExercisePage {
         });
         editExercisePopover.onDidDismiss().then(async value => {
             if (value.data) {
-                let newExercise: Exercise = {
+                let newExercise: PractitionerExercise = {
                     exerciseID: oldExercise.exerciseID,
                     exercise: oldExercise.exercise,
                     series: value.data.updatedWorkload!.series,
@@ -129,7 +129,7 @@ export class PractitionerExercisePage {
         await editExercisePopover.present();
     }
 
-    async updateEditedExercise(oldExercise: Exercise, newExercise: Exercise) {
+    async updateEditedExercise(oldExercise: PractitionerExercise, newExercise: PractitionerExercise) {
         let errorOccurred = false;
         if (oldExercise.series == newExercise.series && oldExercise.repetition == newExercise.repetition && oldExercise.rest == newExercise.rest && oldExercise.load == newExercise.load) {
             await this.alertService.ShowToast("Nada foi alterado", undefined, "warning");
@@ -146,7 +146,7 @@ export class PractitionerExercisePage {
         }
     }
 
-    public async removeExerciseBtn(exercise: Exercise) {
+    public async removeExerciseBtn(exercise: PractitionerExercise) {
         let confirmation = await this.alertService.ConfirmationAlert("Deseja remover este exercício?", undefined, "Não", "Sim");
         if (!this.practitionerInfo?.exercisesID || !confirmation)
             return;
@@ -165,7 +165,7 @@ export class PractitionerExercisePage {
     }
 
     private removeRepeatedExercises() {
-        let newList: ExerciseTemplate[] = [];
+        let newList: Exercise[] = [];
         this.allExercises?.forEach(exer => {
             let canAdd = true;
             this.practitionerExercises?.forEach(pracExer => {

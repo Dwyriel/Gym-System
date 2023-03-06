@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {waitForFirebaseResponse} from "../../services/app.utility";
-import {ExerciseTemplate} from "../../interfaces/exercise";
+import {Exercise} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertService} from "../../services/alert.service";
@@ -19,7 +19,7 @@ export class ExerciseFormPage {
     public possibleCategories: Array<string> = new Array<string>();
     public newCategoryName: string = "";
 
-    public exercises: ExerciseTemplate[] = [];
+    public exercises: Exercise[] = [];
     public idToChangeExercise: string | null = null;
     public hideCategoryInsertion: boolean = true;
     public isLoading: boolean = false;

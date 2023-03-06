@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {ExercisesService} from "../../services/exercises.service";
-import {ExerciseTemplate} from "../../interfaces/exercise";
+import {Exercise} from "../../interfaces/exercise";
 import {PractitionerService} from "../../services/practitioner.service";
 import {AlertService} from "../../services/alert.service";
 import {waitForFirebaseResponse} from "../../services/app.utility";
@@ -8,7 +8,7 @@ import {AccountService} from "../../services/account.service";
 
 interface ExercisesByCategory {
     categoryName: string,
-    exercises: Array<ExerciseTemplate>
+    exercises: Array<Exercise>
 }
 
 @Component({
@@ -20,7 +20,7 @@ export class ExerciseListPage {
     private readonly minSkeletonTextSize = 150;
     private readonly skeletonTextVariation = 200;
     private readonly skeletonTextNumOfItems = 8;
-    private allExercises?: Array<ExerciseTemplate>;
+    private allExercises?: Array<Exercise>;
     private exercisesByCategoryAsString: string = "";
 
     public skeletonTextItems: string[] = [];
@@ -40,7 +40,7 @@ export class ExerciseListPage {
 
     ionViewDidLeave() {
         this.exercisesByCategory = new Array<ExercisesByCategory>();
-        this.allExercises = new Array<ExerciseTemplate>();
+        this.allExercises = new Array<Exercise>();
         this.searchFilter = "";
         this.fetchingData = true;
     }
@@ -55,7 +55,7 @@ export class ExerciseListPage {
         this.fetchingData = true;
         this.allExercises = await this.exercisesService.GetAllExercises();
         let categories: Array<string> = await this.exercisesService.GetAllCategories(this.allExercises);
-        categories.forEach(categoryName => this.exercisesByCategory.push({categoryName, exercises: new Array<ExerciseTemplate>()}));
+        categories.forEach(categoryName => this.exercisesByCategory.push({categoryName, exercises: new Array<Exercise>()}));
 
         for (let i = 0; i < categories.length; i++) {
             this.allExercises.forEach(exercise => {
@@ -68,7 +68,7 @@ export class ExerciseListPage {
         this.fetchingData = false;
     }
 
-    async DeleteExerciseBtn(exercise: ExerciseTemplate) {
+    async DeleteExerciseBtn(exercise: Exercise) {
         let answer = await this.alertService.ConfirmationAlert("Apagar este exercício?", `"${exercise.name}" desaparecerá para sempre`, "Não", "Sim");
         if (!answer)
             return;

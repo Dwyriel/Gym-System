@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Firestore, collection, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, docData, query, startAt, endAt, limit, where, orderBy, getDocsFromCache, getDocFromCache, getCountFromServer} from "@angular/fire/firestore";
-import {ExerciseTemplate} from "../interfaces/exercise";
+import {Exercise} from "../interfaces/exercise";
 
 @Injectable({
     providedIn: 'root'
@@ -23,10 +23,10 @@ export class ExercisesService {
      * @param exerciseTemplate the exercise to be added into the database
      * @return the id of the object on the database
      */
-    public async CreateExercise(exerciseTemplate: ExerciseTemplate) {
+    public async CreateExercise(exerciseTemplate: Exercise) {
         if (!exerciseTemplate)
             return;
-        return await addDoc(this.colShort(), {category: exerciseTemplate.category.trim(), name: exerciseTemplate.name.trim()});
+        return await addDoc(this.colExercShort(), {category: exerciseTemplate.category.trim(), name: exerciseTemplate.name.trim()});
     }
 
     /**
@@ -39,7 +39,7 @@ export class ExercisesService {
             exerciseTemplate.category = exerciseTemplate.category.trim();
         if(exerciseTemplate.name)
             exerciseTemplate.name = exerciseTemplate.name.trim();
-        return updateDoc(this.docShort(id), exerciseTemplate);
+        return updateDoc(this.docExercShort(id), exerciseTemplate);
     }
 
     /**
@@ -48,7 +48,7 @@ export class ExercisesService {
      * @param id the id of the exercise that will be deleted
      */
     public async DeleteExercise(id: string) {
-        return deleteDoc(this.docShort(id));
+        return deleteDoc(this.docExercShort(id));
     }
 
     /**
@@ -56,10 +56,10 @@ export class ExercisesService {
      * @param id the id of the exercise
      */
     public async GetExercise(id: string) {
-        const doc = await getDoc(this.docShort(id));
+        const doc = await getDoc(this.docExercShort(id));
         if (!doc.exists())
             return Promise.reject();
-        let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+        let exercise: Exercise = doc.data() as Exercise;
         exercise.thisObjectID = doc.id;
         return Promise.resolve(exercise);
     }
@@ -70,10 +70,10 @@ export class ExercisesService {
      */
     public async GetExerciseFromCache(id: string) {
         try {
-            const doc = await getDocFromCache(this.docShort(id));
+            const doc = await getDocFromCache(this.docExercShort(id));
             if (!doc.exists())
                 return Promise.reject();
-            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            let exercise: Exercise = doc.data() as Exercise;
             exercise.thisObjectID = doc.id;
             return Promise.resolve(exercise);
         } catch (exception) {
@@ -86,7 +86,7 @@ export class ExercisesService {
      * @param id the id of the exercise
      */
     public async GetExerciseObservable(id: string) {
-        return docData(this.docShort(id));
+        return docData(this.docExercShort(id));
     }
 
     /**
@@ -94,7 +94,7 @@ export class ExercisesService {
      * @param exercises (optional) the array of ExerciseTemplate, if not passed it will be retrieved from the database
      * @return an array of strings containing only unique categories
      */
-    public async GetAllCategories(exercises?: ExerciseTemplate[]) {
+    public async GetAllCategories(exercises?: Exercise[]) {
         if (!exercises)
             exercises = await this.GetAllExercises();
         let cats: string[] = [];
@@ -110,10 +110,10 @@ export class ExercisesService {
      * @return the result of the query as ExerciseTemplate[]
      */
     public async GetAllFromRange(from: number, to: number) {
-        const allDocs = await getDocs(query(this.colShort(), startAt(from), endAt(to)));
-        let arrayOfExercises: (ExerciseTemplate)[] = [];
+        const allDocs = await getDocs(query(this.colExercShort(), startAt(from), endAt(to)));
+        let arrayOfExercises: (Exercise)[] = [];
         allDocs.forEach(doc => {
-            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            let exercise: Exercise = doc.data() as Exercise;
             exercise.thisObjectID = doc.id;
             arrayOfExercises.push(exercise);
         });
@@ -129,10 +129,10 @@ export class ExercisesService {
      * @return the result of the query as ExerciseTemplate[]
      */
     public async GetAllFromRangeWithOrderBy(from: number, to: number, field: string, direction: 'desc' | 'asc') {
-        const allDocs = await getDocs(query(this.colShort(), orderBy(field, direction), startAt(from), endAt(to)));
-        let arrayOfExercises: (ExerciseTemplate)[] = [];
+        const allDocs = await getDocs(query(this.colExercShort(), orderBy(field, direction), startAt(from), endAt(to)));
+        let arrayOfExercises: (Exercise)[] = [];
         allDocs.forEach(doc => {
-            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            let exercise: Exercise = doc.data() as Exercise;
             exercise.thisObjectID = doc.id;
             arrayOfExercises.push(exercise);
         });
@@ -147,10 +147,10 @@ export class ExercisesService {
      * @return the result of the query as ExerciseTemplate[]
      */
     public async GetAllMatching(field: string, value: string, maxEntries?: number) {
-        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colShort(), where(field, "==", value), limit(maxEntries))) : await getDocs(query(this.colShort(), where(field, "==", value)));
-        let arrayOfExercises: (ExerciseTemplate)[] = [];
+        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colExercShort(), where(field, "==", value), limit(maxEntries))) : await getDocs(query(this.colExercShort(), where(field, "==", value)));
+        let arrayOfExercises: (Exercise)[] = [];
         allDocs.forEach(doc => {
-            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            let exercise: Exercise = doc.data() as Exercise;
             exercise.thisObjectID = doc.id;
             arrayOfExercises.push(exercise);
         });
@@ -163,10 +163,10 @@ export class ExercisesService {
      * @return the result of the query as ExerciseTemplate[]
      */
     public async GetAllExercises(maxEntries?: number) {
-        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colShort(), limit(maxEntries))) : await getDocs(this.colShort());
-        let arrayOfExercises: (ExerciseTemplate)[] = [];
+        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colExercShort(), limit(maxEntries))) : await getDocs(this.colExercShort());
+        let arrayOfExercises: (Exercise)[] = [];
         allDocs.forEach(doc => {
-            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            let exercise: Exercise = doc.data() as Exercise;
             exercise.thisObjectID = doc.id;
             arrayOfExercises.push(exercise);
         });
@@ -180,10 +180,10 @@ export class ExercisesService {
      */
     public async GetAllExercisesFromCache(maxEntries?: number) {
         try {
-            const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colShort(), limit(maxEntries))) : await getDocsFromCache(this.colShort());
-            let arrayOfExercises: (ExerciseTemplate)[] = [];
+            const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colExercShort(), limit(maxEntries))) : await getDocsFromCache(this.colExercShort());
+            let arrayOfExercises: (Exercise)[] = [];
             allDocs.forEach(doc => {
-                let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+                let exercise: Exercise = doc.data() as Exercise;
                 exercise.thisObjectID = doc.id;
                 arrayOfExercises.push(exercise);
             });
@@ -201,10 +201,10 @@ export class ExercisesService {
      * @return the result of the query as ExerciseTemplate[]
      */
     public async GetAllExercisesWithOrderBy(field: string, direction: 'desc' | 'asc', maxEntries?: number) {
-        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colShort(), orderBy(field, direction), limit(maxEntries))) : await getDocs(query(this.colShort(), orderBy(field, direction)));
-        let arrayOfExercises: (ExerciseTemplate)[] = [];
+        const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colExercShort(), orderBy(field, direction), limit(maxEntries))) : await getDocs(query(this.colExercShort(), orderBy(field, direction)));
+        let arrayOfExercises: (Exercise)[] = [];
         allDocs.forEach(doc => {
-            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            let exercise: Exercise = doc.data() as Exercise;
             exercise.thisObjectID = doc.id;
             arrayOfExercises.push(exercise);
         });
@@ -216,7 +216,7 @@ export class ExercisesService {
      */
     public async GetExerciseCount() {
         try {
-            const doc = await getCountFromServer(this.colShort());
+            const doc = await getCountFromServer(this.colExercShort());
             return doc.data().count;
         } catch (exception) {
             return Promise.reject();

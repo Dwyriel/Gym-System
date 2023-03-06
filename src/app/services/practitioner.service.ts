@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Firestore, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc, getCountFromServer} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
-import {Exercise} from "../interfaces/exercise";
+import {PractitionerExercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
 import {ExercisesService} from "./exercises.service";
 
@@ -83,7 +83,7 @@ export class PractitionerService {
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
      * @param exercise the exercise that will be added
      */
-    public async AddExercise(id: string, exercise: Exercise) {
+    public async AddExercise(id: string, exercise: PractitionerExercise) {
         return updateDoc(this.docExerShort(id), {
             items: arrayUnion({
                 exerciseID: exercise.exerciseID,
@@ -115,7 +115,7 @@ export class PractitionerService {
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
      * @param exercise the exercise that will be removed
      */
-    public async RemoveExercise(id: string, exercise: Exercise) {
+    public async RemoveExercise(id: string, exercise: PractitionerExercise) {
         return updateDoc(this.docExerShort(id), {
             items: arrayRemove({
                 exerciseID: exercise.exerciseID,
@@ -208,7 +208,7 @@ export class PractitionerService {
             const doc = fromCache ? await getDocFromCache(this.docExerShort(id)) : await getDoc(this.docExerShort(id));
             if (!doc.exists())
                 return Promise.reject();
-            let exercises: Exercise[] = (doc.data() as { items: Exercise[] }).items;
+            let exercises: PractitionerExercise[] = (doc.data() as { items: PractitionerExercise[] }).items;
             for (let i = 0; i < exercises.length; i++) {
                 let errorOccurred = false;
                 await this.exercisesService.GetExerciseFromCache(exercises[i].exerciseID).then(value => exercises[i].exercise = value).catch(() => errorOccurred = true);

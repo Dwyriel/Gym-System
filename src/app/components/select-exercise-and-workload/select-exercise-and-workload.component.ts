@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PopoverController} from "@ionic/angular";
-import {ExerciseTemplate} from "../../interfaces/exercise";
+import {Exercise} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {acceptOnlyInteger} from "../../services/app.utility";
 
@@ -17,14 +17,14 @@ interface Workload {
     styleUrls: ['./select-exercise-and-workload.component.scss'],
 })
 export class SelectExerciseAndWorkloadComponent implements OnInit {
-    @Input("exercisesInput") private exercisesInput: Array<ExerciseTemplate> = [];
+    @Input("exercisesInput") private exercisesInput: Array<Exercise> = [];
     @Input("workloadInput") public workloadInput?: Workload;
 
     public isEditing: boolean = false;
     public categories: string[] = [];
-    public exercises: Array<ExerciseTemplate> = []
+    public exercises: Array<Exercise> = []
     public selectedCategory: string = "";
-    public selectedExerciseTemplate?: ExerciseTemplate;
+    public selectedExerciseTemplate?: Exercise;
 
     constructor(private popoverController: PopoverController, private exerciseService: ExercisesService) { }
 
