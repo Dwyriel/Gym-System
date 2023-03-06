@@ -55,9 +55,9 @@ export class PractitionerService {
             return undefined;
         return addDoc(this.colPracShort(), {
             formCreationDate: practitioner.formCreationDate.getTime(),
-            name: practitioner.name,
-            objectives: practitioner.objectives,
-            observations: practitioner.observations,
+            name: practitioner.name.trim(),
+            objectives: practitioner.objectives.trim(),
+            observations: practitioner.observations.trim(),
             exercisesID: exerRef.id,
             presenceLogID: presRef.id
         });
@@ -69,6 +69,12 @@ export class PractitionerService {
      * @param practitioner the modifications that will be performed
      */
     public async UpdatePractitioner(id: string, practitioner: { name?: string, objectives?: string, observations?: string }) {
+        if(practitioner.name)
+            practitioner.name = practitioner.name.trim();
+        if(practitioner.objectives)
+            practitioner.objectives = practitioner.objectives.trim();
+        if(practitioner.observations)
+            practitioner.observations = practitioner.observations.trim();
         return updateDoc(this.docPracShort(id), practitioner);
     }
 
