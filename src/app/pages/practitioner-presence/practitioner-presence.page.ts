@@ -177,7 +177,11 @@ export class PractitionerPresencePage {
             animated: true
         });
         editPresencePopover.onDidDismiss().then(async value => {
-            if (value.data && value.data.presence.wasPresent != presence.wasPresent) {
+            if (value.data.presence.wasPresent == presence.wasPresent) {
+                await this.alertService.ShowToast("Nada foi alterado", undefined, "warning");
+                return;
+            }
+            if (value.data) {
                 let id = await this.alertService.PresentLoading("Carregando");
                 let editedPresence: Presence = {date: presence.date, wasPresent: value.data.presence.wasPresent};
                 let errorOcurred = false;
