@@ -19,6 +19,7 @@ interface Workload {
 export class SelectExerciseAndWorkloadComponent implements OnInit {
     @Input("exercisesInput") private exercisesInput: Array<Exercise> = [];
     @Input("workloadInput") public workloadInput?: Workload;
+    @Input("onlyExercise") public onlyExercise?: boolean;
 
     public isEditing: boolean = false;
     public categories: string[] = [];
@@ -30,8 +31,10 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
 
     async ngOnInit() {
         this.isEditing = this.workloadInput != undefined;
-        if (this.isEditing)
+        if (this.isEditing) {
+            this.onlyExercise = false;
             return;
+        }
         this.workloadInput = {series: undefined, repetition: undefined, rest: undefined, load: undefined};
         this.categories = await this.exerciseService.GetAllCategories(this.exercisesInput);
     }
@@ -67,6 +70,6 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
     }
 
     get checkIfRequirementsArentMet() {
-        return !this.isEditing && (!this.selectedCategory || !this.selectedExerciseTemplate) || !this.workloadInput!.series || !this.workloadInput!.repetition || (!this.workloadInput!.rest && this.workloadInput!.rest !== 0) || (!this.workloadInput!.load && this.workloadInput!.load !== 0);
+        return !this.isEditing && (!this.selectedCategory || !this.selectedExerciseTemplate) || !this.onlyExercise && (!this.workloadInput!.series || !this.workloadInput!.repetition || (!this.workloadInput!.rest && this.workloadInput!.rest !== 0) || (!this.workloadInput!.load && this.workloadInput!.load !== 0));
     }
 }

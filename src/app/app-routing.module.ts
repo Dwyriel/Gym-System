@@ -73,6 +73,14 @@ const routes: Routes = [
         path: 'template-list',
         loadChildren: () => import('./pages/template-list/template-list.module').then(m => m.TemplateListPageModule)
     },
+    {
+        path: 'exercise-template-form',
+        loadChildren: () => import('./pages/exercise-template-form/exercise-template-form.module').then(m => m.ExerciseTemplateFormPageModule)
+    },
+    {
+        path: 'exercise-template-form/:id',
+        loadChildren: () => import('./pages/exercise-template-form/exercise-template-form.module').then(m => m.ExerciseTemplateFormPageModule)
+    }
 ];
 
 @NgModule({
