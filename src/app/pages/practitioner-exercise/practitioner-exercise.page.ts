@@ -46,7 +46,7 @@ export class PractitionerExercisePage {
             await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
         if (errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
-            return
+            return;
         }
         this.allExercises = await this.exercisesService.GetAllExercises();
         await this.populateExerciseList();
