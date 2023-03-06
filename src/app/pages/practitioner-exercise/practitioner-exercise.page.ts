@@ -82,6 +82,20 @@ export class PractitionerExercisePage {
             await this.removeExerciseBtn(exercise);
     }
 
+    public async removeAllExercises() {
+        let confirmation = await this.alertService.ConfirmationAlert("Deseja remover todos os exercícios?", `O aluno "${this.practitionerInfo?.name}" ficará sem exercícios.`, "Não", "Sim");
+        if (!confirmation || !this.practitionerInfo?.exercisesID)
+            return;
+        let id = await this.alertService.PresentLoading("Carregando");
+        await this.practitionerService.ClearExercises(this.practitionerInfo?.exercisesID)
+            .then(async () => {
+                await this.alertService.ShowToast("Exercícios removidos com sucesso", undefined, "primary")
+                await this.populateExerciseList();
+            })
+            .catch(async () => await this.alertService.ShowToast("Não foi possível remover os exercícios", undefined, "danger"));
+        await this.alertService.DismissLoading(id);
+    }
+
     private async addExerciseBtn() {
         const unusedExercises = this.removeRepeatedExercises();
         const addExercisePopover = await this.popoverController.create({
