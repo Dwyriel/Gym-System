@@ -185,6 +185,26 @@ export class ExercisesService {
     }
 
     /**
+     * Gets all the exercises of a exerciseTemplate
+     * @param exerciseIDs the array of id of exercises to fetch (aka ExerciseTemplate.exerciseIDs)
+     * @return the result of the query as Exercise[]
+     */
+    public async GetTemplatesExercises(exerciseIDs: string[]) {
+        try {
+            let exercises: Exercise[] = [];
+            for (let exerciseID of exerciseIDs) {
+                let cacheError = false;
+                await this.GetExerciseFromCache(exerciseID).then(value => exercises.push(value)).catch(() => cacheError = true);
+                if (cacheError)
+                    exercises.push(await this.GetExercise(exerciseID));
+            }
+            return Promise.resolve(exercises);
+        } catch (exception) {
+            return Promise.reject();
+        }
+    }
+
+    /**
      * Gets all exercises with a certain limit
      * @param from the entry to start at (inclusive)
      * @param to the entry to end at (inclusive)
