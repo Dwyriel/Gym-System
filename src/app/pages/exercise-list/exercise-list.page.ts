@@ -44,13 +44,13 @@ export class ExerciseListPage {
         this.fetchingData = true;
     }
 
-    setSkeletonText(){
+    private setSkeletonText(){
         this.skeletonTextItems = [];
         for (let i = 0; i < this.skeletonTextNumOfItems; i++)
             this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px`);
     }
 
-    async PopulateInterface() {
+    private async PopulateInterface() {
         this.fetchingData = true;
         this.allExercises = await this.exercisesService.GetAllExercises();
         let categories: Array<string> = await this.exercisesService.GetAllCategories(this.allExercises);
@@ -67,7 +67,29 @@ export class ExerciseListPage {
         this.fetchingData = false;
     }
 
-    async DeleteExerciseBtn(exercise: Exercise) {
+    private RepopulateInterface() {
+        this.exercisesByCategory = JSON.parse(this.exercisesByCategoryAsString);
+    }
+
+    public async SearchNames(repopulate: boolean = true) {
+        if (repopulate)
+            this.RepopulateInterface();
+        for (let i = 0; i < this.exercisesByCategory.length; i++) {
+            for (let j = 0; j < this.exercisesByCategory[i].exercises.length; j++) {
+                let name = this.exercisesByCategory[i].exercises[j].name.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+                if (!name.includes(this.searchFilter.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, ""))) {
+                    this.exercisesByCategory[i].exercises.splice(j, 1);
+                    j--;
+                }
+            }
+            if (this.exercisesByCategory[i].exercises.length == 0) {
+                this.exercisesByCategory.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
+    public async DeleteExerciseBtn(exercise: Exercise) {
         let answer = await this.alertService.ConfirmationAlert("Apagar este exercício?", `"${exercise.name}" desaparecerá para sempre`, "Não", "Sim");
         if (!answer)
             return;
@@ -92,7 +114,7 @@ export class ExerciseListPage {
         await this.alertService.DismissLoading(id);
     }
 
-    async DeleteExercise(exerciseId: string): Promise<boolean> {
+    private async DeleteExercise(exerciseId: string): Promise<boolean> {
         if (!exerciseId)
             return false;
         let shouldWait = true, returnValue = false;
@@ -114,27 +136,5 @@ export class ExerciseListPage {
         while (shouldWait)
             await new Promise(resolve => setTimeout(resolve, 10));
         return returnValue;
-    }
-
-    RepopulateInterface() {
-        this.exercisesByCategory = JSON.parse(this.exercisesByCategoryAsString);
-    }
-
-    async SearchNames(repopulate: boolean = true) {
-        if (repopulate)
-            this.RepopulateInterface();
-        for (let i = 0; i < this.exercisesByCategory.length; i++) {
-            for (let j = 0; j < this.exercisesByCategory[i].exercises.length; j++) {
-                let name = this.exercisesByCategory[i].exercises[j].name.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
-                if (!name.includes(this.searchFilter.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, ""))) {
-                    this.exercisesByCategory[i].exercises.splice(j, 1);
-                    j--;
-                }
-            }
-            if (this.exercisesByCategory[i].exercises.length == 0) {
-                this.exercisesByCategory.splice(i, 1);
-                i--;
-            }
-        }
     }
 }
