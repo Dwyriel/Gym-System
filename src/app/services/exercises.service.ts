@@ -21,11 +21,11 @@ export class ExercisesService {
     }
 
     private docTemplateShort(id: string) {
-        return doc(this.firestore, this.exerciseCollectionName, id);
+        return doc(this.firestore, this.templateCollectionName, id);
     }
 
     private colTemplateShort() {
-        return collection(this.firestore, this.exerciseCollectionName);
+        return collection(this.firestore, this.templateCollectionName);
     }
 
     /**
