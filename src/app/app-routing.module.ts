@@ -69,6 +69,10 @@ const routes: Routes = [
         path: 'practitioner-presence/:id',
         loadChildren: () => import('./pages/practitioner-presence/practitioner-presence.module').then(m => m.PractitionerPresencePageModule)
     },
+    {
+        path: 'template-list',
+        loadChildren: () => import('./pages/template-list/template-list.module').then(m => m.TemplateListPageModule)
+    },
 ];
 
 @NgModule({

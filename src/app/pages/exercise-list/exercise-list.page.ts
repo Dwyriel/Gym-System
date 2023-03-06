@@ -28,7 +28,6 @@ export class ExerciseListPage {
     public searchFilter: string = "";
     public exercisesArrayIsEmpty = true;
     public fetchingData = true;
-    public isLoading = true;
 
     constructor(private exercisesService: ExercisesService, private practitionersService: PractitionerService, private alertService: AlertService, private accountService: AccountService) { }
 
