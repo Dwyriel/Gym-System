@@ -21,7 +21,7 @@
             <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesByCategory && exercisesByCategory.length < 1">
                 <ion-note class="ion-margin-top">Nenhum exercício encontrado</ion-note>
             </ion-row>
-            <ion-list *ngFor="let category of exercisesByCategory" lines="full">
+            <ion-list *ngFor="let category of exercisesByCategory" lines="full" class="ion-no-padding">
                 <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
                 <ion-item *ngFor="let exercise of category.exercises">
                     <ion-label class="ion-padding-start">{{exercise.name}}</ion-label>
@@ -41,7 +41,7 @@
                 </ion-item>
                 <ion-input lines="full" disabled="true" placeholder="Pesquisar"></ion-input>
             </ion-item>
-            <ion-list lines="full">
+            <ion-list lines="full" class="ion-no-padding">
                 <ion-list-header class="ion-text-center"><ion-skeleton-text [animated]="true" style="width: 200px"></ion-skeleton-text></ion-list-header>
                 <ion-item *ngFor="let skeletonStyle of skeletonTextItems">
                     <ion-label class="ion-padding-start"><ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text></ion-label>
