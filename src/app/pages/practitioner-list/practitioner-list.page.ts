@@ -37,13 +37,13 @@ export class PractitionerListPage {
         this.fetchingData = true;
     }
 
-    setSkeletonText(){
+    private setSkeletonText(){
         this.skeletonTextItems = [];
         for (let i = 0; i < this.skeletonTextNumOfItems; i++)
             this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px`);
     }
 
-    async PopulateInterface() {
+    private async PopulateInterface() {
         this.fetchingData = true;
         this.allPractitioners = await this.practitionersService.GetAllPractitioners();
         this.allPractitionersAsString = JSON.stringify(this.allPractitioners);
@@ -51,11 +51,11 @@ export class PractitionerListPage {
         this.fetchingData = false;
     }
 
-    RepopulateInterface() {
+    private RepopulateInterface() {
         this.allPractitioners = JSON.parse(this.allPractitionersAsString);
     }
 
-    async SearchNames() {
+    public async SearchNames() {
         if (!this.allPractitioners)
             return;
         this.RepopulateInterface();
