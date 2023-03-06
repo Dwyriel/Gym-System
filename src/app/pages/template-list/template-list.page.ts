@@ -30,8 +30,10 @@ export class TemplateListPage {
             await this.PopulateInterface();
     }
 
-    //TODO: restart values
     ionViewDidLeave() {
+        this.templatesList = [];
+        this.searchFilter = "";
+        this.fetchingData = true;
     }
 
     private setSkeletonText() {
