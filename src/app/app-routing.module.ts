@@ -69,6 +69,14 @@ const routes: Routes = [
         path: 'practitioner-presence/:id',
         loadChildren: () => import('./pages/practitioner-presence/practitioner-presence.module').then(m => m.PractitionerPresencePageModule)
     },
+    {
+        path: 'exercise-template-form',
+        loadChildren: () => import('./pages/exercise-template-form/exercise-template-form.module').then(m => m.ExerciseTemplateFormPageModule)
+    },
+    {
+        path: 'exercise-template-form/:id',
+        loadChildren: () => import('./pages/exercise-template-form/exercise-template-form.module').then(m => m.ExerciseTemplateFormPageModule)
+    },
 ];
 
 @NgModule({
