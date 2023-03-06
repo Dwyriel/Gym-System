@@ -17,8 +17,8 @@
         <ion-row class="ion-padding ion-justify-content-center" *ngIf="!hasExercises">
             <ion-note>Não há nenhum exercício adicionado</ion-note>
         </ion-row>
-        <ion-list *ngIf="hasExercises">
-            <ion-grid>
+        <ion-list *ngIf="hasExercises" class="ion-no-padding">
+            <ion-grid class="ion-no-padding">
                 <ion-row>
                     <ion-item lines="none" class="bold-text full-width">
                         <div class="big-cell">Exercício</div>
@@ -45,7 +45,7 @@
             <ion-label>Adicionar exercício</ion-label>
             <ion-icon name="add-outline"></ion-icon>
         </ion-item>
-        <ion-list>
+        <ion-list class="ion-no-padding">
             <ion-grid>
                 <ion-row>
                     <ion-item lines="none" class="bold-text full-width">

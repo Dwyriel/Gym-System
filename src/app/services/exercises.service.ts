@@ -26,7 +26,7 @@ export class ExercisesService {
     public async CreateExercise(exerciseTemplate: ExerciseTemplate) {
         if (!exerciseTemplate)
             return;
-        return await addDoc(this.colShort(), exerciseTemplate);
+        return await addDoc(this.colShort(), {category: exerciseTemplate.category.trim(), name: exerciseTemplate.name.trim()});
     }
 
     /**
@@ -35,6 +35,10 @@ export class ExercisesService {
      * @param exerciseTemplate the modifications that will be performed
      */
     public async UpdateExercise(id: string, exerciseTemplate: { category?: string, name?: string }) {
+        if(exerciseTemplate.category)
+            exerciseTemplate.category = exerciseTemplate.category.trim();
+        if(exerciseTemplate.name)
+            exerciseTemplate.name = exerciseTemplate.name.trim();
         return updateDoc(this.docShort(id), exerciseTemplate);
     }
 
@@ -214,7 +218,7 @@ export class ExercisesService {
         try {
             const doc = await getCountFromServer(this.colShort());
             return doc.data().count;
-        } catch (exception){
+        } catch (exception) {
             return Promise.reject();
         }
     }

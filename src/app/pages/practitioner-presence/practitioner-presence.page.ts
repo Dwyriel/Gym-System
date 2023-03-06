@@ -32,7 +32,7 @@ export class PractitionerPresencePage {
     public filteredPresenceLogByYear: Presence[] = [];
     public filteredPresenceLog: Presence[] = [];
     public isLoading: boolean = true;
-    public appInfo = AppInfoService.AppInfo
+    public appInfo = AppInfoService.AppInfo;
 
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private popoverController: PopoverController, private alertService: AlertService) { }
 
@@ -155,9 +155,13 @@ export class PractitionerPresencePage {
         let confirmation = await this.alertService.ConfirmationAlert("Deseja remover esta presença?", undefined, "Não", "Sim");
         if (!confirmation)
             return;
+        let id = await this.alertService.PresentLoading("Carregando");
         await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence)
+            .then(async () => await this.alertService.ShowToast("Marcação removida com sucesso", undefined, "primary"))
             .catch(async () => await this.alertService.ShowToast("Não foi possível remover a marcação da data", undefined, "danger"));
         await this.refreshListAfterChange();
+        await this.alertService.DismissLoading(id);
+
     }
 
     async editPresenceBtn(presence: Presence) {
@@ -173,7 +177,12 @@ export class PractitionerPresencePage {
             animated: true
         });
         editPresencePopover.onDidDismiss().then(async value => {
-            if (value.data && value.data.presence.wasPresent != presence.wasPresent) {
+            if (value.data.presence.wasPresent == presence.wasPresent) {
+                await this.alertService.ShowToast("Nada foi alterado", undefined, "warning");
+                return;
+            }
+            if (value.data) {
+                let id = await this.alertService.PresentLoading("Carregando");
                 let editedPresence: Presence = {date: presence.date, wasPresent: value.data.presence.wasPresent};
                 let errorOcurred = false;
                 await this.practitionerService.AddPresence(this.practitioner.presenceLogID, editedPresence).catch(() => errorOcurred = true);
@@ -181,7 +190,11 @@ export class PractitionerPresencePage {
                     await this.practitionerService.RemovePresence(this.practitioner.presenceLogID, presence).catch(() => errorOcurred = true);
                 if (errorOcurred)
                     await this.alertService.ShowToast("Não foi possível editar a marcação da data", undefined, "danger");
-                await this.refreshListAfterChange();
+                else {
+                    await this.alertService.ShowToast("Marcação alterada com sucesso", undefined, "primary");
+                    await this.refreshListAfterChange();
+                }
+                await this.alertService.DismissLoading(id);
             }
         });
         await editPresencePopover.present();
@@ -200,9 +213,12 @@ export class PractitionerPresencePage {
         });
         createPresencePopover.onDidDismiss().then(async value => {
             if (value.data) {
+                let id = await this.alertService.PresentLoading("Carregando");
                 await this.practitionerService.AddPresence(this.practitioner.presenceLogID, value.data.presence)
+                    .then(async () => await this.alertService.ShowToast("Marcação criada com sucesso", undefined, "primary"))
                     .catch(async () => await this.alertService.ShowToast("Não foi possível criar a marcação da data", undefined, "danger"));
                 await this.refreshListAfterChange();
+                await this.alertService.DismissLoading(id);
             }
         });
         await createPresencePopover.present();

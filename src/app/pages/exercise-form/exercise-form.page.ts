@@ -19,6 +19,7 @@ export class ExerciseFormPage {
     public possibleCategories: Array<string> = new Array<string>();
     public newCategoryName: string = "";
 
+    public exercises: ExerciseTemplate[] = [];
     public idToChangeExercise: string | null = null;
     public hideCategoryInsertion: boolean = true;
     public isLoading: boolean = false;
@@ -29,7 +30,7 @@ export class ExerciseFormPage {
         this.isLoading = true;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
-        await this.GetUniqueCategories();
+        await this.GetExerciseAndUniqueCategories();
         this.idToChangeExercise = this.activatedRoute.snapshot.paramMap.get("id");
         if (this.idToChangeExercise)
             await this.GetExerciseFromFirebase();
@@ -44,9 +45,10 @@ export class ExerciseFormPage {
         this.categorySelected = undefined;
     }
 
-    async GetUniqueCategories() {
-        let Exercises: Array<ExerciseTemplate> = await this.exercisesService.GetAllExercises();
-        Exercises.forEach(item => this.possibleCategories.push(item.category));
+    async GetExerciseAndUniqueCategories() {
+        this.exercises = await this.exercisesService.GetAllExercises();
+        for (let exercise of this.exercises)
+            this.possibleCategories.push(exercise.category);
         this.possibleCategories = [...new Set(this.possibleCategories)];
     }
 
@@ -72,31 +74,30 @@ export class ExerciseFormPage {
     }
 
     async OnClick() {
-        if(!AppInfoService.AppInfo?.isOnline){
+        if (!AppInfoService.AppInfo?.isOnline) {
             await this.alertService.ShowToast("Dispositivo não esta conectado a internet", undefined, "danger");
             return;
         }
-        let functionResult: Promise<any> = (this.idToChangeExercise) ? this.UpdateExercise() : this.CreateExercise();
+        let functionResult: Promise<any> = this.CreateOrUpdateExercise(Boolean(this.idToChangeExercise));
         await functionResult.then(async () => {
             await this.alertService.ShowToast((this.idToChangeExercise) ? "Exercício alterado com sucesso" : "Exercício criado com sucesso", undefined, "primary");
             await this.router.navigate(["/exercise-list"]);
-        }).catch(async () => {
+        }).catch(async error => {
             this.isLoading = false;
-            await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger");
+            if (error.alreadyExists)
+                await this.alertService.ShowToast("Exercício já existe", undefined, "warning");
+            else
+                await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger");
         });
     }
 
-    async CreateExercise() {
+    async CreateOrUpdateExercise(isUpdating?: boolean) {
         this.isLoading = true;
         if (typeof this.categorySelected == "number")
             this.categorySelected = this.newCategoryName;
-        return this.exercisesService.CreateExercise({name: this.exerciseName, category: this.categorySelected!});
-    }
-
-    async UpdateExercise() {
-        this.isLoading = true;
-        if (typeof this.categorySelected == "number")
-            this.categorySelected = this.newCategoryName;
-        return this.exercisesService.UpdateExercise(this.idToChangeExercise!, {name: this.exerciseName, category: this.categorySelected!});
+        let exercise = {name: this.exerciseName, category: this.categorySelected!};
+        if (this.exercises.some(exer => exer.category == exercise.category && exer.name == exercise.name))
+            return Promise.reject({alreadyExists: true});
+        return isUpdating ? this.exercisesService.UpdateExercise(this.idToChangeExercise!, exercise) : this.exercisesService.CreateExercise(exercise);
     }
 }
