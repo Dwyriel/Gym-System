@@ -6,20 +6,17 @@
         <ion-title>Ciclos</ion-title>
     </ion-toolbar>
 </ion-header>
-
 <ion-content>
     <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="templatesListArrayIsEmpty && !fetchingData">
         <ion-note class="ion-margin-top">Não há nenhum ciclo registrado</ion-note>
     </ion-row>
-
     <div class="webbrowser has-add-fab-on-bottom" *ngIf="!templatesListArrayIsEmpty && !fetchingData">
         <ion-item>
             <ion-item lines="none">
                 <ion-icon name="search-outline"></ion-icon>
             </ion-item>
-            <ion-input lines="full" placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
+            <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
         </ion-item>
-
         <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="templatesList && templatesList.length < 1">
             <ion-note class="ion-margin-top">Nenhum ciclo encontrado</ion-note>
         </ion-row>
@@ -27,19 +24,15 @@
         <ion-list *ngFor="let template of templatesList" lines="full" class="ion-no-padding">
             <ion-item>
                 <ion-label class="ion-padding-start">{{template.name}}</ion-label>
-
-                <!--TODO: route to /template-form/:id-->
-                <ion-item lines="none" button="true" detail="false">
+                <ion-item lines="none" button="true" detail="false" routerLink="/template-form/{{template.thisObjectID}}">
                     <ion-icon name="pencil-outline"></ion-icon>
                 </ion-item>
-
                 <ion-item lines="none" button="true" detail="false" (click)="DeleteTemplateBtn(template)">
                     <ion-icon name="trash"></ion-icon>
                 </ion-item>
             </ion-item>
         </ion-list>
     </div>
-
     <div class="webbrowser has-add-fab-on-bottom" *ngIf="fetchingData">
         <ion-item>
             <ion-item lines="none">
@@ -48,9 +41,13 @@
             <ion-input lines="full" disabled="true" placeholder="Pesquisar"></ion-input>
         </ion-item>
         <ion-list lines="full" class="ion-no-padding">
-            <ion-list-header class="ion-text-center"><ion-skeleton-text [animated]="true" style="width: 200px"></ion-skeleton-text></ion-list-header>
+            <ion-list-header class="ion-text-center">
+                <ion-skeleton-text [animated]="true" style="width: 200px"></ion-skeleton-text>
+            </ion-list-header>
             <ion-item *ngFor="let skeletonStyle of skeletonTextItems">
-                <ion-label class="ion-padding-start"><ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text></ion-label>
+                <ion-label class="ion-padding-start">
+                    <ion-skeleton-text [animated]="true" [style]="skeletonStyle"></ion-skeleton-text>
+                </ion-label>
                 <ion-item lines="none" button="true" detail="false">
                     <ion-icon name="pencil-outline"></ion-icon>
                 </ion-item>
@@ -60,10 +57,8 @@
             </ion-item>
         </ion-list>
     </div>
-
-    <!--TODO: route to /template-form-->
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button>
+        <ion-fab-button routerLink="/template-form">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>
     </ion-fab>
