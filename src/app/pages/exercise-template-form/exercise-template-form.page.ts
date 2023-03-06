@@ -7,6 +7,7 @@ import {ExercisesService} from "../../services/exercises.service";
 import {AlertService} from "../../services/alert.service";
 import {Exercise} from "../../interfaces/exercise";
 import {ExerciseTemplate} from "../../interfaces/exercise-template";
+import {AppInfoService} from "../../services/app-info.service";
 
 function sortByCategory(firstExerc: Exercise, secondExerc: Exercise) {
     let firstLowerCase = firstExerc.category.toLowerCase();
@@ -35,7 +36,7 @@ export class ExerciseTemplateFormPage implements OnInit {
 
     async ionViewWillEnter() {
         this.exerciseTemplateID = this.activatedRoute.snapshot.paramMap.get("id");
-        this.getAllInfos();
+        await this.getAllInfos();
         this.isLoading = false;
     }
 
@@ -49,26 +50,34 @@ export class ExerciseTemplateFormPage implements OnInit {
         if (this.exerciseTemplateID)
             await this.exercisesService.GetExerciseTemplate(this.exerciseTemplateID).then(async value => {
                 this.templateName = value.name;
-                this.exercisesService;
-                this.addedExercises
-            });
-        await this.getExercises();
-        await this.getExerciseTemplates();
+                this.exercisesService.GetTemplatesExercises(value.exerciseIDs).then(value1 => {
+                    this.addedExercises = value1;
+                    this.addedExercises.sort(sortByCategory);
+                }).catch(() => errorOccurred = true);
+            }).catch(() => errorOccurred = true);
+        if (errorOccurred) {
+            await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
+            return;
+        }
+        await this.getExercisesAndTemplates();
     }
 
-    async getExercises() {
-        await this.exercisesService.GetAllExercises().then(value => this.allExercises = value).catch(async () => await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger"));
+    async getExercisesAndTemplates() {
+        let errorOccurred = false;
+        await this.exercisesService.GetAllExercises().then(value => this.allExercises = value).catch(async () => {
+            await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
+            errorOccurred = true;
+        });
+        if (!errorOccurred)
+            await this.getExerciseTemplates();
     }
 
     async getExerciseTemplates() {
-        let cacheError = false, errorOccurred = false;
+        let cacheError = false;
         await this.exercisesService.GetAllExerciseTemplatesFromCache().then(value => this.allExerciseTemplates = value).catch(() => cacheError = true);
         if (cacheError)
-            await this.exercisesService.GetAllExerciseTemplates().then(value => this.allExerciseTemplates = value).catch(() => {
-                errorOccurred = true;
-                this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
-            });
-        return errorOccurred;
+            await this.exercisesService.GetAllExerciseTemplates().then(value => this.allExerciseTemplates = value)
+                .catch(() => this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger"));
     }
 
     get checkIfSendConditionsAreMet() {
@@ -110,6 +119,25 @@ export class ExerciseTemplateFormPage implements OnInit {
     }
 
     async onCreateOrUpdateButtonClick() {
+        if (!AppInfoService.AppInfo?.isOnline) {
+            await this.alertService.ShowToast("Dispositivo não esta conectado a internet", undefined, "danger");
+            return;
+        }
+        this.isLoading = true;
+        let functionResult: Promise<any> = this.CreateOrUpdateExerciseTemplate(Boolean(this.exerciseTemplateID));
+        await functionResult.then(async () => {
+            await this.alertService.ShowToast((this.exerciseTemplateID) ? "Ciclo alterado com sucesso" : "Ciclo criado com sucesso", undefined, "primary");
+            await this.router.navigate(["/home"]);//todo verify
+        }).catch(async () => {
+            this.isLoading = false;
+            await this.alertService.ShowToast((this.exerciseTemplateID) ? "Não foi possível alterar o ciclo" : "Não foi possível criar o ciclo", undefined, "danger");
+        });
+    }
 
+    async CreateOrUpdateExerciseTemplate(isUpdating?: boolean) {
+        let exerciseIDs: string[] = [];
+        for (let exercise of this.addedExercises)
+            exerciseIDs.push(exercise.thisObjectID!);
+        return isUpdating ? this.exercisesService.UpdateExerciseTemplate(this.exerciseTemplateID!, {name: this.templateName, exerciseIDs: exerciseIDs}) : this.exercisesService.CreateExerciseTemplate({name: this.templateName!, exerciseIDs: exerciseIDs});
     }
 }

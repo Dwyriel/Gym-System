@@ -4,7 +4,7 @@
             <ion-back-button defaultHref="/home" text="">
             </ion-back-button>
         </ion-buttons>
-        <ion-title>{{true ? "Alterar" : "Criar"}} Ciclo</ion-title>
+        <ion-title>{{exerciseTemplateID ? "Alterar" : "Criar"}} Ciclo</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -32,7 +32,7 @@
             </ion-item>
         </ion-list>
         <ion-row class="ion-justify-content-center bottom-items-margin">
-            <ion-button [disabled]="!checkIfSendConditionsAreMet" class="full-width margin-top-1"> {{true ? "Alterar" : "Criar"}} </ion-button>
+            <ion-button [disabled]="!checkIfSendConditionsAreMet" class="full-width margin-top-1" (click)="onCreateOrUpdateButtonClick()"> {{exerciseTemplateID ? "Alterar" : "Criar"}} </ion-button>
         </ion-row>
     </div>
     <div class="spinner-div" *ngIf="isLoading">
