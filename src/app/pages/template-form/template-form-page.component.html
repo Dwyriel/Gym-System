@@ -15,10 +15,10 @@
                 <ion-input [(ngModel)]="templateName" (keyup.enter)="EnterPressed()"></ion-input>
             </ion-item>
             <ion-item lines="none" class="bold-text">
-                <ion-label>Exercicios:</ion-label>
+                <ion-label>Exercícios:</ion-label>
             </ion-item>
             <ion-item *ngIf="addedExercises.length < 1" lines="none" class="ion-text-center">
-                <ion-label color="medium">Nenhum exercicio adicionado</ion-label>
+                <ion-label color="medium">Nenhum exercício adicionado</ion-label>
             </ion-item>
             <ion-item *ngFor="let exercise of addedExercises">
                 <ion-label class="ion-margin-start">{{exercise.name}}</ion-label>
@@ -26,9 +26,11 @@
                     <ion-icon name="remove"></ion-icon>
                 </ion-item>
             </ion-item>
-            <ion-item class="ion-text-end" button="true" (click)="onAddExerciseButtonClick()">
-                <ion-label class="ion-margin-end">Adicionar exercício</ion-label>
-                <ion-icon name="add-outline"></ion-icon>
+            <ion-item button="true" (click)="onAddExerciseButtonClick()">
+                <div class="center-button-content">
+                    <ion-label>Adicionar exercício</ion-label>
+                    <ion-icon name="add-outline"></ion-icon>
+                </div>
             </ion-item>
         </ion-list>
         <ion-row class="ion-justify-content-center bottom-items-margin">

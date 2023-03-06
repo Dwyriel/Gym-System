@@ -48,8 +48,7 @@
                     <ion-skeleton-text class="text-skeleton" animated="true" *ngIf="isLoading"></ion-skeleton-text>
                     <ion-text *ngIf="!isLoading && numberOfTemplates">Há atualmente {{numberOfTemplates}} ciclos no sistema</ion-text>
                 </ion-card-content>
-                <!--TODO: Route this to the template-form-->
-                <ion-button fill="clear" routerLink="/">Adicionar Ciclo</ion-button>
+                <ion-button fill="clear" routerLink="/template-form">Adicionar Ciclo</ion-button>
             </ion-card>
         </ion-grid>
     </div>
