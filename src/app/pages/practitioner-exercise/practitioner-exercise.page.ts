@@ -120,14 +120,16 @@ export class PractitionerExercisePage {
                     rest: value.data.updatedWorkload!.rest,
                     load: value.data.updatedWorkload!.load
                 };
+                let id = await this.alertService.PresentLoading("Carregando");
                 await this.updateEditedExercise(oldExercise, newExercise);
+                await this.alertService.DismissLoading(id);
+
             }
         });
         await editExercisePopover.present();
     }
 
     async updateEditedExercise(oldExercise: Exercise, newExercise: Exercise) {
-        let id = await this.alertService.PresentLoading("Carregando");
         let errorOccurred = false;
         if (oldExercise.series == newExercise.series && oldExercise.repetition == newExercise.repetition && oldExercise.rest == newExercise.rest && oldExercise.load == newExercise.load)
             return;
@@ -140,7 +142,6 @@ export class PractitionerExercisePage {
             await this.alertService.ShowToast("Exercício alterado com sucesso", undefined, "primary");
             await this.populateExerciseList();
         }
-        await this.alertService.DismissLoading(id);
     }
 
     public async removeExerciseBtn(exercise: Exercise) {
