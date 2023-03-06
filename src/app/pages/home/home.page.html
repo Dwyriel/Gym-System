@@ -40,7 +40,6 @@
                         </ion-card>
                     </ion-col>
                 </ion-row>
-                <!--TODO: Add exercise-template shortcut and metrics-->
                 <ion-card>
                     <ion-card-header>
                         <ion-card-title>Ciclos</ion-card-title>
@@ -48,8 +47,9 @@
                     </ion-card-header>
                     <ion-card-content>
                         <ion-skeleton-text class="text-skeleton" animated="true" *ngIf="isLoading"></ion-skeleton-text>
-                        <ion-text *ngIf="!isLoading">Há atualmente ENI ciclos no sistema</ion-text>
+                        <ion-text *ngIf="!isLoading && numberOfTemplates">Há atualmente {{numberOfTemplates}} ciclos no sistema</ion-text>
                     </ion-card-content>
+                    <!--TODO: Route this to the template-form-->
                     <ion-button fill="clear" routerLink="/">Adicionar Ciclo</ion-button>
                 </ion-card>
             </ion-grid>
