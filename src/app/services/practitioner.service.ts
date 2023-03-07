@@ -187,12 +187,12 @@ export class PractitionerService {
     /**
      * Gets a practitioner from the database
      * @param id the id of the practitioner
-     * @throws if doc doesn't exist, returning {docExists: false}
+     * @throws if doc doesn't exist, returning {docDoesNotExist: true}
      */
     public async GetPractitioner(id: string) {
         const pracDoc = await getDoc(this.docPracShort(id));
         if (!pracDoc.exists())
-            return Promise.reject({docExists: false});
+            return Promise.reject({docDoesNotExist: true});
         let practitioner: Practitioner = pracDoc.data() as Practitioner;
         practitioner.thisObjectID = pracDoc.id;
         practitioner.formCreationDate = new Date(practitioner.formCreationDate);
@@ -202,13 +202,13 @@ export class PractitionerService {
     /**
      * Gets a practitioner from cache
      * @param id the id of the practitioner
-     * @throws if doc doesn't exist, returning {docExists: false}
+     * @throws if doc doesn't exist, returning {docDoesNotExist: true}
      */
     public async GetPractitionerFromCache(id: string) {
         try {
             const pracDoc = await getDocFromCache(this.docPracShort(id));
             if (!pracDoc.exists())
-                return Promise.reject({docExists: false});
+                return Promise.reject({docDoesNotExist: true});
             let practitioner: Practitioner = pracDoc.data() as Practitioner;
             practitioner.thisObjectID = pracDoc.id;
             practitioner.formCreationDate = new Date(practitioner.formCreationDate);
@@ -222,13 +222,13 @@ export class PractitionerService {
      * Gets all the exercises of a practitioner
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
      * @param fromCache if the doc should be loaded from cache or not
-     * @throws if doc doesn't exist, returning {docExists: false}
+     * @throws if doc doesn't exist, returning {docDoesNotExist: true}
      */
     public async GetPractitionersExercises(id: string, fromCache: boolean = false) {
         try {
             const doc = fromCache ? await getDocFromCache(this.docExerShort(id)) : await getDoc(this.docExerShort(id));
             if (!doc.exists())
-                return Promise.reject({docExists: false});
+                return Promise.reject({docDoesNotExist: true});
             let exercises: PractitionerExercise[] = (doc.data() as { items: PractitionerExercise[] }).items;
             for (let i = 0; i < exercises.length; i++) {
                 let errorOccurred = false;
@@ -246,13 +246,13 @@ export class PractitionerService {
      * Gets all the presences of a practitioner
      * @param id the id of the array of presences (aka practitioner.presenceLogID)
      * @param fromCache if the doc should be loaded from cache or not
-     * @throws if doc doesn't exist, returning {docExists: false}
+     * @throws if doc doesn't exist, returning {docDoesNotExist: true}
      */
     public async GetPractitionersPresences(id: string, fromCache: boolean = false) {
         try {
             const doc = fromCache ? await getDocFromCache(this.docPresShort(id)) : await getDoc(this.docPresShort(id));
             if (!doc.exists())
-                return Promise.reject({docExists: false});
+                return Promise.reject({docDoesNotExist: true});
             let data = (doc.data() as { items: { date: number, wasPresent: boolean }[] }).items
             let presences: Presence[] = [];
             for (let i = 0; i < data.length; i++)
@@ -266,12 +266,12 @@ export class PractitionerService {
     /**
      * Gets a practitioner with all the fields filled (including the exercise and presence array)
      * @param id the id of the practitioner
-     * @throws if doc doesn't exist, returning {docExists: false}
+     * @throws if doc doesn't exist, returning {docDoesNotExist: true}
      */
     public async GetPractitionerAllFieldsFilled(id: string) {
         const pracDoc = await getDoc(this.docPracShort(id));
         if (!pracDoc.exists())
-            return Promise.reject({docExists: false});
+            return Promise.reject({docDoesNotExist: true});
         let practitioner = pracDoc.data() as Practitioner;
         practitioner.thisObjectID = pracDoc.id;
         practitioner.formCreationDate = new Date(practitioner.formCreationDate);
