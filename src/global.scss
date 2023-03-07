@@ -74,6 +74,10 @@ ion-popover {
     transform: translate(var(-64.4px), var(-64.4px));
 }
 
+.font-color-secondary {
+    color: var(--ion-color-secondary);
+}
+
 @media (max-width: 900px) {
     .has-add-fab-on-bottom {
         margin-bottom: 4.2rem;
