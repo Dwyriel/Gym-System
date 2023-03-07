@@ -87,7 +87,7 @@ export class PractitionerService {
             obj["objectives"] = practitioner.objectives.trim();
         if (practitioner.observations)
             obj["observations"] = practitioner.observations.trim();
-        if (practitioner.templateName)
+        if (practitioner.templateName || practitioner.templateName === "")
             obj["templateName"] = practitioner.templateName.trim();
         if (Object.keys(obj).length < 1)
             return;
