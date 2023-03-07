@@ -14,8 +14,8 @@ export class TemplateListPage {
     private readonly minSkeletonTextSize = 150;
     private readonly skeletonTextVariation = 200;
     private readonly skeletonTextNumOfItems = 8;
-    private templatesListAsString: string = "";
 
+    public templatesListUnaltered: ExerciseTemplate[] = [];
     public templatesList: ExerciseTemplate[] = [];
     public templatesListArrayIsEmpty = true;
     public skeletonTextItems: string[] = [];
@@ -45,13 +45,13 @@ export class TemplateListPage {
     private async PopulateInterface() {
         this.fetchingData = true;
         this.templatesList = await this.exercisesService.GetAllExerciseTemplates();
-        this.templatesListAsString = JSON.stringify(this.templatesList);
+        this.templatesListUnaltered = [...this.templatesList];
         this.templatesListArrayIsEmpty = this.templatesList.length < 1;
         this.fetchingData = false;
     }
 
     private RepopulateInterface() {
-        this.templatesList = JSON.parse(this.templatesListAsString);
+        this.templatesList = [...this.templatesListUnaltered];
     }
 
     public async SearchNames(repopulate: boolean = true) {
@@ -73,11 +73,11 @@ export class TemplateListPage {
         let id = await this.alertService.PresentLoading("Carregando");
         if (await this.DeleteTemplate(templateToDelete.thisObjectID!)) {
             await this.alertService.ShowToast("Ciclo apagado com sucesso", undefined, "primary");
-            this.templatesList = JSON.parse(this.templatesListAsString);
+            this.templatesList = [...this.templatesListUnaltered];
             for (let [index, template] of this.templatesList.entries())
                 if (template.thisObjectID == templateToDelete.thisObjectID)
                     this.templatesList.splice(index, 1);
-            this.templatesListAsString = JSON.stringify(this.templatesList);
+            this.templatesListUnaltered = [...this.templatesList];
             await this.SearchNames(false);
         } else
             await this.alertService.ShowToast("O Ciclo não pode ser apagado", undefined, "danger");
