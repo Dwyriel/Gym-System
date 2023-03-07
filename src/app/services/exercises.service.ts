@@ -61,7 +61,7 @@ export class ExercisesService {
             obj["category"] = exercise.category.trim();
         if (exercise.name)
             obj["name"] = exercise.name.trim();
-        if(Object.keys(obj).length < 1)
+        if (Object.keys(obj).length < 1)
             return;
         return updateDoc(this.docExercShort(id), obj);
     }
@@ -77,7 +77,7 @@ export class ExercisesService {
             obj['name'] = exercise.name.trim();
         if (exercise.exerciseIDs && exercise.exerciseIDs.length > 0)
             obj['exerciseIDs'] = exercise.exerciseIDs;
-        if(Object.keys(obj).length < 1)
+        if (Object.keys(obj).length < 1)
             return;
         return updateDoc(this.docTemplateShort(id), obj);
     }
@@ -102,11 +102,12 @@ export class ExercisesService {
     /**
      * Gets a specific exercise from the database
      * @param id the id of the exercise
+     * @throws if doc doesn't exist, returning {docExists: false}
      */
     public async GetExercise(id: string) {
         const doc = await getDoc(this.docExercShort(id));
         if (!doc.exists())
-            return Promise.reject();
+            return Promise.reject({docExists: false});
         let exercise: Exercise = doc.data() as Exercise;
         exercise.thisObjectID = doc.id;
         return Promise.resolve(exercise);
@@ -115,11 +116,12 @@ export class ExercisesService {
     /**
      * Gets a specific exerciseTemplate from the database
      * @param id the id of the exerciseTemplate
+     * @throws if doc doesn't exist, returning {docExists: false}
      */
     public async GetExerciseTemplate(id: string) {
         const doc = await getDoc(this.docTemplateShort(id));
         if (!doc.exists())
-            return Promise.reject();
+            return Promise.reject({docExists: false});
         let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
         exercise.thisObjectID = doc.id;
         return Promise.resolve(exercise);
@@ -128,12 +130,13 @@ export class ExercisesService {
     /**
      * Gets a specific exercise from cache
      * @param id the id of the exercise
+     * @throws if doc doesn't exist, returning {docExists: false}
      */
     public async GetExerciseFromCache(id: string) {
         try {
             const doc = await getDocFromCache(this.docExercShort(id));
             if (!doc.exists())
-                return Promise.reject();
+                return Promise.reject({docExists: false});
             let exercise: Exercise = doc.data() as Exercise;
             exercise.thisObjectID = doc.id;
             return Promise.resolve(exercise);
@@ -145,12 +148,13 @@ export class ExercisesService {
     /**
      * Gets a specific exerciseTemplate from cache
      * @param id the id of the exerciseTemplate
+     * @throws if doc doesn't exist, returning {docExists: false}
      */
     public async GetExerciseTemplateFromCache(id: string) {
         try {
             const doc = await getDocFromCache(this.docTemplateShort(id));
             if (!doc.exists())
-                return Promise.reject();
+                return Promise.reject({docExists: false});
             let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
             exercise.thisObjectID = doc.id;
             return Promise.resolve(exercise);
