@@ -15,7 +15,7 @@
                 <ion-label>Adicionar exercício</ion-label>
                 <ion-icon name="add-outline"></ion-icon>
             </ion-item>
-            <ion-item lines="none" button="true" style="width: 25%" (click)="removeAllExercises()">
+            <ion-item lines="none" button="true" style="width: 25%" (click)="removeAllExercises()" [disabled]="!hasExercises">
                 <ion-label>{{(appInfo!.appWidth > minWidthForFullText) ? "Remover Todos" : ""}}</ion-label>
                 <ion-icon name="trash-outline"></ion-icon>
             </ion-item>

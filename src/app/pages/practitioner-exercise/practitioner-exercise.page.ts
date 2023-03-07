@@ -93,6 +93,7 @@ export class PractitionerExercisePage {
                 await this.populateExerciseList();
             })
             .catch(async () => await this.alertService.ShowToast("Não foi possível remover os exercícios", undefined, "danger"));
+        await this.updateUserOutOfTemplate();
         await this.alertService.DismissLoading(id);
     }
 
@@ -111,6 +112,7 @@ export class PractitionerExercisePage {
                     .then(async () => await this.alertService.ShowToast("Exercício adicionado com sucesso", undefined, "primary"))
                     .catch(async () => await this.alertService.ShowToast("Não foi possível adicionar o exercício", undefined, "danger"));
                 await this.populateExerciseList();
+                await this.updateUserOutOfTemplate();
                 await this.alertService.DismissLoading(id);
             }
         });
@@ -169,6 +171,7 @@ export class PractitionerExercisePage {
             .then(async () => await this.alertService.ShowToast("Exercício removido com sucesso", undefined, "primary"))
             .catch(async () => await this.alertService.ShowToast("Não foi possível remover o exercício", undefined, "danger"));
         await this.populateExerciseList();
+        await this.updateUserOutOfTemplate();
         await this.alertService.DismissLoading(id);
 
     }
@@ -189,5 +192,11 @@ export class PractitionerExercisePage {
                 newList.push(exer);
         }
         return newList;
+    }
+
+    private async updateUserOutOfTemplate() {
+        if (!this.practitionerInfo?.templateName || !this.practitionerID)
+            return;
+        await this.practitionerService.UpdatePractitioner(this.practitionerID, {templateName: ""})
     }
 }
