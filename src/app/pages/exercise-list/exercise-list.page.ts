@@ -22,6 +22,7 @@ export class ExerciseListPage {
     private readonly skeletonTextNumOfItems = 8;
     private allExercises?: Array<Exercise>;
     private exercisesByCategoryAsString: string = "";
+    private previouslyDeleted = false;
 
     public skeletonTextItems: string[] = [];
     public exercisesByCategory: Array<ExercisesByCategory> = new Array<ExercisesByCategory>();
@@ -42,6 +43,7 @@ export class ExerciseListPage {
         this.allExercises = new Array<Exercise>();
         this.searchFilter = "";
         this.fetchingData = true;
+        this.previouslyDeleted = false;
     }
 
     private setSkeletonText() {
@@ -114,24 +116,45 @@ export class ExerciseListPage {
     private async DeleteExercise(exerciseId: string): Promise<boolean> {
         if (!exerciseId)
             return false;
-        let shouldWait = true, returnValue = false;
-        let allPractitioners = await this.practitionersService.GetAllPractitioners();
+        let errorOccurred = await this.removeFromPractitioners(exerciseId);
+        if (!errorOccurred)
+            errorOccurred = await this.removeFromTemplates(exerciseId);
+        if (errorOccurred)
+            return !errorOccurred;
+        await this.exercisesService.DeleteExercise(exerciseId).catch(() => errorOccurred = true);
+        this.previouslyDeleted = !errorOccurred;
+        return !errorOccurred;
+    }
+
+    private async removeFromPractitioners(exerciseID: string) {
+        let errorOccurred = false;
+        let allPractitioners = this.previouslyDeleted ? await this.practitionersService.GetAllPractitionersFromCache() : await this.practitionersService.GetAllPractitioners();
         for (let i = 0; i < allPractitioners.length; i++) {
-            let allExercises = await this.practitionersService.GetPractitionersExercises(allPractitioners[i].exercisesID);
-            for (let j = 0; j < allExercises.length; j++)
-                if (allExercises[j].exerciseID == exerciseId)
-                    await this.practitionersService.RemoveExercise(allPractitioners[i].exercisesID, allExercises[j]);
+            let allPractitionerExercises = await this.practitionersService.GetPractitionersExercises(allPractitioners[i].exercisesID);
+            for (let j = 0; j < allPractitionerExercises.length; j++)
+                if (allPractitionerExercises[j].exerciseID == exerciseID) {
+                    await this.practitionersService.RemoveExercise(allPractitioners[i].exercisesID, allPractitionerExercises[j]).catch(() => errorOccurred = true);
+                    break;
+                }
+            if (errorOccurred)
+                return errorOccurred;
         }
-        await this.exercisesService.DeleteExercise(exerciseId).then(() => {
-            returnValue = true;
-            shouldWait = false;
-        }).catch(err => {
-            returnValue = false;
-            shouldWait = false;
-            console.log(err);
-        });
-        while (shouldWait)
-            await new Promise(resolve => setTimeout(resolve, 10));
-        return returnValue;
+        return errorOccurred;
+    }
+
+    private async removeFromTemplates(exerciseID: string) {
+        let errorOccurred = false;
+        let allTemplates = this.previouslyDeleted ? await this.exercisesService.GetAllExerciseTemplatesFromCache() : await this.exercisesService.GetAllExerciseTemplates();
+        for (let i = 0; i < allTemplates.length; i++) {
+            for (let j = 0; j < allTemplates[i].exerciseIDs.length; j++)
+                if (exerciseID === allTemplates[i].exerciseIDs[j]) {
+                    allTemplates[i].exerciseIDs.splice(j, 1);
+                    await this.exercisesService.UpdateExerciseTemplate(allTemplates[i].thisObjectID!, {exerciseIDs: allTemplates[i].exerciseIDs}).catch(() => errorOccurred = true);
+                    break;
+                }
+            if (errorOccurred)
+                return errorOccurred;
+        }
+        return errorOccurred;
     }
 }
