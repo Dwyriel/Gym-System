@@ -15,6 +15,12 @@ function sortByCategory(firstExerc: Exercise, secondExerc: Exercise) {
     return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
 }
 
+function sortByName(firstExerc: Exercise, secondExerc: Exercise) {
+    let firstLowerCase = firstExerc.name.toLowerCase();
+    let secondLowerCase = secondExerc.name.toLowerCase();
+    return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
+}
+
 @Component({
     selector: 'app-template-form',
     templateUrl: './template-form-page.component.html',
@@ -23,10 +29,11 @@ function sortByCategory(firstExerc: Exercise, secondExerc: Exercise) {
 export class TemplateFormPage implements OnInit {
     private allExercises: Exercise[] = [];
     private allExerciseTemplates: ExerciseTemplate[] = [];
+    private addedExercises: Exercise[] = [];
 
     public exerciseTemplateID: string | null = null;
     public templateName?: string;
-    public addedExercises: Exercise[] = [];
+    public exercisesByCategory: { name: string, exercises: Exercise[] }[] = [];
     public isLoading = true;
 
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private exercisesService: ExercisesService, private popoverController: PopoverController, private alertService: AlertService) { }
@@ -52,7 +59,7 @@ export class TemplateFormPage implements OnInit {
                 this.templateName = value.name;
                 this.exercisesService.GetTemplatesExercises(value.exerciseIDs).then(value1 => {
                     this.addedExercises = value1;
-                    this.addedExercises.sort(sortByCategory);
+                    this.filterExercisesByCategory();
                 }).catch(() => errorOccurred = true);
             }).catch(() => errorOccurred = true);
         if (errorOccurred) {
@@ -80,10 +87,6 @@ export class TemplateFormPage implements OnInit {
                 .catch(() => this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger"));
     }
 
-    get checkIfSendConditionsAreMet() {
-        return this.templateName && this.addedExercises.length > 0;
-    }
-
     get filteredExercisesArray() {
         let exercisesNotYetAdded: Exercise[] = [];
         for (let exercise of this.allExercises) {
@@ -93,8 +96,31 @@ export class TemplateFormPage implements OnInit {
         return exercisesNotYetAdded.sort(sortByCategory);
     }
 
+    filterExercisesByCategory() {
+        this.exercisesByCategory = [];
+        this.addedExercises.sort(sortByCategory);
+        for (let exercise of this.addedExercises) {
+            if (!this.exercisesByCategory.some(value => value.name === exercise.category)) {
+                this.exercisesByCategory.push({name: exercise.category, exercises: [exercise]});
+                continue;
+            }
+            for (let index = 0; index < this.exercisesByCategory.length; index++) {
+                if (this.exercisesByCategory[index].name === exercise.category) {
+                    this.exercisesByCategory[index].exercises.push(exercise);
+                    this.exercisesByCategory[index].exercises.sort(sortByName);
+                    break;
+                }
+            }
+        }
+    }
+
+    get checkIfSendConditionsAreMet() {
+        return this.templateName && this.addedExercises.length > 0;
+    }
+
     onRemoveExerciseButtonClick(exercise: Exercise) {
         this.addedExercises.splice(this.addedExercises.findIndex(value => value.category == exercise.category && value.name == exercise.name), 1);
+        this.filterExercisesByCategory();
     }
 
     async onAddExerciseButtonClick() {
@@ -107,7 +133,7 @@ export class TemplateFormPage implements OnInit {
         addExercisePopover.onDidDismiss().then(async value => {
             if (value.data) {
                 this.addedExercises.push(value.data.selectedExercise.exercise);
-                this.addedExercises.sort(sortByCategory);
+                this.filterExercisesByCategory();
             }
         });
         await addExercisePopover.present();
