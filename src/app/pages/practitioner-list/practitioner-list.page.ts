@@ -15,7 +15,7 @@ export class PractitionerListPage {
     private readonly minSkeletonTextSize = 100;
     private readonly skeletonTextVariation = 250;
     private readonly skeletonTextNumOfItems = 7;
-    private allPractitionersAsString: string = "";
+    private allPractitionersCache: Practitioner[] = [];
 
     public skeletonTextItems: string[] = [];
     public allPractitioners?: Array<Practitioner>;
@@ -46,13 +46,13 @@ export class PractitionerListPage {
     private async PopulateInterface() {
         this.fetchingData = true;
         this.allPractitioners = await this.practitionersService.GetAllPractitioners();
-        this.allPractitionersAsString = JSON.stringify(this.allPractitioners);
+        this.allPractitionersCache = [...this.allPractitioners];
         this.practitionerArrayIsEmpty = this.allPractitioners.length < 1;
         this.fetchingData = false;
     }
 
     private RepopulateInterface() {
-        this.allPractitioners = JSON.parse(this.allPractitionersAsString);
+        this.allPractitioners = [...this.allPractitionersCache];
     }
 
     public async SearchNames() {
