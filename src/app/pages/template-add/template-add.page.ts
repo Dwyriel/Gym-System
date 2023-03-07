@@ -154,5 +154,6 @@ export class TemplateAddPage {
             return;
         }
         await this.alertService.ShowToast("Ciclo atribuido com sucesso", undefined, "primary");
+        await this.router.navigate([`/practitioner-profile/${this.practitionerID}`]);
     }
 }
