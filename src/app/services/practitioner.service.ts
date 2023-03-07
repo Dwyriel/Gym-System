@@ -89,6 +89,8 @@ export class PractitionerService {
             obj["observations"] = practitioner.observations.trim();
         if (practitioner.templateName)
             obj["templateName"] = practitioner.templateName.trim();
+        if(obj.keys().length < 1)
+            return;
         return updateDoc(this.docPracShort(id), obj);
     }
 

@@ -61,6 +61,8 @@ export class ExercisesService {
             obj["category"] = exercise.category.trim();
         if (exercise.name)
             obj["name"] = exercise.name.trim();
+        if(obj.keys().length < 1)
+            return;
         return updateDoc(this.docExercShort(id), obj);
     }
 
@@ -75,6 +77,8 @@ export class ExercisesService {
             obj['name'] = exercise.name.trim();
         if (exercise.exerciseIDs && exercise.exerciseIDs.length > 0)
             obj['exerciseIDs'] = exercise.exerciseIDs;
+        if(obj.keys().length < 1)
+            return;
         return updateDoc(this.docTemplateShort(id), obj);
     }
 
@@ -284,9 +288,9 @@ export class ExercisesService {
         const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colTemplateShort(), limit(maxEntries))) : await getDocs(this.colTemplateShort());
         let arrayOfExerciseTemplates: (ExerciseTemplate)[] = [];
         allDocs.forEach(doc => {
-            let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
-            exercise.thisObjectID = doc.id;
-            arrayOfExerciseTemplates.push(exercise);
+            let template: ExerciseTemplate = doc.data() as ExerciseTemplate;
+            template.thisObjectID = doc.id;
+            arrayOfExerciseTemplates.push(template);
         });
         return arrayOfExerciseTemplates;
     }
@@ -321,9 +325,9 @@ export class ExercisesService {
             const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colTemplateShort(), limit(maxEntries))) : await getDocsFromCache(this.colTemplateShort());
             let arrayOfExerciseTemplates: (ExerciseTemplate)[] = [];
             allDocs.forEach(doc => {
-                let exercise: ExerciseTemplate = doc.data() as ExerciseTemplate;
-                exercise.thisObjectID = doc.id;
-                arrayOfExerciseTemplates.push(exercise);
+                let template: ExerciseTemplate = doc.data() as ExerciseTemplate;
+                template.thisObjectID = doc.id;
+                arrayOfExerciseTemplates.push(template);
             });
             return arrayOfExerciseTemplates;
         } catch (exception) {
