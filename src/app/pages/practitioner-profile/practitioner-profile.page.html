@@ -16,6 +16,9 @@
                 <h1 class="ion-margin-bottom text-div" *ngIf="!isLoading"> {{practitionerInfo?.name}} </h1>
                 <div class="side-btn-margin">
                     <ion-buttons>
+                        <ion-button routerLink="/template-add/{{practitionerID}}" [disabled]="isLoading">
+                            <ion-icon name="clipboard-outline"></ion-icon>
+                        </ion-button>
                         <ion-button routerLink="/practitioner-form/{{practitionerID}}" [disabled]="isLoading">
                             <ion-icon name="pencil-outline"></ion-icon>
                         </ion-button>
