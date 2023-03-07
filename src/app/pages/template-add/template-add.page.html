@@ -4,20 +4,18 @@
             <ion-back-button defaultHref="/practitioner-profile/{{practitionerID}}" text="">
             </ion-back-button>
         </ion-buttons>
-        <ion-title>Adicionar Ciclo</ion-title>
+        <ion-title>Atribuir Ciclo</ion-title>
     </ion-toolbar>
 </ion-header>
-
 <ion-content>
     <div [hidden]="isLoading" class="webbrowser">
         <ion-item lines="full">
-            <ion-select [(ngModel)]="selectedTemplateName" interface="alert" cancelText="Cancelar" placeholder="Escolha um ciclo" (ionChange)="changedTemplate(selectedTemplateName)">
-                <ion-select-option *ngFor="let template of templatesList" [value]="template.name"> {{template.name}}</ion-select-option>
+            <ion-select [(ngModel)]="selectedTemplateName" interface="alert" cancelText="Cancelar" placeholder="Escolha um ciclo" (ionChange)="changedTemplate()">
+                <ion-select-option *ngFor="let template of templatesList" [value]="template.name">{{template.name}}</ion-select-option>
             </ion-select>
         </ion-item>
-
         <ion-list class="ion-no-padding">
-            <div *ngIf="selectedTemplate?.exercises">
+            <div *ngIf="selectedTemplateName">
                 <ion-item lines="none" class="bold-text full-width">
                     <div class="big-cell">Exercício</div>
                     <div class="align-text-middle small-cell hor-text-center">S</div>
@@ -25,17 +23,18 @@
                     <div class="align-text-middle small-cell hor-text-center">D</div>
                     <div class="align-text-middle small-cell hor-text-center">C</div>
                 </ion-item>
-
-                <ion-item *ngFor="let exercise of selectedTemplate!.exercises">
-                    <ion-checkbox slot="start" (ionChange)="OnCheck(exercise)"></ion-checkbox>
-                    <ion-text class="big-cell"> {{exercise.name}} </ion-text>
-                    <div class="align-text-middle small-cell hor-text-center">S</div>
-                    <div class="align-text-middle small-cell hor-text-center">R</div>
-                    <div class="align-text-middle small-cell hor-text-center">D</div>
-                    <div class="align-text-middle small-cell hor-text-center">C</div>
+                <ion-item *ngFor="let tempExercise of templateExercises; index as i">
+                    <ion-checkbox slot="start" [(ngModel)]="tempExercise.checked" (ionChange)="OnCheck($event, i)"></ion-checkbox>
+                    <ion-text class="big-cell"> {{tempExercise.exercise.name}} </ion-text>
+                    <div class="align-text-middle small-cell hor-text-center">{{tempExercise.workload.series}}</div>
+                    <div class="align-text-middle small-cell hor-text-center">{{tempExercise.workload.repetition}}</div>
+                    <div class="align-text-middle small-cell hor-text-center">{{tempExercise.workload.rest}}</div>
+                    <div class="align-text-middle small-cell hor-text-center">{{tempExercise.workload.load}}</div>
                 </ion-item>
             </div>
         </ion-list>
-
+        <ion-row class="ion-justify-content-center bottom-items-margin">
+            <ion-button class="full-width margin-top-1" [disabled]="checkIfSomethingIsntValid" (click)="OnClick()">Atribuir ciclo</ion-button>
+        </ion-row>
     </div>
 </ion-content>
