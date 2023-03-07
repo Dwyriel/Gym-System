@@ -154,13 +154,18 @@ export class TemplateFormPage implements OnInit {
         await functionResult.then(async () => {
             await this.alertService.ShowToast((this.exerciseTemplateID) ? "Ciclo alterado com sucesso" : "Ciclo criado com sucesso", undefined, "primary");
             await this.router.navigate(["/template-list"]);
-        }).catch(async () => {
+        }).catch(async error => {
             this.isLoading = false;
-            await this.alertService.ShowToast((this.exerciseTemplateID) ? "Não foi possível alterar o ciclo" : "Não foi possível criar o ciclo", undefined, "danger");
+            if (error.alreadyExists)
+                await this.alertService.ShowToast((this.exerciseTemplateID) ? "Nada foi alterado" : "Ciclo já existe", undefined, "warning");
+            else
+                await this.alertService.ShowToast((this.exerciseTemplateID) ? "Não foi possível alterar o ciclo" : "Não foi possível criar o ciclo", undefined, "danger");
         });
     }
 
     async CreateOrUpdateExerciseTemplate(isUpdating?: boolean) {
+        if (this.allExerciseTemplates.some(template => template.name == this.templateName))
+            return Promise.reject({alreadyExists: true});
         let exerciseIDs: string[] = [];
         for (let exercise of this.addedExercises)
             exerciseIDs.push(exercise.thisObjectID!);
