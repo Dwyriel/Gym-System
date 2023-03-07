@@ -47,9 +47,15 @@
         </ion-list>
     </div>
     <div [hidden]="!isLoading" class="webbrowser">
-        <ion-item lines="full" button="true" disabled="true">
-            <ion-label>Adicionar exercício</ion-label>
-            <ion-icon name="add-outline"></ion-icon>
+        <ion-item lines="full" disabled="true">
+            <ion-item lines="full" button="true" disabled="true" style="width: 75%">
+                <ion-label>Adicionar exercício</ion-label>
+                <ion-icon name="add-outline"></ion-icon>
+            </ion-item>
+            <ion-item lines="none" button="true" style="width: 25%" disabled="true">
+                <ion-label>{{(appInfo!.appWidth > minWidthForFullText) ? "Remover Todos" : ""}}</ion-label>
+                <ion-icon name="trash-outline"></ion-icon>
+            </ion-item>
         </ion-item>
         <ion-list class="ion-no-padding">
             <ion-grid>
