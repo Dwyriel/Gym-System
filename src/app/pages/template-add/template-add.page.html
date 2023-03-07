@@ -37,4 +37,7 @@
             <ion-button class="full-width margin-top-1" [disabled]="checkIfSomethingIsntValid" (click)="OnClick()">Atribuir ciclo</ion-button>
         </ion-row>
     </div>
+    <div class="spinner-div" *ngIf="isLoading">
+        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
+    </div>
 </ion-content>
