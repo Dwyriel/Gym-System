@@ -110,25 +110,25 @@ export class TemplateAddPage {
             }
     }
 
-    async OnCheck(indexCat: number, indexExerc: number) {
-        if (!this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].checked)
+    async OnCheck(indexCategory: number, indexExercise: number) {
+        if (!this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].checked)
             return;
         const editExercisePopover = await this.popoverController.create({
             component: SelectExerciseAndWorkloadComponent,
             mode: 'md',
-            componentProps: {workloadInput: {...this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload}},
+            componentProps: {workloadInput: {...this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].workload}},
             animated: true
         });
         editExercisePopover.onDidDismiss().then(async value => {
             if (!value.data || value.data && (!value.data.updatedWorkload.series || !value.data.updatedWorkload.repetition || !value.data.updatedWorkload.rest || !value.data.updatedWorkload.load)) {
-                this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].checked = !this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].checked;
+                this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].checked = !this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].checked;
                 return;
             }
             let workload: { series?: number, repetition?: number, rest?: number, load?: number } = value.data.updatedWorkload;
-            this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload.series = workload.series;
-            this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload.repetition = workload.repetition;
-            this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload.rest = workload.rest;
-            this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload.load = workload.load;
+            this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].workload.series = workload.series;
+            this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].workload.repetition = workload.repetition;
+            this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].workload.rest = workload.rest;
+            this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].workload.load = workload.load;
         });
         await editExercisePopover.present();
     }
