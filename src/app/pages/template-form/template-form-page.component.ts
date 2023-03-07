@@ -153,7 +153,7 @@ export class TemplateFormPage implements OnInit {
         let functionResult: Promise<any> = this.CreateOrUpdateExerciseTemplate(Boolean(this.exerciseTemplateID));
         await functionResult.then(async () => {
             await this.alertService.ShowToast((this.exerciseTemplateID) ? "Ciclo alterado com sucesso" : "Ciclo criado com sucesso", undefined, "primary");
-            await this.router.navigate(["/template-list"]);//todo verify
+            await this.router.navigate(["/template-list"]);
         }).catch(async () => {
             this.isLoading = false;
             await this.alertService.ShowToast((this.exerciseTemplateID) ? "Não foi possível alterar o ciclo" : "Não foi possível criar o ciclo", undefined, "danger");
