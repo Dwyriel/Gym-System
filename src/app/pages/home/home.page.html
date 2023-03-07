@@ -1,58 +1,55 @@
-<div class="ion-page" id="main-content">
-    <ion-header>
-        <ion-toolbar>
-            <ion-buttons slot="start">
-                <ion-menu-button></ion-menu-button>
-            </ion-buttons>
-            <ion-title>Home</ion-title>
-        </ion-toolbar>
-    </ion-header>
-    <ion-content>
-        <div class="webbrowser">
-            <ion-grid>
-                <ion-row>
-                    <ion-col>
-                        <ion-card>
-                            <img alt="Imagem de alunos" src="./assets/exercise-image-1.jpg"/>
-                            <ion-card-header>
-                                <ion-card-title>Alunos</ion-card-title>
-                                <ion-card-subtitle>Insira mais alunos no sistema</ion-card-subtitle>
-                            </ion-card-header>
-                            <ion-card-content>
-                                <ion-skeleton-text class="text-skeleton" animated="true" *ngIf="isLoading"></ion-skeleton-text>
-                                <ion-text *ngIf="!isLoading && numberOfPractitioners">Há atualmente {{numberOfPractitioners}} alunos no sistema</ion-text>
-                            </ion-card-content>
-                            <ion-button fill="clear" routerLink="/practitioner-form">Adicionar Aluno</ion-button>
-                        </ion-card>
-                    </ion-col>
-                    <ion-col>
-                        <ion-card>
-                            <img alt="Imagem de exercícios" src="./assets/exercise-image-2.jpg"/>
-                            <ion-card-header>
-                                <ion-card-title>Exercícios</ion-card-title>
-                                <ion-card-subtitle>Insira mais exercícios no sistema</ion-card-subtitle>
-                            </ion-card-header>
-                            <ion-card-content>
-                                <ion-skeleton-text class="text-skeleton" animated="true" *ngIf="isLoading"></ion-skeleton-text>
-                                <ion-text *ngIf="!isLoading && numberOfExercises">Há atualmente {{numberOfExercises}} exercícios no sistema</ion-text>
-                            </ion-card-content>
-                            <ion-button fill="clear" routerLink="/exercise-form">Adicionar Exercício</ion-button>
-                        </ion-card>
-                    </ion-col>
-                </ion-row>
-                <!--TODO: Add exercise-template shortcut and metrics-->
-                <ion-card>
-                    <ion-card-header>
-                        <ion-card-title>Ciclos</ion-card-title>
-                        <ion-card-subtitle>Insira mais ciclos no sistema</ion-card-subtitle>
-                    </ion-card-header>
-                    <ion-card-content>
-                        <ion-skeleton-text class="text-skeleton" animated="true" *ngIf="isLoading"></ion-skeleton-text>
-                        <ion-text *ngIf="!isLoading">Há atualmente ENI ciclos no sistema</ion-text>
-                    </ion-card-content>
-                    <ion-button fill="clear" routerLink="/">Adicionar Ciclo</ion-button>
-                </ion-card>
-            </ion-grid>
-        </div>
-    </ion-content>
-</div>
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Home</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <div class="webbrowser">
+        <ion-grid>
+            <ion-row>
+                <ion-col class="ion-no-padding">
+                    <ion-card routerLink="/practitioner-list">
+                        <img alt="Imagem de alunos" src="./assets/exercise-image-1.jpg"/>
+                        <ion-card-header>
+                            <ion-card-title>Alunos</ion-card-title>
+                            <ion-card-subtitle>Insira mais alunos no sistema</ion-card-subtitle>
+                        </ion-card-header>
+                        <ion-card-content>
+                            <ion-skeleton-text class="text-skeleton" animated="true" *ngIf="isLoading"></ion-skeleton-text>
+                            <ion-text *ngIf="!isLoading && numberOfPractitioners">Há atualmente <span class="font-color-secondary">{{numberOfPractitioners}}</span> alunos no sistema</ion-text>
+                        </ion-card-content>
+                        <ion-button fill="clear" routerLink="/practitioner-form" (click)="$event.stopPropagation()">Adicionar Aluno</ion-button>
+                    </ion-card>
+                </ion-col>
+                <ion-col class="ion-no-padding">
+                    <ion-card routerLink="/exercise-list">
+                        <img alt="Imagem de exercícios" src="./assets/exercise-image-2.jpg"/>
+                        <ion-card-header>
+                            <ion-card-title>Exercícios</ion-card-title>
+                            <ion-card-subtitle>Insira mais exercícios no sistema</ion-card-subtitle>
+                        </ion-card-header>
+                        <ion-card-content>
+                            <ion-skeleton-text class="text-skeleton" animated="true" *ngIf="isLoading"></ion-skeleton-text>
+                            <ion-text *ngIf="!isLoading && numberOfExercises">Há atualmente <span class="font-color-secondary">{{numberOfExercises}}</span> exercícios no sistema</ion-text>
+                        </ion-card-content>
+                        <ion-button fill="clear" routerLink="/exercise-form" (click)="$event.stopPropagation()">Adicionar Exercício</ion-button>
+                    </ion-card>
+                </ion-col>
+            </ion-row>
+            <ion-card routerLink="/template-list">
+                <ion-card-header>
+                    <ion-card-title>Ciclos</ion-card-title>
+                    <ion-card-subtitle>Insira mais ciclos no sistema</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                    <ion-skeleton-text class="text-skeleton" animated="true" *ngIf="isLoading"></ion-skeleton-text>
+                    <ion-text *ngIf="!isLoading && numberOfTemplates">Há atualmente <span class="font-color-secondary">{{numberOfTemplates}}</span> ciclos no sistema</ion-text>
+                </ion-card-content>
+                <ion-button fill="clear" routerLink="/template-form" (click)="$event.stopPropagation()">Adicionar Ciclo</ion-button>
+            </ion-card>
+        </ion-grid>
+    </div>
+</ion-content>

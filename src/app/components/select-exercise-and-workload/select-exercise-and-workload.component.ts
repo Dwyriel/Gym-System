@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PopoverController} from "@ionic/angular";
-import {ExerciseTemplate} from "../../interfaces/exercise";
+import {Exercise} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {acceptOnlyInteger} from "../../services/app.utility";
 
@@ -17,21 +17,24 @@ interface Workload {
     styleUrls: ['./select-exercise-and-workload.component.scss'],
 })
 export class SelectExerciseAndWorkloadComponent implements OnInit {
-    @Input("exercisesInput") private exercisesInput: Array<ExerciseTemplate> = [];
+    @Input("exercisesInput") private exercisesInput: Array<Exercise> = [];
     @Input("workloadInput") public workloadInput?: Workload;
+    @Input("onlyExercise") public onlyExercise?: boolean;
 
     public isEditing: boolean = false;
     public categories: string[] = [];
-    public exercises: Array<ExerciseTemplate> = []
+    public exercises: Array<Exercise> = []
     public selectedCategory: string = "";
-    public selectedExerciseTemplate?: ExerciseTemplate;
+    public selectedExerciseTemplate?: Exercise;
 
     constructor(private popoverController: PopoverController, private exerciseService: ExercisesService) { }
 
     async ngOnInit() {
         this.isEditing = this.workloadInput != undefined;
-        if (this.isEditing)
+        if (this.isEditing) {
+            this.onlyExercise = false;
             return;
+        }
         this.workloadInput = {series: undefined, repetition: undefined, rest: undefined, load: undefined};
         this.categories = await this.exerciseService.GetAllCategories(this.exercisesInput);
     }
@@ -43,10 +46,9 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
     selectedCategoryChanged() {
         this.exercises = [];
         this.selectedExerciseTemplate = undefined;
-        this.exercisesInput.forEach(exercise => {
+        for (let exercise of this.exercisesInput)
             if (exercise.category == this.selectedCategory)
                 this.exercises.push(exercise);
-        })
     }
 
     checkForInvalidCharacters(event: KeyboardEvent) {
@@ -67,6 +69,6 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
     }
 
     get checkIfRequirementsArentMet() {
-        return !this.isEditing && (!this.selectedCategory || !this.selectedExerciseTemplate) || !this.workloadInput!.series || !this.workloadInput!.repetition || (!this.workloadInput!.rest && this.workloadInput!.rest !== 0) || (!this.workloadInput!.load && this.workloadInput!.load !== 0);
+        return !this.isEditing && (!this.selectedCategory || !this.selectedExerciseTemplate) || !this.onlyExercise && (!this.workloadInput!.series || !this.workloadInput!.repetition || (!this.workloadInput!.rest && this.workloadInput!.rest !== 0) || (!this.workloadInput!.load && this.workloadInput!.load !== 0));
     }
 }

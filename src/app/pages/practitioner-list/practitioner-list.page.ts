@@ -15,7 +15,7 @@ export class PractitionerListPage {
     private readonly minSkeletonTextSize = 100;
     private readonly skeletonTextVariation = 250;
     private readonly skeletonTextNumOfItems = 7;
-    private allPractitionersAsString: string = "";
+    private allPractitionersCache: Practitioner[] = [];
 
     public skeletonTextItems: string[] = [];
     public allPractitioners?: Array<Practitioner>;
@@ -37,25 +37,25 @@ export class PractitionerListPage {
         this.fetchingData = true;
     }
 
-    setSkeletonText(){
+    private setSkeletonText(){
         this.skeletonTextItems = [];
         for (let i = 0; i < this.skeletonTextNumOfItems; i++)
             this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px`);
     }
 
-    async PopulateInterface() {
+    private async PopulateInterface() {
         this.fetchingData = true;
         this.allPractitioners = await this.practitionersService.GetAllPractitioners();
-        this.allPractitionersAsString = JSON.stringify(this.allPractitioners);
+        this.allPractitionersCache = [...this.allPractitioners];
         this.practitionerArrayIsEmpty = this.allPractitioners.length < 1;
         this.fetchingData = false;
     }
 
-    RepopulateInterface() {
-        this.allPractitioners = JSON.parse(this.allPractitionersAsString);
+    private RepopulateInterface() {
+        this.allPractitioners = [...this.allPractitionersCache];
     }
 
-    async SearchNames() {
+    public async SearchNames() {
         if (!this.allPractitioners)
             return;
         this.RepopulateInterface();
@@ -66,5 +66,9 @@ export class PractitionerListPage {
                 i--;
             }
         }
+    }
+
+    public formatCreationDate(formCreationDate: Date) {
+        return (formCreationDate.getMonth() + 1) + "/" + formCreationDate.getFullYear();
     }
 }

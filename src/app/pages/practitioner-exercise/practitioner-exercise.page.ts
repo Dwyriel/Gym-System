@@ -5,7 +5,7 @@ import {AccountService} from "../../services/account.service";
 import {PractitionerService} from "../../services/practitioner.service";
 import {AlertService} from "../../services/alert.service";
 import {Practitioner} from "../../classes/practitioner";
-import {Exercise, ExerciseTemplate} from "../../interfaces/exercise";
+import {PractitionerExercise, Exercise} from "../../interfaces/exercise";
 import {ExercisesService} from "../../services/exercises.service";
 import {PopoverController} from "@ionic/angular";
 import {SelectExerciseAndWorkloadComponent} from "../../components/select-exercise-and-workload/select-exercise-and-workload.component";
@@ -25,8 +25,8 @@ export class PractitionerExercisePage {
 
     public skeletonTextItems: string[] = [];
     public practitionerInfo?: Practitioner;
-    public practitionerExercises?: Exercise[];
-    public allExercises?: ExerciseTemplate[];
+    public practitionerExercises?: PractitionerExercise[];
+    public allExercises?: Exercise[];
     public isLoading = false;
     public hasExercises = true;
     public practitionerID: string | null = null;
@@ -42,11 +42,11 @@ export class PractitionerExercisePage {
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         let cacheError = false, errorOccurred = false;
         await this.practitionerService.GetPractitionerFromCache(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => cacheError = true);
-        if(cacheError)
+        if (cacheError)
             await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
         if (errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
-            return
+            return;
         }
         this.allExercises = await this.exercisesService.GetAllExercises();
         await this.populateExerciseList();
@@ -62,13 +62,13 @@ export class PractitionerExercisePage {
         this.practitionerID = null;
     }
 
-    setSkeletonText(){
+    setSkeletonText() {
         this.skeletonTextItems = [];
         for (let i = 0; i < this.skeletonTextNumOfItems; i++)
             this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px; max-width: 80%`);
     }
 
-    public async onClick(exercise?: Exercise) {
+    public async onClick(exercise?: PractitionerExercise) {
         if (!exercise) {
             await this.addExerciseBtn();
             return;
@@ -80,6 +80,21 @@ export class PractitionerExercisePage {
             await this.editExerciseBtn(exercise);
         else if (selection == 1)
             await this.removeExerciseBtn(exercise);
+    }
+
+    public async removeAllExercises() {
+        let confirmation = await this.alertService.ConfirmationAlert("Deseja remover todos os exercícios?", `O aluno "${this.practitionerInfo?.name}" ficará sem exercícios.`, "Não", "Sim");
+        if (!confirmation || !this.practitionerInfo?.exercisesID)
+            return;
+        let id = await this.alertService.PresentLoading("Carregando");
+        await this.practitionerService.ClearExercises(this.practitionerInfo?.exercisesID)
+            .then(async () => {
+                await this.alertService.ShowToast("Exercícios removidos com sucesso", undefined, "primary")
+                await this.populateExerciseList();
+            })
+            .catch(async () => await this.alertService.ShowToast("Não foi possível remover os exercícios", undefined, "danger"));
+        await this.updateUserOutOfTemplate();
+        await this.alertService.DismissLoading(id);
     }
 
     private async addExerciseBtn() {
@@ -97,13 +112,14 @@ export class PractitionerExercisePage {
                     .then(async () => await this.alertService.ShowToast("Exercício adicionado com sucesso", undefined, "primary"))
                     .catch(async () => await this.alertService.ShowToast("Não foi possível adicionar o exercício", undefined, "danger"));
                 await this.populateExerciseList();
+                await this.updateUserOutOfTemplate();
                 await this.alertService.DismissLoading(id);
             }
         });
         await addExercisePopover.present();
     }
 
-    private async editExerciseBtn(oldExercise: Exercise) {
+    private async editExerciseBtn(oldExercise: PractitionerExercise) {
         const editExercisePopover = await this.popoverController.create({
             component: SelectExerciseAndWorkloadComponent,
             mode: 'md',
@@ -112,7 +128,7 @@ export class PractitionerExercisePage {
         });
         editExercisePopover.onDidDismiss().then(async value => {
             if (value.data) {
-                let newExercise: Exercise = {
+                let newExercise: PractitionerExercise = {
                     exerciseID: oldExercise.exerciseID,
                     exercise: oldExercise.exercise,
                     series: value.data.updatedWorkload!.series,
@@ -129,7 +145,7 @@ export class PractitionerExercisePage {
         await editExercisePopover.present();
     }
 
-    async updateEditedExercise(oldExercise: Exercise, newExercise: Exercise) {
+    async updateEditedExercise(oldExercise: PractitionerExercise, newExercise: PractitionerExercise) {
         let errorOccurred = false;
         if (oldExercise.series == newExercise.series && oldExercise.repetition == newExercise.repetition && oldExercise.rest == newExercise.rest && oldExercise.load == newExercise.load) {
             await this.alertService.ShowToast("Nada foi alterado", undefined, "warning");
@@ -146,7 +162,7 @@ export class PractitionerExercisePage {
         }
     }
 
-    public async removeExerciseBtn(exercise: Exercise) {
+    public async removeExerciseBtn(exercise: PractitionerExercise) {
         let confirmation = await this.alertService.ConfirmationAlert("Deseja remover este exercício?", undefined, "Não", "Sim");
         if (!this.practitionerInfo?.exercisesID || !confirmation)
             return;
@@ -155,6 +171,7 @@ export class PractitionerExercisePage {
             .then(async () => await this.alertService.ShowToast("Exercício removido com sucesso", undefined, "primary"))
             .catch(async () => await this.alertService.ShowToast("Não foi possível remover o exercício", undefined, "danger"));
         await this.populateExerciseList();
+        await this.updateUserOutOfTemplate();
         await this.alertService.DismissLoading(id);
 
     }
@@ -165,16 +182,21 @@ export class PractitionerExercisePage {
     }
 
     private removeRepeatedExercises() {
-        let newList: ExerciseTemplate[] = [];
-        this.allExercises?.forEach(exer => {
+        let newList: Exercise[] = [];
+        for (let exer of this.allExercises!) {
             let canAdd = true;
-            this.practitionerExercises?.forEach(pracExer => {
+            for (let pracExer of this.practitionerExercises!)
                 if (exer.thisObjectID == pracExer.exercise?.thisObjectID)
                     canAdd = false;
-            });
             if (canAdd)
                 newList.push(exer);
-        });
+        }
         return newList;
+    }
+
+    private async updateUserOutOfTemplate() {
+        if (!this.practitionerInfo?.templateName || !this.practitionerID)
+            return;
+        await this.practitionerService.UpdatePractitioner(this.practitionerID, {templateName: ""})
     }
 }

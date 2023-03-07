@@ -1,12 +1,12 @@
-export interface ExerciseTemplate {
+export interface Exercise {
     thisObjectID? :string;
     category: string;
     name: string;
 }
 
-export interface Exercise {
+export interface PractitionerExercise {
     exerciseID: string;
-    exercise?: ExerciseTemplate;
+    exercise?: Exercise;
     series: number;
     repetition: number;
     rest: number;

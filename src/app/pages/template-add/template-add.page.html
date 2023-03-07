@@ -1,0 +1,50 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/practitioner-profile/{{practitionerID}}" text="">
+            </ion-back-button>
+        </ion-buttons>
+        <ion-title>Atribuir Ciclo</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <div [hidden]="isLoading" class="webbrowser">
+        <ion-item lines="full">
+            <ion-select [(ngModel)]="selectedTemplateName" interface="alert" cancelText="Cancelar" placeholder="Escolha um ciclo" (ionChange)="changedTemplate()">
+                <ion-select-option *ngFor="let template of templatesList" [value]="template.name">{{template.name}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-list class="ion-no-padding">
+            <div *ngIf="selectedTemplateName">
+                <ion-item lines="none" class="bold-text full-width">
+                    <div class="big-cell">Exercício</div>
+                    <div class="align-text-middle small-cell hor-text-center">S</div>
+                    <div class="align-text-middle small-cell hor-text-center">R</div>
+                    <div class="align-text-middle small-cell hor-text-center">D</div>
+                    <div class="align-text-middle small-cell hor-text-center">C</div>
+                </ion-item>
+                <div *ngFor="let categoryObj of templateExercisesByCategory; index as i">
+                    <ion-item>
+                        <ion-text> {{categoryObj.category}} </ion-text>
+                    </ion-item>
+                    <ion-item *ngFor="let exerciseObj of categoryObj.templateExercises; index as j">
+                        <div style="width: 5%; min-width: 36px">
+                            <ion-checkbox slot="start" [(ngModel)]="exerciseObj.checked" (ionChange)="OnCheck(i, j)"></ion-checkbox>
+                        </div>
+                        <ion-text style="width: 55%"> {{exerciseObj.exercise.name}} </ion-text>
+                        <div class="align-text-middle small-cell hor-text-center" style="min-width: 10%">{{exerciseObj.workload.series}}</div>
+                        <div class="align-text-middle small-cell hor-text-center" style="min-width: 10%">{{exerciseObj.workload.repetition}}</div>
+                        <div class="align-text-middle small-cell hor-text-center" style="min-width: 10%">{{exerciseObj.workload.rest}}</div>
+                        <div class="align-text-middle small-cell hor-text-center" style="min-width: 10%">{{exerciseObj.workload.load}}</div>
+                    </ion-item>
+                </div>
+            </div>
+        </ion-list>
+        <ion-row class="ion-justify-content-center bottom-items-margin">
+            <ion-button class="full-width margin-top-1" [disabled]="checkIfSomethingIsntValid" (click)="OnClick()">Atribuir ciclo</ion-button>
+        </ion-row>
+    </div>
+    <div class="spinner-div" *ngIf="isLoading">
+        <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
+    </div>
+</ion-content>

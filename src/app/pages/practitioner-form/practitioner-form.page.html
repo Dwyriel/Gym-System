@@ -7,13 +7,12 @@
         <ion-title> {{(practitionerID) ? "Alterar" : "Criar"}} Aluno</ion-title>
     </ion-toolbar>
 </ion-header>
-
 <ion-content fullscreen="true">
     <div class="spinner-div" *ngIf="isLoading">
         <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
     </div>
     <div [hidden]="isLoading" class="webbrowser">
-        <ion-list>
+        <ion-list class="ion-no-padding">
             <ion-item class="ion-margin-horizontal">
                 <ion-label position="floating">Nome do aluno</ion-label>
                 <ion-input [(ngModel)]="practitioner.name" (keyup.enter)="EnterPressed()"></ion-input>
@@ -31,5 +30,4 @@
             <ion-button class="full-width margin-top-1" [disabled]="!practitioner.name" (click)="OnClick()"> {{(practitionerID) ? "Alterar" : "Criar"}} </ion-button>
         </ion-row>
     </div>
-
 </ion-content>

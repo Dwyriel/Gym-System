@@ -3,31 +3,31 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>Exercícios</ion-title>
+        <ion-title>Ciclos</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content>
-    <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesArrayIsEmpty && !fetchingData">
-        <ion-note class="ion-margin-top">Não há nenhum exercício registrado</ion-note>
+    <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="templatesListArrayIsEmpty && !fetchingData">
+        <ion-note class="ion-margin-top">Não há nenhum ciclo registrado</ion-note>
     </ion-row>
-    <div class="webbrowser has-add-fab-on-bottom" *ngIf="!exercisesArrayIsEmpty && !fetchingData">
+    <div class="webbrowser has-add-fab-on-bottom" *ngIf="!templatesListArrayIsEmpty && !fetchingData">
         <ion-item>
             <ion-item lines="none">
                 <ion-icon name="search-outline"></ion-icon>
             </ion-item>
-            <ion-input lines="full" placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
+            <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
         </ion-item>
-        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="exercisesByCategory && exercisesByCategory.length < 1">
-            <ion-note class="ion-margin-top">Nenhum exercício encontrado</ion-note>
+        <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="templatesList && templatesList.length < 1">
+            <ion-note class="ion-margin-top">Nenhum ciclo encontrado</ion-note>
         </ion-row>
-        <ion-list *ngFor="let category of exercisesByCategory" lines="full" class="ion-no-padding">
-            <ion-list-header class="ion-text-center">{{category.categoryName}}</ion-list-header>
-            <ion-item *ngFor="let exercise of category.exercises">
-                <ion-label class="ion-padding-start">{{exercise.name}}</ion-label>
-                <ion-item lines="none" button="true" routerLink="/exercise-form/{{exercise.thisObjectID}}" detail="false">
+
+        <ion-list *ngFor="let template of templatesList" lines="full" class="ion-no-padding">
+            <ion-item>
+                <ion-label class="ion-padding-start">{{template.name}}</ion-label>
+                <ion-item lines="none" button="true" detail="false" routerLink="/template-form/{{template.thisObjectID}}">
                     <ion-icon name="pencil-outline"></ion-icon>
                 </ion-item>
-                <ion-item lines="none" button="true" (click)="DeleteExerciseBtn(exercise!)" detail="false">
+                <ion-item lines="none" button="true" detail="false" (click)="DeleteTemplateBtn(template)">
                     <ion-icon name="trash"></ion-icon>
                 </ion-item>
             </ion-item>
@@ -58,7 +58,7 @@
         </ion-list>
     </div>
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button routerLink="/exercise-form">
+        <ion-fab-button routerLink="/template-form">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>
     </ion-fab>

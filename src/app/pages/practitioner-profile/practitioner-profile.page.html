@@ -12,10 +12,14 @@
     <div class="webbrowser">
         <ion-list class="ion-padding">
             <div class="flex">
-                <ion-skeleton-text animated="true" class="ion-margin-bottom text-div header-skeleton" *ngIf="isLoading"></ion-skeleton-text>
-                <h1 class="ion-margin-bottom text-div" *ngIf="!isLoading"> {{practitionerInfo?.name}} </h1>
+                <ion-skeleton-text animated="true" class="ion-margin-bottom header-text header-skeleton" *ngIf="isLoading"></ion-skeleton-text>
+                <h1 class="ion-margin-bottom header-text" *ngIf="!isLoading"> {{practitionerInfo?.name}} </h1>
+
                 <div class="side-btn-margin">
                     <ion-buttons>
+                        <ion-button routerLink="/template-add/{{practitionerID}}" [disabled]="isLoading">
+                            <ion-icon name="clipboard-outline"></ion-icon>
+                        </ion-button>
                         <ion-button routerLink="/practitioner-form/{{practitionerID}}" [disabled]="isLoading">
                             <ion-icon name="pencil-outline"></ion-icon>
                         </ion-button>
@@ -26,24 +30,27 @@
                 </div>
             </div>
 
+            <ion-badge class="info-badge" color="secondary" *ngIf="!isLoading">{{todayPresenceValue}}</ion-badge>
+            <ion-badge class="info-badge" color="secondary" *ngIf="!isLoading && practitionerInfo?.templateName">{{practitionerInfo?.templateName}}</ion-badge>
+
             <div>
                 <p class="bold-text">Objetivos</p>
-                <div *ngIf="isLoading">
+                <div class="text-paragraph-inset" *ngIf="isLoading">
                     <ion-skeleton-text animated="true" class="big-text-skeleton" ></ion-skeleton-text>
                     <ion-skeleton-text animated="true" class="small-text-skeleton" ></ion-skeleton-text>
                 </div>
-                <div *ngIf="!isLoading">
+                <div class="text-paragraph-inset" *ngIf="!isLoading">
                     <p class="pre-wrap" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
                     <ion-note *ngIf="!practitionerInfo?.objectives">Nenhum objetivo listado</ion-note>
                 </div>
 
                 <p class="bold-text">Observações</p>
-                <div *ngIf="isLoading">
+                <div class="text-paragraph-inset" *ngIf="isLoading">
                     <ion-skeleton-text animated="true" class="big-text-skeleton" ></ion-skeleton-text>
                     <ion-skeleton-text animated="true" class="small-text-skeleton" ></ion-skeleton-text>
                     <ion-skeleton-text animated="true" class="smallest-text-skeleton" ></ion-skeleton-text>
                 </div>
-                <div *ngIf="!isLoading">
+                <div class="text-paragraph-inset" *ngIf="!isLoading">
                     <p class="pre-wrap" *ngIf="practitionerInfo?.observations">{{practitionerInfo?.observations}}</p>
                     <ion-note *ngIf="!practitionerInfo?.observations">Nenhuma observação listada</ion-note>
                 </div>
