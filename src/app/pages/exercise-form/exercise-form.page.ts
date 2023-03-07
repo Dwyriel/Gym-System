@@ -13,6 +13,7 @@ import {AppInfoService} from "../../services/app-info.service";
     styleUrls: ['./exercise-form.page.scss'],
 })
 export class ExerciseFormPage {
+    private originalName?: string;
     public readonly categoryCreationValue = 1;
     public exerciseName: string = "";
     public categorySelected?: string | number;
@@ -56,6 +57,7 @@ export class ExerciseFormPage {
         await this.exercisesService.GetExercise(this.idToChangeExercise!).then(exercise => {
             this.exerciseName = exercise.name;
             this.categorySelected = exercise.category;
+            this.originalName = this.exerciseName;
         }).catch(() => {
             this.exerciseName = "";
             this.categorySelected = undefined;
@@ -85,7 +87,9 @@ export class ExerciseFormPage {
         }).catch(async error => {
             this.isLoading = false;
             if (error.alreadyExists)
-                await this.alertService.ShowToast((this.idToChangeExercise) ? "Nada foi alterado" : "Exercício já existe", undefined, "warning");
+                await this.alertService.ShowToast("Exercício já existe", undefined, "warning");
+            else if (error.nothingChanged)
+                await this.alertService.ShowToast("Nada foi alterado", undefined, "warning");
             else
                 await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger");
         });
@@ -96,6 +100,8 @@ export class ExerciseFormPage {
         if (typeof this.categorySelected == "number")
             this.categorySelected = this.newCategoryName;
         let exercise = {name: this.exerciseName, category: this.categorySelected!};
+        if (this.originalName == exercise.name)
+            return Promise.reject({nothingChanged: true});
         if (this.exercises.some(exer => exer.category == exercise.category && exer.name == exercise.name))
             return Promise.reject({alreadyExists: true});
         return isUpdating ? this.exercisesService.UpdateExercise(this.idToChangeExercise!, exercise) : this.exercisesService.CreateExercise(exercise);

@@ -30,6 +30,8 @@ export class TemplateFormPage implements OnInit {
     private allExercises: Exercise[] = [];
     private allExerciseTemplates: ExerciseTemplate[] = [];
     private addedExercises: Exercise[] = [];
+    private originalName?: string;
+    private changed = false;
 
     public exerciseTemplateID: string | null = null;
     public templateName?: string;
@@ -56,6 +58,7 @@ export class TemplateFormPage implements OnInit {
         let errorOccurred = false;
         if (this.exerciseTemplateID)
             await this.exercisesService.GetExerciseTemplate(this.exerciseTemplateID).then(async value => {
+                this.originalName = value.name;
                 this.templateName = value.name;
                 this.exercisesService.GetTemplatesExercises(value.exerciseIDs).then(value1 => {
                     this.addedExercises = value1;
@@ -119,11 +122,13 @@ export class TemplateFormPage implements OnInit {
     }
 
     onRemoveExerciseButtonClick(exercise: Exercise) {
+        this.changed = true;
         this.addedExercises.splice(this.addedExercises.findIndex(value => value.category == exercise.category && value.name == exercise.name), 1);
         this.filterExercisesByCategory();
     }
 
     async onAddExerciseButtonClick() {
+        this.changed = true;
         const addExercisePopover = await this.popoverController.create({
             component: SelectExerciseAndWorkloadComponent,
             mode: 'md',
@@ -157,15 +162,19 @@ export class TemplateFormPage implements OnInit {
         }).catch(async error => {
             this.isLoading = false;
             if (error.alreadyExists)
-                await this.alertService.ShowToast((this.exerciseTemplateID) ? "Nada foi alterado" : "Ciclo já existe", undefined, "warning");
+                await this.alertService.ShowToast("Ciclo já existe", undefined, "warning");
+            else if (error.nothingChanged)
+                await this.alertService.ShowToast("Nada foi alterado", undefined, "warning");
             else
                 await this.alertService.ShowToast((this.exerciseTemplateID) ? "Não foi possível alterar o ciclo" : "Não foi possível criar o ciclo", undefined, "danger");
         });
     }
 
     async CreateOrUpdateExerciseTemplate(isUpdating?: boolean) {
-        if (this.allExerciseTemplates.some(template => template.name == this.templateName))
+        if (this.allExerciseTemplates.some(template => template.name == this.templateName) && this.originalName != this.templateName)
             return Promise.reject({alreadyExists: true});
+        if (this.originalName == this.templateName && !this.changed)
+            return Promise.reject({nothingChanged: true});
         let exerciseIDs: string[] = [];
         for (let exercise of this.addedExercises)
             exerciseIDs.push(exercise.thisObjectID!);
