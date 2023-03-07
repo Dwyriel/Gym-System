@@ -56,11 +56,12 @@ export class ExercisesService {
      * @param exercise the modifications that will be performed
      */
     public async UpdateExercise(id: string, exercise: { category?: string, name?: string }) {
+        let obj: any = {};
         if (exercise.category)
-            exercise.category = exercise.category.trim();
+            obj["category"] = exercise.category.trim();
         if (exercise.name)
-            exercise.name = exercise.name.trim();
-        return updateDoc(this.docExercShort(id), exercise);
+            obj["name"] = exercise.name.trim();
+        return updateDoc(this.docExercShort(id), obj);
     }
 
     /**

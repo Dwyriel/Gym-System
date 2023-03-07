@@ -11,4 +11,5 @@ export class Practitioner {
     exercises?: PractitionerExercise[];
     presenceLogID: string = "";
     presenceLog?: Presence[];
+    templateName?: string = "";
 }
