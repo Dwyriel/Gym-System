@@ -67,4 +67,8 @@ export class PractitionerListPage {
             }
         }
     }
+
+    public formatCreationDate(formCreationDate: Date) {
+        return (formCreationDate.getMonth() + 1) + "/" + formCreationDate.getFullYear();
+    }
 }

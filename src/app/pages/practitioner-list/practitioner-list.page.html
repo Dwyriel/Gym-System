@@ -23,7 +23,7 @@
         <ion-list *ngIf="allPractitioners && allPractitioners.length > 0" class="ion-no-padding">
             <ion-item lines="full" button="true" *ngFor="let practitioner of allPractitioners" routerLink="/practitioner-profile/{{practitioner.thisObjectID}}">
                 <ion-label>{{practitioner.name}}</ion-label>
-                <ion-badge color="secondary" slot="end">{{(practitioner.formCreationDate.getMonth()+1)+"/"+practitioner.formCreationDate.getFullYear()}}</ion-badge>
+                <ion-badge color="secondary" slot="end">{{formatCreationDate(practitioner.formCreationDate)}}</ion-badge>
             </ion-item>
         </ion-list>
     </div>
