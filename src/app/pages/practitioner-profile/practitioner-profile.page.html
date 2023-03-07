@@ -14,6 +14,7 @@
             <div class="flex">
                 <ion-skeleton-text animated="true" class="ion-margin-bottom text-div header-skeleton" *ngIf="isLoading"></ion-skeleton-text>
                 <h1 class="ion-margin-bottom text-div" *ngIf="!isLoading"> {{practitionerInfo?.name}} </h1>
+
                 <div class="side-btn-margin">
                     <ion-buttons>
                         <ion-button routerLink="/practitioner-form/{{practitionerID}}" [disabled]="isLoading">
@@ -25,6 +26,7 @@
                     </ion-buttons>
                 </div>
             </div>
+            <ion-badge class="ion-margin-bottom text-div ion-margin-top" *ngIf="!isLoading && practitionerInfo?.templateName" color="secondary"> {{practitionerInfo?.templateName}} </ion-badge>
 
             <div>
                 <p class="bold-text">Objetivos</p>
