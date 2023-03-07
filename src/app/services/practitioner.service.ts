@@ -97,63 +97,68 @@ export class PractitionerService {
     /**
      * Updates an existing practitioner's exercise array on the database, adding a new entry.
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
-     * @param exercise the exercise that will be added
+     * @param exercises the exercises that will be added
      */
-    public async AddExercise(id: string, exercise: PractitionerExercise) {
+    public async AddExercise(id: string, ...exercises: PractitionerExercise[]) {
+        if (exercises.length < 1)
+            return;
+        let exercisesToSend: PractitionerExercise[] = [];
+        for (let exercise of exercises)
+            exercisesToSend.push({exerciseID: exercise.exerciseID, series: exercise.series, repetition: exercise.repetition, rest: exercise.rest, load: exercise.load});
         return updateDoc(this.docExerShort(id), {
-            items: arrayUnion({
-                exerciseID: exercise.exerciseID,
-                series: exercise.series,
-                repetition: exercise.repetition,
-                rest: exercise.rest,
-                load: exercise.load,
-            })
+            items: arrayUnion(...exercisesToSend)
         });
     }
 
     /**
      * Updates an existing practitioner's presence array on the database, adding a new entry. time will always be changed to 12pm before running the query.
      * @param id the id of the array of presences (aka practitioner.presenceLogID)
-     * @param presence the presence that will be added
+     * @param presences the presences that will be added
      */
-    public async AddPresence(id: string, presence: Presence) {
-        presence.date.setHours(12, 0, 0);
+    public async AddPresence(id: string, ...presences: Presence[]) {
+        if (presences.length < 1)
+            return;
+        let presencesToSend: { date: number, wasPresent: boolean }[] = [];
+        for (let presence of presences) {
+            presence.date.setHours(12, 0, 0);
+            presencesToSend.push({date: presence.date.getTime(), wasPresent: presence.wasPresent})
+        }
         return updateDoc(this.docPresShort(id), {
-            items: arrayUnion({
-                date: presence.date.getTime(),
-                wasPresent: presence.wasPresent
-            })
+            items: arrayUnion(...presencesToSend)
         });
     }
 
     /**
      * Removes an exercise from a practitioner's exercise array.
      * @param id the id of the array of exercises (aka practitioner.exercisesID)
-     * @param exercise the exercise that will be removed
+     * @param exercises the exercises that will be removed
      */
-    public async RemoveExercise(id: string, exercise: PractitionerExercise) {
+    public async RemoveExercise(id: string, ...exercises: PractitionerExercise[]) {
+        if (exercises.length < 1)
+            return;
+        let exercisesToSend: PractitionerExercise[] = [];
+        for (let exercise of exercises)
+            exercisesToSend.push({exerciseID: exercise.exerciseID, series: exercise.series, repetition: exercise.repetition, rest: exercise.rest, load: exercise.load});
         return updateDoc(this.docExerShort(id), {
-            items: arrayRemove({
-                exerciseID: exercise.exerciseID,
-                series: exercise.series,
-                repetition: exercise.repetition,
-                rest: exercise.rest,
-                load: exercise.load,
-            })
+            items: arrayRemove(...exercisesToSend)
         });
     }
 
     /**
      * Removes a presence from a practitioner's presence array.
      * @param id the id of the array of presences (aka practitioner.presenceLogID)
-     * @param presence the presence that will be removed
+     * @param presences the presences that will be removed
      */
-    public async RemovePresence(id: string, presence: Presence) {
+    public async RemovePresence(id: string, ...presences: Presence[]) {
+        if (presences.length < 1)
+            return;
+        let presencesToSend: { date: number, wasPresent: boolean }[] = [];
+        for (let presence of presences) {
+            presence.date.setHours(12, 0, 0);
+            presencesToSend.push({date: presence.date.getTime(), wasPresent: presence.wasPresent})
+        }
         return updateDoc(this.docPresShort(id), {
-            items: arrayRemove({
-                date: presence.date.getTime(),
-                wasPresent: presence.wasPresent
-            })
+            items: arrayRemove(...presencesToSend)
         });
     }
 

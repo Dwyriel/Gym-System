@@ -80,6 +80,14 @@ const routes: Routes = [
     {
         path: 'template-form/:id',
         loadChildren: () => import('./pages/template-form/template-form.module').then(m => m.TemplateFormPageModule)
+    },
+    {
+        path: 'template-add',
+        redirectTo: 'practitioner-list'
+    },
+    {
+        path: 'template-add/:id',
+        loadChildren: () => import('./pages/template-add/template-add.module').then(m => m.TemplateAddPageModule)
     }
 ];
 

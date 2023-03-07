@@ -17,6 +17,9 @@
 
                 <div class="side-btn-margin">
                     <ion-buttons>
+                        <ion-button routerLink="/template-add/{{practitionerID}}" [disabled]="isLoading">
+                            <ion-icon name="clipboard-outline"></ion-icon>
+                        </ion-button>
                         <ion-button routerLink="/practitioner-form/{{practitionerID}}" [disabled]="isLoading">
                             <ion-icon name="pencil-outline"></ion-icon>
                         </ion-button>
