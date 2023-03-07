@@ -61,7 +61,7 @@ export class ExercisesService {
             obj["category"] = exercise.category.trim();
         if (exercise.name)
             obj["name"] = exercise.name.trim();
-        if(obj.keys().length < 1)
+        if(Object.keys(obj).length < 1)
             return;
         return updateDoc(this.docExercShort(id), obj);
     }
@@ -77,7 +77,7 @@ export class ExercisesService {
             obj['name'] = exercise.name.trim();
         if (exercise.exerciseIDs && exercise.exerciseIDs.length > 0)
             obj['exerciseIDs'] = exercise.exerciseIDs;
-        if(obj.keys().length < 1)
+        if(Object.keys(obj).length < 1)
             return;
         return updateDoc(this.docTemplateShort(id), obj);
     }
