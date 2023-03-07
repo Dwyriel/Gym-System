@@ -4,6 +4,7 @@ import {ExercisesService} from "../../services/exercises.service";
 import {waitForFirebaseResponse} from "../../services/app.utility";
 import {AccountService} from "../../services/account.service";
 import {AlertService} from "../../services/alert.service";
+import {PractitionerService} from "../../services/practitioner.service";
 
 @Component({
     selector: 'app-template-list',
@@ -14,6 +15,8 @@ export class TemplateListPage {
     private readonly minSkeletonTextSize = 150;
     private readonly skeletonTextVariation = 200;
     private readonly skeletonTextNumOfItems = 8;
+    private previouslyDeleted = false;
+
 
     public templatesListUnaltered: ExerciseTemplate[] = [];
     public templatesList: ExerciseTemplate[] = [];
@@ -22,7 +25,7 @@ export class TemplateListPage {
     public searchFilter: string = "";
     public fetchingData = true;
 
-    constructor(private exercisesService: ExercisesService, private accountService: AccountService, private alertService: AlertService) { }
+    constructor(private exercisesService: ExercisesService, private practitionerService: PractitionerService,private accountService: AccountService, private alertService: AlertService) { }
 
     async ionViewWillEnter() {
         this.setSkeletonText();
@@ -71,7 +74,7 @@ export class TemplateListPage {
         if (!answer)
             return;
         let id = await this.alertService.PresentLoading("Carregando");
-        if (await this.DeleteTemplate(templateToDelete.thisObjectID!)) {
+        if (await this.DeleteTemplate(templateToDelete)) {
             await this.alertService.ShowToast("Ciclo apagado com sucesso", undefined, "primary");
             this.templatesList = [...this.templatesListUnaltered];
             for (let [index, template] of this.templatesList.entries())
@@ -85,21 +88,26 @@ export class TemplateListPage {
 
     }
 
-    private async DeleteTemplate(templateID: string): Promise<boolean> {
-        if (!templateID)
+    private async DeleteTemplate(templateToDelete: ExerciseTemplate): Promise<boolean> {
+        if (!templateToDelete.thisObjectID)
             return false;
-        let shouldWait = true, returnValue = false;
-        //TODO: Remove what indicate a template was being used from all practitioners
-        await this.exercisesService.DeleteExerciseTemplate(templateID).then(() => {
-            returnValue = true;
-            shouldWait = false;
-        }).catch(err => {
-            returnValue = false;
-            shouldWait = false;
-            console.log(err);
-        });
-        while (shouldWait)
-            await new Promise(resolve => setTimeout(resolve, 10));
-        return returnValue;
+        let errorOccurred = await this.removeFromPractitioners(templateToDelete.name);
+        await this.exercisesService.DeleteExerciseTemplate(templateToDelete.thisObjectID).catch(() => errorOccurred = true);
+        this.previouslyDeleted = !errorOccurred;
+        return !errorOccurred;
+    }
+
+    private async removeFromPractitioners(templateName: string): Promise<boolean> {
+        let errorOccurred = false;
+        let allPractitioners = this.previouslyDeleted ? await this.practitionerService.GetAllPractitionersFromCache() : await this.practitionerService.GetAllPractitioners();
+        for (let i = 0; i < allPractitioners.length; i++) {
+            if (allPractitioners[i].templateName == templateName) {
+                allPractitioners[i].templateName = undefined;
+                break;
+            }
+            if (errorOccurred)
+                return errorOccurred;
+        }
+        return errorOccurred;
     }
 }
