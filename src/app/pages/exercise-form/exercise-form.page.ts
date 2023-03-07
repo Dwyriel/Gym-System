@@ -85,7 +85,7 @@ export class ExerciseFormPage {
         }).catch(async error => {
             this.isLoading = false;
             if (error.alreadyExists)
-                await this.alertService.ShowToast("Exercício já existe", undefined, "warning");
+                await this.alertService.ShowToast((this.idToChangeExercise) ? "Nada foi alterado" : "Exercício já existe", undefined, "warning");
             else
                 await this.alertService.ShowToast((this.idToChangeExercise) ? "Não foi possível alterar o exercício" : "Não foi possível criar o exercício", undefined, "danger");
         });
