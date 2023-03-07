@@ -42,7 +42,7 @@ export class PractitionerExercisePage {
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
         let cacheError = false, errorOccurred = false;
         await this.practitionerService.GetPractitionerFromCache(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => cacheError = true);
-        if(cacheError)
+        if (cacheError)
             await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
         if (errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
@@ -62,7 +62,7 @@ export class PractitionerExercisePage {
         this.practitionerID = null;
     }
 
-    setSkeletonText(){
+    setSkeletonText() {
         this.skeletonTextItems = [];
         for (let i = 0; i < this.skeletonTextNumOfItems; i++)
             this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px; max-width: 80%`);
@@ -180,15 +180,14 @@ export class PractitionerExercisePage {
 
     private removeRepeatedExercises() {
         let newList: Exercise[] = [];
-        this.allExercises?.forEach(exer => {
+        for (let exer of this.allExercises!) {
             let canAdd = true;
-            this.practitionerExercises?.forEach(pracExer => {
+            for (let pracExer of this.practitionerExercises!)
                 if (exer.thisObjectID == pracExer.exercise?.thisObjectID)
                     canAdd = false;
-            });
             if (canAdd)
                 newList.push(exer);
-        });
+        }
         return newList;
     }
 }

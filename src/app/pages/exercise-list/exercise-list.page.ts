@@ -44,7 +44,7 @@ export class ExerciseListPage {
         this.fetchingData = true;
     }
 
-    private setSkeletonText(){
+    private setSkeletonText() {
         this.skeletonTextItems = [];
         for (let i = 0; i < this.skeletonTextNumOfItems; i++)
             this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px`);
@@ -54,13 +54,12 @@ export class ExerciseListPage {
         this.fetchingData = true;
         this.allExercises = await this.exercisesService.GetAllExercises();
         let categories: Array<string> = await this.exercisesService.GetAllCategories(this.allExercises);
-        categories.forEach(categoryName => this.exercisesByCategory.push({categoryName, exercises: new Array<Exercise>()}));
-
+        for (let categoryName of categories)
+            this.exercisesByCategory.push({categoryName: categoryName, exercises: new Array<Exercise>()});
         for (let i = 0; i < categories.length; i++) {
-            this.allExercises.forEach(exercise => {
+            for (let exercise of this.allExercises)
                 if (exercise.category == this.exercisesByCategory[i].categoryName)
                     this.exercisesByCategory[i].exercises.push(exercise);
-            });
         }
         this.exercisesByCategoryAsString = JSON.stringify(this.exercisesByCategory);
         this.exercisesArrayIsEmpty = this.exercisesByCategory.length < 1;
@@ -97,16 +96,14 @@ export class ExerciseListPage {
         if (await this.DeleteExercise(exercise.thisObjectID!)) {
             await this.alertService.ShowToast("Exercício apagado com sucesso", undefined, "primary");
             this.exercisesByCategory = JSON.parse(this.exercisesByCategoryAsString);
-            this.exercisesByCategory.forEach((categories, categoriesIndex) => {
+            for (let [categoriesIndex, categories] of this.exercisesByCategory.entries())
                 if (categories.categoryName == exercise.category) {
-                    categories.exercises.forEach((exercises, exercisesIndex) => {
+                    for (let [exercisesIndex, exercises] of categories.exercises.entries())
                         if (exercises.thisObjectID == exercise.thisObjectID)
                             categories.exercises.splice(exercisesIndex, 1);
-                    });
                     if (categories.exercises.length == 0)
                         this.exercisesByCategory.splice(categoriesIndex, 1);
                 }
-            });
             this.exercisesByCategoryAsString = JSON.stringify(this.exercisesByCategory);
             await this.SearchNames(false);
         } else

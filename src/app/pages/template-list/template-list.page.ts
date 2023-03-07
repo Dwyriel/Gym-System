@@ -74,14 +74,12 @@ export class TemplateListPage {
         if (await this.DeleteTemplate(templateToDelete.thisObjectID!)) {
             await this.alertService.ShowToast("Ciclo apagado com sucesso", undefined, "primary");
             this.templatesList = JSON.parse(this.templatesListAsString);
-            this.templatesList.forEach((template, index) => {
+            for (let [index, template] of this.templatesList.entries())
                 if (template.thisObjectID == templateToDelete.thisObjectID)
                     this.templatesList.splice(index, 1);
-            });
             this.templatesListAsString = JSON.stringify(this.templatesList);
             await this.SearchNames(false);
-        }
-        else
+        } else
             await this.alertService.ShowToast("O Ciclo não pode ser apagado", undefined, "danger");
         await this.alertService.DismissLoading(id);
 

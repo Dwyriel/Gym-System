@@ -46,10 +46,9 @@ export class SelectExerciseAndWorkloadComponent implements OnInit {
     selectedCategoryChanged() {
         this.exercises = [];
         this.selectedExerciseTemplate = undefined;
-        this.exercisesInput.forEach(exercise => {
+        for (let exercise of this.exercisesInput)
             if (exercise.category == this.selectedCategory)
                 this.exercises.push(exercise);
-        })
     }
 
     checkForInvalidCharacters(event: KeyboardEvent) {
