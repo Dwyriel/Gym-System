@@ -23,14 +23,19 @@
                     <div class="align-text-middle small-cell hor-text-center">D</div>
                     <div class="align-text-middle small-cell hor-text-center">C</div>
                 </ion-item>
-                <ion-item *ngFor="let tempExercise of templateExercises; index as i">
-                    <ion-checkbox slot="start" [(ngModel)]="tempExercise.checked" (ionChange)="OnCheck($event, i)"></ion-checkbox>
-                    <ion-text class="big-cell"> {{tempExercise.exercise.name}} </ion-text>
-                    <div class="align-text-middle small-cell hor-text-center">{{tempExercise.workload.series}}</div>
-                    <div class="align-text-middle small-cell hor-text-center">{{tempExercise.workload.repetition}}</div>
-                    <div class="align-text-middle small-cell hor-text-center">{{tempExercise.workload.rest}}</div>
-                    <div class="align-text-middle small-cell hor-text-center">{{tempExercise.workload.load}}</div>
-                </ion-item>
+                <div *ngFor="let categoryObj of templateExercisesByCategory; index as i">
+                    <ion-item>
+                        <ion-text class="big-cell"> {{categoryObj.category}} </ion-text>
+                    </ion-item>
+                    <ion-item *ngFor="let exerciseObj of categoryObj.templateExercises; index as j">
+                        <ion-checkbox slot="start" [(ngModel)]="exerciseObj.checked" (ionChange)="OnCheck(i, j)"></ion-checkbox>
+                        <ion-text class="big-cell"> {{exerciseObj.exercise.name}} </ion-text>
+                        <div class="align-text-middle small-cell hor-text-center">{{exerciseObj.workload.series}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{exerciseObj.workload.repetition}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{exerciseObj.workload.rest}}</div>
+                        <div class="align-text-middle small-cell hor-text-center">{{exerciseObj.workload.load}}</div>
+                    </ion-item>
+                </div>
             </div>
         </ion-list>
         <ion-row class="ion-justify-content-center bottom-items-margin">

@@ -23,9 +23,9 @@ function sortByName(first: ExerciseTemplate, second: ExerciseTemplate) {
     return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
 }
 
-function sortByCategory(first: internalTemplateExercise, second: internalTemplateExercise) {
-    let firstLowerCase = first.exercise.category.toLowerCase();
-    let secondLowerCase = second.exercise.category.toLowerCase();
+function sortByCategory(first: { category: string }, second: { category: string }) {
+    let firstLowerCase = first.category.toLowerCase();
+    let secondLowerCase = second.category.toLowerCase();
     return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
 }
 
@@ -39,7 +39,7 @@ export class TemplateAddPage {
     public practitioner?: Practitioner;
     public templatesList: ExerciseTemplate[] = [];
     public selectedTemplateName?: string;
-    public templateExercises: internalTemplateExercise[] = [];
+    public templateExercisesByCategory: { category: string, templateExercises: internalTemplateExercise[] }[] = [];
     public isLoading = true;
 
     constructor(private accountService: AccountService, private activatedRoute: ActivatedRoute, private practitionerService: PractitionerService, private exercisesService: ExercisesService, private alertService: AlertService, private router: Router, private popoverController: PopoverController) { }
@@ -62,7 +62,7 @@ export class TemplateAddPage {
         this.practitioner = undefined;
         this.templatesList = [];
         this.selectedTemplateName = undefined;
-        this.templateExercises = [];
+        this.templateExercisesByCategory = [];
         this.isLoading = true;
     }
 
@@ -87,39 +87,48 @@ export class TemplateAddPage {
     }
 
     get checkIfSomethingIsntValid() {
-        return !this.selectedTemplateName || !this.templateExercises.some(value => value.checked);
+        return !this.selectedTemplateName || !this.templateExercisesByCategory.some(value => value.templateExercises.some(value1 => value1.checked));
     }
 
     changedTemplate() {
-        this.templateExercises = [];
+        this.templateExercisesByCategory = [];
         for (let template of this.templatesList)
             if (template.name === this.selectedTemplateName) {
-                for (let exercise of template.exercises!)
-                    this.templateExercises.push({checked: false, exercise: exercise, workload: {series: undefined, repetition: undefined, rest: undefined, load: undefined}});
-                this.templateExercises.sort(sortByCategory);
+                for (let exercise of template.exercises!) {
+                    let indexOf = -1;
+                    for (let i = 0; i < this.templateExercisesByCategory.length; i++)
+                        if (this.templateExercisesByCategory[i].category === exercise.category) {
+                            indexOf = i;
+                            break;
+                        }
+                    if (indexOf === -1)
+                        indexOf = this.templateExercisesByCategory.push({category: exercise.category, templateExercises: []}) - 1;
+                    this.templateExercisesByCategory[indexOf].templateExercises.push({checked: false, exercise: exercise, workload: {series: undefined, repetition: undefined, rest: undefined, load: undefined}});
+                }
+                this.templateExercisesByCategory.sort(sortByCategory);
                 return;
             }
     }
 
-    async OnCheck(event: any, index: number) {
-        if (!this.templateExercises[index].checked)
+    async OnCheck(indexCat: number, indexExerc: number) {
+        if (!this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].checked)
             return;
         const editExercisePopover = await this.popoverController.create({
             component: SelectExerciseAndWorkloadComponent,
             mode: 'md',
-            componentProps: {workloadInput: {...this.templateExercises[index].workload}},
+            componentProps: {workloadInput: {...this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload}},
             animated: true
         });
         editExercisePopover.onDidDismiss().then(async value => {
             if (!value.data || value.data && (!value.data.updatedWorkload.series || !value.data.updatedWorkload.repetition || !value.data.updatedWorkload.rest || !value.data.updatedWorkload.load)) {
-                this.templateExercises[index].checked = !this.templateExercises[index].checked;
+                this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].checked = !this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].checked;
                 return;
             }
             let workload: { series?: number, repetition?: number, rest?: number, load?: number } = value.data.updatedWorkload;
-            this.templateExercises[index].workload.series = workload.series;
-            this.templateExercises[index].workload.repetition = workload.repetition;
-            this.templateExercises[index].workload.rest = workload.rest;
-            this.templateExercises[index].workload.load = workload.load;
+            this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload.series = workload.series;
+            this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload.repetition = workload.repetition;
+            this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload.rest = workload.rest;
+            this.templateExercisesByCategory[indexCat].templateExercises[indexExerc].workload.load = workload.load;
         });
         await editExercisePopover.present();
     }
@@ -127,20 +136,18 @@ export class TemplateAddPage {
     async OnClick() {
         let loadingID = await this.alertService.PresentLoading("Carregando");
         let exercisesToAdd: PractitionerExercise[] = [];
-        for (let exercise of this.templateExercises) {
-            if (!exercise.checked)
-                continue;
-            exercisesToAdd.push({exerciseID: exercise.exercise.thisObjectID!, series: exercise.workload.series!, repetition: exercise.workload.repetition!, rest: exercise.workload.rest!, load: exercise.workload.load!});
-        }
+        for (let categoryObj of this.templateExercisesByCategory)
+            for (let exercise of categoryObj.templateExercises) {
+                if (!exercise.checked)
+                    continue;
+                exercisesToAdd.push({exerciseID: exercise.exercise.thisObjectID!, series: exercise.workload.series!, repetition: exercise.workload.repetition!, rest: exercise.workload.rest!, load: exercise.workload.load!});
+            }
         let errorOccurred = false;
         await this.practitionerService.ClearExercises(this.practitioner!.exercisesID).catch(() => errorOccurred = true);
         if (!errorOccurred)
             await this.practitionerService.AddExercise(this.practitioner!.exercisesID, ...exercisesToAdd).catch(() => errorOccurred = true);
         if (!errorOccurred)
-            await this.practitionerService.UpdatePractitioner(this.practitionerID!, {templateName: this.selectedTemplateName}).catch((err) => {
-                errorOccurred = true
-                console.log(err);
-            });
+            await this.practitionerService.UpdatePractitioner(this.practitionerID!, {templateName: this.selectedTemplateName}).catch(() => errorOccurred = true);
         await this.alertService.DismissLoading(loadingID);
         if (errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro atribuindo o ciclo", undefined, "danger");
