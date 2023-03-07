@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Firestore, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc, getCountFromServer} from "@angular/fire/firestore";
+import {Firestore, QuerySnapshot, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, endAt, getDoc, getDocFromCache, getDocs, getDocsFromCache, limit, query, startAt, updateDoc, getCountFromServer} from "@angular/fire/firestore";
 import {Practitioner} from "../classes/practitioner";
 import {PractitionerExercise} from "../interfaces/exercise";
 import {Presence} from "../interfaces/frequency-log";
@@ -39,6 +39,17 @@ export class PractitionerService {
         return collection(this.firestore, this.practitionerPresenceCollectionName);
     }
 
+    private getArrayOfPractitionerFromAllDocs(allDocs: QuerySnapshot) {
+        let arrayOfPractitioner: (Practitioner)[] = [];
+        allDocs.forEach(doc => {
+            let practitioner: Practitioner = doc.data() as Practitioner;
+            practitioner.thisObjectID = doc.id;
+            practitioner.formCreationDate = new Date(practitioner.formCreationDate);
+            arrayOfPractitioner.push(practitioner)
+        });
+        return arrayOfPractitioner;
+    }
+
     /**
      * Creates a new practitioner on the database.
      * @param practitioner the practitioner to be added into the database
@@ -68,14 +79,17 @@ export class PractitionerService {
      * @param id the id of the practitioner to be modified
      * @param practitioner the modifications that will be performed
      */
-    public async UpdatePractitioner(id: string, practitioner: { name?: string, objectives?: string, observations?: string }) {
-        if(practitioner.name)
-            practitioner.name = practitioner.name.trim();
-        if(practitioner.objectives)
-            practitioner.objectives = practitioner.objectives.trim();
-        if(practitioner.observations)
-            practitioner.observations = practitioner.observations.trim();
-        return updateDoc(this.docPracShort(id), practitioner);
+    public async UpdatePractitioner(id: string, practitioner: { name?: string, objectives?: string, observations?: string, templateName?: string }) {
+        let obj: any = {};
+        if (practitioner.name)
+            obj["name"] = practitioner.name.trim();
+        if (practitioner.objectives)
+            obj["objectives"] = practitioner.objectives.trim();
+        if (practitioner.observations)
+            obj["observations"] = practitioner.observations.trim();
+        if (practitioner.templateName)
+            obj["templateName"] = practitioner.templateName.trim();
+        return updateDoc(this.docPracShort(id), obj);
     }
 
     /**
@@ -178,6 +192,7 @@ export class PractitionerService {
             return Promise.reject();
         let practitioner: Practitioner = pracDoc.data() as Practitioner;
         practitioner.thisObjectID = pracDoc.id;
+        practitioner.formCreationDate = new Date(practitioner.formCreationDate);
         return Promise.resolve(practitioner);
     }
 
@@ -192,6 +207,7 @@ export class PractitionerService {
                 return Promise.reject();
             let practitioner: Practitioner = pracDoc.data() as Practitioner;
             practitioner.thisObjectID = pracDoc.id;
+            practitioner.formCreationDate = new Date(practitioner.formCreationDate);
             return Promise.resolve(practitioner);
         } catch (exception) {
             return Promise.reject();
@@ -250,7 +266,8 @@ export class PractitionerService {
         if (!pracDoc.exists())
             return Promise.reject();
         let practitioner = pracDoc.data() as Practitioner;
-        const ExerDoc = await getDoc(this.docExerShort(practitioner.exercisesID));
+        practitioner.thisObjectID = pracDoc.id;
+        practitioner.formCreationDate = new Date(practitioner.formCreationDate);
         practitioner.exercises = await this.GetPractitionersExercises(practitioner.exercisesID);
         practitioner.presenceLog = await this.GetPractitionersPresences(practitioner.presenceLogID);
         return Promise.resolve(practitioner);
@@ -261,13 +278,7 @@ export class PractitionerService {
      */
     public async GetAllFromRange(from: number, to: number) {
         const allDocs = await getDocs(query(this.colPracShort(), startAt(from), endAt(to)));
-        let arrayOfPractitioner: (Practitioner)[] = [];
-        allDocs.forEach(doc => {
-            let practitioner: Practitioner = doc.data() as Practitioner;
-            practitioner.thisObjectID = doc.id;
-            arrayOfPractitioner.push(practitioner)
-        });
-        return arrayOfPractitioner;
+        return this.getArrayOfPractitionerFromAllDocs(allDocs);
     }
 
     /**
@@ -276,13 +287,7 @@ export class PractitionerService {
      */
     public async GetAllPractitioners(maxEntries?: number) {
         const allDocs = (maxEntries && maxEntries > 0) ? await getDocs(query(this.colPracShort(), limit(maxEntries))) : await getDocs(this.colPracShort());
-        let arrayOfPractitioner: (Practitioner)[] = [];
-        allDocs.forEach(doc => {
-            let practitioner: Practitioner = doc.data() as Practitioner;
-            practitioner.thisObjectID = doc.id;
-            arrayOfPractitioner.push(practitioner)
-        });
-        return arrayOfPractitioner;
+        return this.getArrayOfPractitionerFromAllDocs(allDocs);
     }
 
     /**
@@ -292,14 +297,8 @@ export class PractitionerService {
     public async GetAllPractitionersFromCache(maxEntries?: number) {
         try {
             const allDocs = (maxEntries && maxEntries > 0) ? await getDocsFromCache(query(this.colPracShort(), limit(maxEntries))) : await getDocsFromCache(this.colPracShort());
-            let arrayOfPractitioner: (Practitioner)[] = [];
-            allDocs.forEach(doc => {
-                let practitioner: Practitioner = doc.data() as Practitioner;
-                practitioner.thisObjectID = doc.id;
-                arrayOfPractitioner.push(practitioner)
-            });
-            return arrayOfPractitioner;
-        } catch (exception){
+            return this.getArrayOfPractitionerFromAllDocs(allDocs);
+        } catch (exception) {
             return Promise.reject();
         }
     }
@@ -311,7 +310,7 @@ export class PractitionerService {
         try {
             const doc = await getCountFromServer(this.colPracShort());
             return doc.data().count;
-        } catch (exception){
+        } catch (exception) {
             return Promise.reject();
         }
     }
