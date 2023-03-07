@@ -15,6 +15,7 @@ export class PractitionerProfilePage {
     public practitionerInfo?: Practitioner;
     public isLoading: boolean = false;
     public practitionerID: string | null = null;
+    public todayPresenceValue?: string;
 
     //todo load presences, change button icon accordingly to today's checkin
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private alertService: AlertService) { }
@@ -29,7 +30,10 @@ export class PractitionerProfilePage {
             .then(result => this.practitionerInfo = result).catch(async () => errorOccurred = true);
         if (!errorOccurred)
             await this.practitionerService.GetPractitionersPresences(this.practitionerInfo!.presenceLogID)
-                .then(result => this.practitionerInfo!.presenceLog = result).catch(() => errorOccurred = true);
+                .then(result => {
+                    this.practitionerInfo!.presenceLog = result;
+                    this.todayPresenceState();
+                }).catch(() => errorOccurred = true);
         if (errorOccurred)
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
         this.isLoading = false;
@@ -51,5 +55,16 @@ export class PractitionerProfilePage {
             await this.alertService.ShowToast("Aluno apagado com sucesso", undefined, "primary");
         }).catch(async () => await this.alertService.ShowToast("Aluno não pode ser apagado", undefined, "danger"));
         this.isLoading = false;
+    }
+
+    public todayPresenceState() {
+        const today = new Date;
+        let isPresent = undefined;
+        for (let presence of this.practitionerInfo!.presenceLog!)
+            if (presence.date.getDate() == today.getDate()) {
+                isPresent = presence.wasPresent;
+                break;
+            }
+        this.todayPresenceValue = (typeof isPresent != "undefined") ? (isPresent == true) ? "Presente" : "Faltou" : "Não marcado";
     }
 }
