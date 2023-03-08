@@ -181,34 +181,52 @@ export class TemplateFormPage {
         return isUpdating ? this.exercisesService.UpdateExerciseTemplate(this.exerciseTemplateID!, {name: this.templateName, exerciseIDs: exerciseIDs}) : this.exercisesService.CreateExerciseTemplate({name: this.templateName!, exerciseIDs: exerciseIDs});
     }
 
+    //TODO: Use cache and do better error handling
     async updateTemplateAndExercisesOnPractitioners() {
         let addedExercisesWithDefaultWorkload: PractitionerExercise[] = [];
-        for (let exercise of this.addedExercises) {
-            let exerciseWithDefaultWorkload: PractitionerExercise = {
-                exerciseID: exercise.thisObjectID!,
-                exercise: exercise,
-                series: 1,
-                repetition: 1,
-                rest: 0,
-                load: 0
+        if (this.changed) {
+            for (let exercise of this.addedExercises) {
+                let exerciseWithDefaultWorkload: PractitionerExercise = {
+                    exerciseID: exercise.thisObjectID!,
+                    exercise: exercise,
+                    series: 1,
+                    repetition: 1,
+                    rest: 0,
+                    load: 0
+                }
+                addedExercisesWithDefaultWorkload.push(exerciseWithDefaultWorkload);
             }
-            addedExercisesWithDefaultWorkload.push(exerciseWithDefaultWorkload);
         }
 
         let allPractitioners = await this.practitionerService.GetAllPractitioners();
         for (let practitioner of allPractitioners) {
-            if (practitioner.templateName == this.originalName) {
-                let errorOccurred = false;
-                if (this.changed)
-                    await this.practitionerService.ClearExercises(practitioner.exercisesID).catch(() => errorOccurred = true);
-                if (!errorOccurred && this.changed)
-                    await this.practitionerService.AddExercise(practitioner.exercisesID, ...addedExercisesWithDefaultWorkload).catch(() => errorOccurred = true);
-                if (!errorOccurred)
-                    await this.practitionerService.UpdatePractitioner(practitioner.thisObjectID!, {templateName: this.templateName}).catch(() => errorOccurred = true);
-                if (errorOccurred) {
-                    await this.alertService.ShowToast("Ocorreu um erro atualizando os alunos", undefined, "danger");
-                    return;
+            if (practitioner.templateName != this.originalName)
+                continue;
+
+            let errorOccurred = false;
+            practitioner.exercises = await this.practitionerService.GetPractitionersExercises(practitioner.exercisesID);
+            if (typeof practitioner.exercises == "undefined")
+                errorOccurred = true;
+
+            if (!errorOccurred)
+                for (let exercise of practitioner.exercises) {
+                    let exerciseShouldStay = this.addedExercises.some(newExercise => exercise.exerciseID == newExercise.thisObjectID);
+                    if (!exerciseShouldStay)
+                        await this.practitionerService.RemoveExercise(practitioner.exercisesID, exercise).catch(() => errorOccurred = true);
                 }
+
+            if (!errorOccurred)
+                for (let newExerciseAndWorkload of addedExercisesWithDefaultWorkload) {
+                    let shouldAddExercise = !practitioner.exercises.some(exercisePract => newExerciseAndWorkload.exerciseID == exercisePract.exerciseID);
+                    if (shouldAddExercise)
+                        await this.practitionerService.AddExercise(practitioner.exercisesID, newExerciseAndWorkload).catch(() => errorOccurred = true);
+                }
+
+            if (!errorOccurred)
+                await this.practitionerService.UpdatePractitioner(practitioner.thisObjectID!, {templateName: this.templateName}).catch(() => errorOccurred = true);
+            if (errorOccurred) {
+                await this.alertService.ShowToast("Ocorreu um erro atualizando os alunos", undefined, "danger");
+                return;
             }
         }
     }
