@@ -206,7 +206,7 @@ export class TemplateFormPage {
                 if (!errorOccurred)
                     await this.practitionerService.UpdatePractitioner(practitioner.thisObjectID!, {templateName: this.templateName}).catch(() => errorOccurred = true);
                 if (errorOccurred) {
-                    await this.alertService.ShowToast("Ocorreu um erro atualizando os ciclos", undefined, "danger");
+                    await this.alertService.ShowToast("Ocorreu um erro atualizando os alunos", undefined, "danger");
                     return;
                 }
             }
