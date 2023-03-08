@@ -101,10 +101,8 @@ export class TemplateListPage {
         let errorOccurred = false;
         let allPractitioners = this.previouslyDeleted ? await this.practitionerService.GetAllPractitionersFromCache() : await this.practitionerService.GetAllPractitioners();
         for (let i = 0; i < allPractitioners.length; i++) {
-            if (allPractitioners[i].templateName == templateName) {
-                allPractitioners[i].templateName = undefined;
-                break;
-            }
+            if (allPractitioners[i].templateName == templateName)
+                await this.practitionerService.UpdatePractitioner(allPractitioners[i].thisObjectID!, {templateName: ""}).catch(() => errorOccurred = true);
             if (errorOccurred)
                 return errorOccurred;
         }
