@@ -40,7 +40,7 @@
                     <ion-skeleton-text animated="true" class="small-text-skeleton" ></ion-skeleton-text>
                 </div>
                 <div class="text-paragraph-inset" *ngIf="!isLoading">
-                    <p class="pre-wrap" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
+                    <p class="pre-wrap ion-no-margin" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
                     <ion-note *ngIf="!practitionerInfo?.objectives">Nenhum objetivo listado</ion-note>
                 </div>
 
@@ -51,7 +51,7 @@
                     <ion-skeleton-text animated="true" class="smallest-text-skeleton" ></ion-skeleton-text>
                 </div>
                 <div class="text-paragraph-inset" *ngIf="!isLoading">
-                    <p class="pre-wrap" *ngIf="practitionerInfo?.observations">{{practitionerInfo?.observations}}</p>
+                    <p class="pre-wrap ion-no-margin" *ngIf="practitionerInfo?.observations">{{practitionerInfo?.observations}}</p>
                     <ion-note *ngIf="!practitionerInfo?.observations">Nenhuma observação listada</ion-note>
                 </div>
             </div>
