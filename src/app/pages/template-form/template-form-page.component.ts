@@ -5,9 +5,10 @@ import {SelectExerciseAndWorkloadComponent} from "../../components/select-exerci
 import {AccountService} from "../../services/account.service";
 import {ExercisesService} from "../../services/exercises.service";
 import {AlertService} from "../../services/alert.service";
-import {Exercise} from "../../interfaces/exercise";
+import {Exercise, PractitionerExercise} from "../../interfaces/exercise";
 import {ExerciseTemplate} from "../../interfaces/exercise-template";
 import {AppInfoService} from "../../services/app-info.service";
+import {PractitionerService} from "../../services/practitioner.service";
 
 function sortByCategory(firstExerc: Exercise, secondExerc: Exercise) {
     let firstLowerCase = firstExerc.category.toLowerCase();
@@ -26,7 +27,7 @@ function sortByName(firstExerc: Exercise, secondExerc: Exercise) {
     templateUrl: './template-form-page.component.html',
     styleUrls: ['./template-form-page.component.scss'],
 })
-export class TemplateFormPage implements OnInit {
+export class TemplateFormPage {
     private allExercises: Exercise[] = [];
     private allExerciseTemplates: ExerciseTemplate[] = [];
     private addedExercises: Exercise[] = [];
@@ -38,10 +39,7 @@ export class TemplateFormPage implements OnInit {
     public exercisesByCategory: { name: string, exercises: Exercise[] }[] = [];
     public isLoading = true;
 
-    constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private exercisesService: ExercisesService, private popoverController: PopoverController, private alertService: AlertService) { }
-
-    ngOnInit() {
-    }
+    constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private exercisesService: ExercisesService, private practitionerService: PractitionerService, private popoverController: PopoverController, private alertService: AlertService) { }
 
     async ionViewWillEnter() {
         this.exerciseTemplateID = this.activatedRoute.snapshot.paramMap.get("id");
@@ -178,6 +176,40 @@ export class TemplateFormPage implements OnInit {
         let exerciseIDs: string[] = [];
         for (let exercise of this.addedExercises)
             exerciseIDs.push(exercise.thisObjectID!);
+        if (isUpdating)
+            await this.updateTemplateAndExercisesOnPractitioners();
         return isUpdating ? this.exercisesService.UpdateExerciseTemplate(this.exerciseTemplateID!, {name: this.templateName, exerciseIDs: exerciseIDs}) : this.exercisesService.CreateExerciseTemplate({name: this.templateName!, exerciseIDs: exerciseIDs});
+    }
+
+    async updateTemplateAndExercisesOnPractitioners() {
+        let addedExercisesWithDefaultWorkload: PractitionerExercise[] = [];
+        for (let exercise of this.addedExercises) {
+            let exerciseWithDefaultWorkload: PractitionerExercise = {
+                exerciseID: exercise.thisObjectID!,
+                exercise: exercise,
+                series: 1,
+                repetition: 1,
+                rest: 0,
+                load: 0
+            }
+            addedExercisesWithDefaultWorkload.push(exerciseWithDefaultWorkload);
+        }
+
+        let allPractitioners = await this.practitionerService.GetAllPractitioners();
+        for (let practitioner of allPractitioners) {
+            if (practitioner.templateName == this.originalName) {
+                let errorOccurred = false;
+                if (this.changed)
+                    await this.practitionerService.ClearExercises(practitioner.exercisesID).catch(() => errorOccurred = true);
+                if (!errorOccurred && this.changed)
+                    await this.practitionerService.AddExercise(practitioner.exercisesID, ...addedExercisesWithDefaultWorkload).catch(() => errorOccurred = true);
+                if (!errorOccurred)
+                    await this.practitionerService.UpdatePractitioner(practitioner.thisObjectID!, {templateName: this.templateName}).catch(() => errorOccurred = true);
+                if (errorOccurred) {
+                    await this.alertService.ShowToast("Ocorreu um erro atualizando os ciclos", undefined, "danger");
+                    return;
+                }
+            }
+        }
     }
 }
