@@ -236,10 +236,12 @@ export class PractitionerService {
                 return Promise.reject({docDoesNotExist: true});
             let exercises: PractitionerExercise[] = (doc.data() as { items: PractitionerExercise[] }).items;
             for (let i = 0; i < exercises.length; i++) {
-                let errorOccurred = false;
-                await this.exercisesService.GetExerciseFromCache(exercises[i].exerciseID).then(value => exercises[i].exercise = value).catch(() => errorOccurred = true);
+                let cacheError = false, errorOccurred = false;
+                await this.exercisesService.GetExerciseFromCache(exercises[i].exerciseID).then(value => exercises[i].exercise = value).catch(() => cacheError = true);
+                if (cacheError)
+                    await this.exercisesService.GetExercise(exercises[i].exerciseID).then(value => exercises[i].exercise = value).catch(() => errorOccurred);
                 if (errorOccurred)
-                    exercises[i].exercise = await this.exercisesService.GetExercise(exercises[i].exerciseID);
+                    return Promise.reject();
             }
             return Promise.resolve(exercises);
         } catch (exception) {
@@ -288,7 +290,7 @@ export class PractitionerService {
     /**
      * Gets all the practitioner, without any optional fields being filled
      */
-    public async GetAllFromRange(from: number, to: number) {
+    public async GetAllPractitionersFromRange(from: number, to: number) {
         const allDocs = await getDocs(query(this.colPracShort(), startAt(from), endAt(to)));
         return this.getArrayOfPractitionerFromAllDocs(allDocs);
     }
