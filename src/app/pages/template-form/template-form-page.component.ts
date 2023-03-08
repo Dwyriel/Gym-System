@@ -203,13 +203,15 @@ export class TemplateFormPage {
             if (practitioner.templateName != this.originalName)
                 continue;
 
-            let errorOccurred = false;
-            practitioner.exercises = await this.practitionerService.GetPractitionersExercises(practitioner.exercisesID);
-            if (typeof practitioner.exercises == "undefined")
-                errorOccurred = true;
+            let cacheError = false, errorOccurred = false;
+            await this.practitionerService.GetPractitionersExercises(practitioner.exercisesID, true).then(value => practitioner.exercises = value).catch(() => cacheError = true);
+            if (cacheError)
+                await this.practitionerService.GetPractitionersExercises(practitioner.exercisesID).then(value => practitioner.exercises = value).catch(() => cacheError = true);
+            if(errorOccurred)
+                return;//todo something here
 
             if (!errorOccurred)
-                for (let exercise of practitioner.exercises) {
+                for (let exercise of practitioner.exercises!) {
                     let exerciseShouldStay = this.addedExercises.some(newExercise => exercise.exerciseID == newExercise.thisObjectID);
                     if (!exerciseShouldStay)
                         await this.practitionerService.RemoveExercise(practitioner.exercisesID, exercise).catch(() => errorOccurred = true);
@@ -217,7 +219,7 @@ export class TemplateFormPage {
 
             if (!errorOccurred)
                 for (let newExerciseAndWorkload of addedExercisesWithDefaultWorkload) {
-                    let shouldAddExercise = !practitioner.exercises.some(exercisePract => newExerciseAndWorkload.exerciseID == exercisePract.exerciseID);
+                    let shouldAddExercise = !practitioner.exercises!.some(exercisePract => newExerciseAndWorkload.exerciseID == exercisePract.exerciseID);
                     if (shouldAddExercise)
                         await this.practitionerService.AddExercise(practitioner.exercisesID, newExerciseAndWorkload).catch(() => errorOccurred = true);
                 }
