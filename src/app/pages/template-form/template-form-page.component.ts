@@ -197,33 +197,28 @@ export class TemplateFormPage {
                 addedExercisesWithDefaultWorkload.push(exerciseWithDefaultWorkload);
             }
         }
-
         let allPractitioners = await this.practitionerService.GetAllPractitioners();
         for (let practitioner of allPractitioners) {
             if (practitioner.templateName != this.originalName)
                 continue;
-
             let cacheError = false, errorOccurred = false;
-            await this.practitionerService.GetPractitionersExercises(practitioner.exercisesID, true).then(value => practitioner.exercises = value).catch(() => cacheError = true);
-            if (cacheError)
-                await this.practitionerService.GetPractitionersExercises(practitioner.exercisesID).then(value => practitioner.exercises = value).catch(() => cacheError = true);
-            if(errorOccurred)
-                return;//todo something here
-
-            if (!errorOccurred)
-                for (let exercise of practitioner.exercises!) {
-                    let exerciseShouldStay = this.addedExercises.some(newExercise => exercise.exerciseID == newExercise.thisObjectID);
-                    if (!exerciseShouldStay)
-                        await this.practitionerService.RemoveExercise(practitioner.exercisesID, exercise).catch(() => errorOccurred = true);
-                }
-
-            if (!errorOccurred)
-                for (let newExerciseAndWorkload of addedExercisesWithDefaultWorkload) {
-                    let shouldAddExercise = !practitioner.exercises!.some(exercisePract => newExerciseAndWorkload.exerciseID == exercisePract.exerciseID);
-                    if (shouldAddExercise)
-                        await this.practitionerService.AddExercise(practitioner.exercisesID, newExerciseAndWorkload).catch(() => errorOccurred = true);
-                }
-
+            if (this.changed) {
+                await this.practitionerService.GetPractitionersExercises(practitioner.exercisesID, true).then(value => practitioner.exercises = value).catch(() => cacheError = true);
+                if (cacheError)
+                    await this.practitionerService.GetPractitionersExercises(practitioner.exercisesID).then(value => practitioner.exercises = value).catch(() => errorOccurred = true);
+                if (!errorOccurred)
+                    for (let exercise of practitioner.exercises!) {
+                        let exerciseShouldStay = this.addedExercises.some(newExercise => exercise.exerciseID == newExercise.thisObjectID);
+                        if (!exerciseShouldStay)
+                            await this.practitionerService.RemoveExercise(practitioner.exercisesID, exercise).catch(() => errorOccurred = true);
+                    }
+                if (!errorOccurred)
+                    for (let newExerciseAndWorkload of addedExercisesWithDefaultWorkload) {
+                        let shouldAddExercise = !practitioner.exercises!.some(exercisePract => newExerciseAndWorkload.exerciseID == exercisePract.exerciseID);
+                        if (shouldAddExercise)
+                            await this.practitionerService.AddExercise(practitioner.exercisesID, newExerciseAndWorkload).catch(() => errorOccurred = true);
+                    }
+            }
             if (!errorOccurred)
                 await this.practitionerService.UpdatePractitioner(practitioner.thisObjectID!, {templateName: this.templateName}).catch(() => errorOccurred = true);
             if (errorOccurred) {
