@@ -123,7 +123,7 @@ export class TemplateAddPage {
             animated: true
         });
         editExercisePopover.onDidDismiss().then(async value => {
-            if (!value.data || value.data && (!value.data.updatedWorkload.series || !value.data.updatedWorkload.repetition || !value.data.updatedWorkload.rest || !value.data.updatedWorkload.load)) {
+            if (!value.data || value.data && (!value.data.updatedWorkload.series || !value.data.updatedWorkload.repetition || value.data.updatedWorkload.rest === undefined || value.data.updatedWorkload.load === undefined)) {
                 this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].checked = !this.templateExercisesByCategory[indexCategory].templateExercises[indexExercise].checked;
                 return;
             }
