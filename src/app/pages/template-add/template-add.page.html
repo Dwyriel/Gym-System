@@ -18,15 +18,13 @@
             <div *ngIf="selectedTemplateName">
                 <ion-item lines="none" class="bold-text full-width">
                     <div class="big-cell">Exercício</div>
-                    <div class="align-text-middle small-cell hor-text-center">S</div>
-                    <div class="align-text-middle small-cell hor-text-center">R</div>
-                    <div class="align-text-middle small-cell hor-text-center">D</div>
-                    <div class="align-text-middle small-cell hor-text-center">C</div>
+                    <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Séries" : "S"}}</div>
+                    <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Repet." : "R"}}</div>
+                    <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Desc." : "D"}}</div>
+                    <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Carga" : "C"}}</div>
                 </ion-item>
                 <div *ngFor="let categoryObj of templateExercisesByCategory; index as i">
-                    <ion-item>
-                        <ion-text> {{categoryObj.category}} </ion-text>
-                    </ion-item>
+                    <ion-list-header> {{categoryObj.category}} </ion-list-header>
                     <ion-item *ngFor="let exerciseObj of categoryObj.templateExercises; index as j">
                         <div style="width: 5%; min-width: 36px">
                             <ion-checkbox slot="start" [(ngModel)]="exerciseObj.checked" (ionChange)="OnCheck(i, j)"></ion-checkbox>

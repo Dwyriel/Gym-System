@@ -10,6 +10,7 @@ import {ExercisesService} from "../../services/exercises.service";
 import {Exercise, PractitionerExercise} from "../../interfaces/exercise";
 import {SelectExerciseAndWorkloadComponent} from "../../components/select-exercise-and-workload/select-exercise-and-workload.component";
 import {PopoverController} from "@ionic/angular";
+import {AppInfoService} from "../../services/app-info.service";
 
 interface internalTemplateExercise {
     checked: boolean;
@@ -35,11 +36,13 @@ function sortByCategory(first: { category: string }, second: { category: string 
     styleUrls: ['./template-add.page.scss'],
 })
 export class TemplateAddPage {
+    public readonly minWidthForFullText = 700;
     public practitionerID: string | null = null;
     public practitioner?: Practitioner;
     public templatesList: ExerciseTemplate[] = [];
     public selectedTemplateName?: string;
     public templateExercisesByCategory: { category: string, templateExercises: internalTemplateExercise[] }[] = [];
+    public appInfo = AppInfoService.AppInfo;
     public isLoading = true;
 
     constructor(private accountService: AccountService, private activatedRoute: ActivatedRoute, private practitionerService: PractitionerService, private exercisesService: ExercisesService, private alertService: AlertService, private router: Router, private popoverController: PopoverController) { }
