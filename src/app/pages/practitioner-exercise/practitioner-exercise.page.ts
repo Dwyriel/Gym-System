@@ -28,6 +28,7 @@ export class PractitionerExercisePage {
     public practitionerExercises?: PractitionerExercise[];
     public allExercises?: Exercise[];
     public isLoading = false;
+    public errorOccurred = false;
     public hasExercises = true;
     public practitionerID: string | null = null;
     public appInfo = AppInfoService.AppInfo;
@@ -37,14 +38,15 @@ export class PractitionerExercisePage {
     async ionViewWillEnter() {
         this.setSkeletonText();
         this.isLoading = true;
+        this.errorOccurred = false;
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-        let cacheError = false, errorOccurred = false;
+        let cacheError = false;
         await this.practitionerService.GetPractitionerFromCache(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => cacheError = true);
         if (cacheError)
-            await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => errorOccurred = true);
-        if (errorOccurred) {
+            await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitionerInfo = result).catch(() => this.errorOccurred = true);
+        if (this.errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
             return;
         }
@@ -55,6 +57,7 @@ export class PractitionerExercisePage {
 
     ionViewDidLeave() {
         this.isLoading = false;
+        this.errorOccurred = false;
         this.hasExercises = true;
         this.practitionerInfo = undefined;
         this.practitionerExercises = undefined;

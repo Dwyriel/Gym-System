@@ -7,6 +7,7 @@ import {IonicModule} from '@ionic/angular';
 import {PractitionerExercisePageRoutingModule} from './practitioner-exercise-routing.module';
 
 import {PractitionerExercisePage} from './practitioner-exercise.page';
+import {ErrorComponent} from "../../components/error/error.component";
 
 @NgModule({
     imports: [
@@ -15,6 +16,6 @@ import {PractitionerExercisePage} from './practitioner-exercise.page';
         IonicModule,
         PractitionerExercisePageRoutingModule
     ],
-    declarations: [PractitionerExercisePage]
+    declarations: [PractitionerExercisePage, ErrorComponent]
 })
 export class PractitionerExercisePageModule {}
