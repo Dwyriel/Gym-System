@@ -7,8 +7,8 @@
         <ion-title>Atribuir Ciclo</ion-title>
     </ion-toolbar>
 </ion-header>
-<ion-content>
-    <div [hidden]="isLoading" class="webbrowser">
+<ion-content fullscreen="true">
+    <div [hidden]="isLoading || errorOccurred" class="webbrowser">
         <ion-item lines="full">
             <ion-select [(ngModel)]="selectedTemplateName" interface="alert" cancelText="Cancelar" placeholder="Escolha um ciclo" (ionChange)="changedTemplate()">
                 <ion-select-option *ngFor="let template of templatesList" [value]="template.name">{{template.name}}</ion-select-option>
@@ -42,7 +42,12 @@
             <ion-button class="full-width margin-top-1" [disabled]="checkIfSomethingIsntValid" (click)="OnClick()">Atribuir ciclo</ion-button>
         </ion-row>
     </div>
-    <div class="spinner-div" *ngIf="isLoading">
+    <div class="spinner-div" *ngIf="isLoading && !errorOccurred">
         <ion-spinner name="crescent" class="big-spinner"></ion-spinner>
+    </div>
+    <div *ngIf="errorOccurred" class="full-size">
+        <ion-row class="ion-justify-content-center ion-align-items-center full-size">
+            <app-error></app-error>
+        </ion-row>
     </div>
 </ion-content>
