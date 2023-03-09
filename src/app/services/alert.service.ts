@@ -138,7 +138,10 @@ export class AlertService {
         });
         let text: string | null = null;
         await alert.present();
-        await alert.onDidDismiss().then(({data}) => {text = data.text})
+        await alert.onDidDismiss().then(({data}) => {
+            if (data)
+                text = data.text;
+        });
         return text;
     }
 
