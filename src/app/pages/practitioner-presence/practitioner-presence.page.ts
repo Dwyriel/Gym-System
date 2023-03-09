@@ -32,6 +32,7 @@ export class PractitionerPresencePage {
     public filteredPresenceLogByYear: Presence[] = [];
     public filteredPresenceLog: Presence[] = [];
     public isLoading: boolean = true;
+    public errorOccurred: boolean = false;
     public appInfo = AppInfoService.AppInfo;
 
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private popoverController: PopoverController, private alertService: AlertService) { }
@@ -41,13 +42,14 @@ export class PractitionerPresencePage {
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-        if (!(await this.getPractitioner()))
-            return;
-        let cacheError = false, errorOccurred = false;
-        await this.getPresences(true).catch(() => cacheError = true);
-        if (cacheError)
-            await this.getPresences().catch(() => errorOccurred = true);
-        if (errorOccurred) {
+        await this.getPractitioner();
+        if(!this.errorOccurred) {
+            let cacheError = false;
+            await this.getPresences(true).catch(() => cacheError = true);
+            if (cacheError)
+                await this.getPresences().catch(() => this.errorOccurred = true);
+        }
+        if (this.errorOccurred) {
             await this.alertService.ShowToast("Um erro ocorreu ao receber dados, atualize a pagina", undefined, "danger");
             this.isLoading = false;
             return;
@@ -58,6 +60,7 @@ export class PractitionerPresencePage {
 
     ionViewWillLeave() {
         this.isLoading = true;
+        this.errorOccurred = false;
         this.practitionerID = null;
         this.monthFilter = undefined;
         this.yearFilter = undefined;
@@ -79,11 +82,10 @@ export class PractitionerPresencePage {
     }
 
     async getPractitioner() {
-        let cacheError = false, errorOccurred = false;
+        let cacheError = false;
         await this.practitionerService.GetPractitionerFromCache(this.practitionerID!).then(result => this.practitioner = result).catch(async () => cacheError = true);
         if (cacheError)
-            await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitioner = result).catch(() => errorOccurred = true);
-        return !errorOccurred;
+            await this.practitionerService.GetPractitioner(this.practitionerID!).then(result => this.practitioner = result).catch(() => this.errorOccurred = true);
     }
 
     private async getPresences(fromCache: boolean = false) {
