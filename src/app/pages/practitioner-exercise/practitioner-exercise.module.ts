@@ -7,13 +7,15 @@ import {IonicModule} from '@ionic/angular';
 import {PractitionerExercisePageRoutingModule} from './practitioner-exercise-routing.module';
 
 import {PractitionerExercisePage} from './practitioner-exercise.page';
+import {ErrorComponentModule} from "../../components/error/error.module";
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
-        PractitionerExercisePageRoutingModule
+        PractitionerExercisePageRoutingModule,
+        ErrorComponentModule
     ],
     declarations: [PractitionerExercisePage]
 })

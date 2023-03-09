@@ -7,14 +7,12 @@
         <ion-title>Aluno</ion-title>
     </ion-toolbar>
 </ion-header>
-
 <ion-content>
-    <div class="webbrowser">
+    <div class="webbrowser" *ngIf="!errorOccurred">
         <ion-list class="ion-padding">
             <div class="flex">
                 <ion-skeleton-text animated="true" class="ion-margin-bottom header-text header-skeleton" *ngIf="isLoading"></ion-skeleton-text>
                 <h1 class="ion-margin-bottom header-text" *ngIf="!isLoading"> {{practitionerInfo?.name}} </h1>
-
                 <div class="side-btn-margin">
                     <ion-buttons>
                         <ion-button routerLink="/template-add/{{practitionerID}}" [disabled]="isLoading">
@@ -29,10 +27,8 @@
                     </ion-buttons>
                 </div>
             </div>
-
             <ion-badge class="info-badge" color="secondary" *ngIf="!isLoading">{{todayPresenceValue}}</ion-badge>
             <ion-badge class="info-badge" color="secondary" *ngIf="!isLoading && practitionerInfo?.templateName">{{practitionerInfo?.templateName}}</ion-badge>
-
             <div>
                 <p class="bold-text">Objetivos</p>
                 <div class="text-paragraph-inset" *ngIf="isLoading">
@@ -43,7 +39,6 @@
                     <p class="pre-wrap ion-no-margin" *ngIf="practitionerInfo?.objectives">{{practitionerInfo?.objectives}}</p>
                     <ion-note *ngIf="!practitionerInfo?.objectives">Nenhum objetivo listado</ion-note>
                 </div>
-
                 <p class="bold-text">Observações</p>
                 <div class="text-paragraph-inset" *ngIf="isLoading">
                     <ion-skeleton-text animated="true" class="big-text-skeleton" ></ion-skeleton-text>
@@ -59,6 +54,11 @@
         <ion-row class="ion-justify-content-center bottom-items-margin">
             <ion-button class="full-width margin-top-1" routerLink="/practitioner-exercise/{{practitionerID}}" [disabled]="isLoading">Exercícios</ion-button>
             <ion-button class="full-width margin-top-1" routerLink="/practitioner-presence/{{practitionerID}}" [disabled]="isLoading">Registro de Presenças</ion-button>
+        </ion-row>
+    </div>
+    <div *ngIf="errorOccurred" class="full-size">
+        <ion-row class="ion-justify-content-center ion-align-items-center full-size">
+            <app-error></app-error>
         </ion-row>
     </div>
 </ion-content>

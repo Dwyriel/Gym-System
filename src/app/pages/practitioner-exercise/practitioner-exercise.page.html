@@ -9,7 +9,7 @@
 </ion-header>
 
 <ion-content fullscreen="true">
-    <div [hidden]="isLoading" class="webbrowser">
+    <div [hidden]="isLoading || errorOccurred" class="webbrowser">
         <ion-item lines="full">
             <ion-item lines="none" button="true" (click)="onClick()" style="width: 75%">
                 <ion-label>Adicionar exercício</ion-label>
@@ -46,7 +46,7 @@
             </ion-grid>
         </ion-list>
     </div>
-    <div [hidden]="!isLoading" class="webbrowser">
+    <div [hidden]="!isLoading || errorOccurred" class="webbrowser">
         <ion-item lines="full" disabled="true">
             <ion-item lines="full" button="true" disabled="true" style="width: 75%">
                 <ion-label>Adicionar exercício</ion-label>
@@ -89,5 +89,10 @@
                 </ion-row>
             </ion-grid>
         </ion-list>
+    </div>
+    <div *ngIf="errorOccurred" class="full-size">
+        <ion-row class="ion-justify-content-center ion-align-items-center full-size">
+            <app-error></app-error>
+        </ion-row>
     </div>
 </ion-content>

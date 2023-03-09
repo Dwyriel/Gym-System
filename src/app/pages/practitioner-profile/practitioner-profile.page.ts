@@ -14,6 +14,7 @@ import {waitForFirebaseResponse} from "../../services/app.utility";
 export class PractitionerProfilePage {
     public practitionerInfo?: Practitioner;
     public isLoading: boolean = false;
+    public errorOccurred: boolean = false;
     public practitionerID: string | null = null;
     public todayPresenceValue?: string;
 
@@ -25,22 +26,22 @@ export class PractitionerProfilePage {
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-        let errorOccurred = false;
         await this.practitionerService.GetPractitioner(this.practitionerID!)
-            .then(result => this.practitionerInfo = result).catch(async () => errorOccurred = true);
-        if (!errorOccurred)
+            .then(result => this.practitionerInfo = result).catch(async () => this.errorOccurred = true);
+        if (!this.errorOccurred)
             await this.practitionerService.GetPractitionersPresences(this.practitionerInfo!.presenceLogID)
                 .then(result => {
                     this.practitionerInfo!.presenceLog = result;
                     this.todayPresenceState();
-                }).catch(() => errorOccurred = true);
-        if (errorOccurred)
+                }).catch(() => this.errorOccurred = true);
+        if (this.errorOccurred)
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
         this.isLoading = false;
     }
 
     ionViewDidLeave() {
         this.isLoading = false;
+        this.errorOccurred = false;
         this.practitionerID = null;
         this.practitionerInfo = undefined;
     }

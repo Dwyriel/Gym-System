@@ -7,13 +7,15 @@ import {IonicModule} from '@ionic/angular';
 import {TemplateAddPageRoutingModule} from './template-add-routing.module';
 
 import {TemplateAddPage} from './template-add.page';
+import {ErrorComponentModule} from "../../components/error/error.module";
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
-        TemplateAddPageRoutingModule
+        TemplateAddPageRoutingModule,
+        ErrorComponentModule
     ],
     declarations: [TemplateAddPage]
 })

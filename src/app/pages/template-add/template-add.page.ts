@@ -44,6 +44,7 @@ export class TemplateAddPage {
     public templateExercisesByCategory: { category: string, templateExercises: internalTemplateExercise[] }[] = [];
     public appInfo = AppInfoService.AppInfo;
     public isLoading = true;
+    public errorOccurred = false;
 
     constructor(private accountService: AccountService, private activatedRoute: ActivatedRoute, private practitionerService: PractitionerService, private exercisesService: ExercisesService, private alertService: AlertService, private router: Router, private popoverController: PopoverController) { }
 
@@ -51,10 +52,10 @@ export class TemplateAddPage {
         if (!(await waitForFirebaseResponse(this.accountService)))
             return;
         this.practitionerID = this.activatedRoute.snapshot.paramMap.get("id");
-        let errorOccurred = await this.getPractitioner();
-        if (!errorOccurred)
-            errorOccurred = await this.getTemplates();
-        if (errorOccurred) {
+        this.errorOccurred = await this.getPractitioner();
+        if (!this.errorOccurred)
+            this.errorOccurred = await this.getTemplates();
+        if (this.errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
             return;
         }
@@ -67,6 +68,7 @@ export class TemplateAddPage {
         this.selectedTemplateName = undefined;
         this.templateExercisesByCategory = [];
         this.isLoading = true;
+        this.errorOccurred = false;
     }
 
     async getPractitioner() {
