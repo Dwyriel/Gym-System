@@ -110,7 +110,6 @@ export class PractitionerExercisePage {
                 }
             }
         }
-        console.log(this.exercisesByCategory);
     }
 
     public async onClick(exercise?: PractitionerExercise) {
