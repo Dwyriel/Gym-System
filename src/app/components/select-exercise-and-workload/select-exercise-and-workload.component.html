@@ -36,6 +36,6 @@
                 <ion-input inputmode="numeric" type="number" min="0" [(ngModel)]="workloadInput!.load" (keyup.enter)="EnterPressed()" (keydown)="checkForInvalidCharacters($event)" clearInput=true></ion-input>
             </ion-item>
         </div>
-        <ion-button class="ion-margin-top" expand="block" [disabled]="checkIfRequirementsArentMet" (click)="onButtonClick()">{{isEditing ? "Atualizar" : "Adicionar"}}</ion-button>
+        <ion-button class="ion-margin-top" expand="block" [disabled]="checkIfRequirementsArentMet" (click)="onButtonClick()">{{isEditing ? "Confirmar" : "Adicionar"}}</ion-button>
     </div>
 </ion-item-group>

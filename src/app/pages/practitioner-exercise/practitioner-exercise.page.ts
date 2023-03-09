@@ -11,6 +11,18 @@ import {PopoverController} from "@ionic/angular";
 import {SelectExerciseAndWorkloadComponent} from "../../components/select-exercise-and-workload/select-exercise-and-workload.component";
 import {AppInfoService} from "../../services/app-info.service";
 
+function sortExerciseByCategory(firstExerc: Exercise, secondExerc: Exercise) {
+    let firstLowerCase = firstExerc.category.toLowerCase();
+    let secondLowerCase = secondExerc.category.toLowerCase();
+    return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
+}
+
+function sortPracExerciseByCategory(firstExerc: PractitionerExercise, secondExerc: PractitionerExercise) {
+    let firstLowerCase = firstExerc.exercise!.category.toLowerCase();
+    let secondLowerCase = secondExerc.exercise!.category.toLowerCase();
+    return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
+}
+
 @Component({
     selector: 'app-practitioner-exercise',
     templateUrl: './practitioner-exercise.page.html',
@@ -51,6 +63,7 @@ export class PractitionerExercisePage {
             return;
         }
         this.allExercises = await this.exercisesService.GetAllExercises();
+        this.allExercises.sort(sortExerciseByCategory);
         await this.populateExerciseList();
         this.isLoading = false;
     }
@@ -182,6 +195,7 @@ export class PractitionerExercisePage {
     private async populateExerciseList() {
         this.practitionerExercises = await this.practitionerService.GetPractitionersExercises(this.practitionerInfo!.exercisesID);
         this.hasExercises = (typeof this.practitionerExercises != "undefined" && this.practitionerExercises.length > 0);
+        this.practitionerExercises.sort(sortPracExerciseByCategory);
     }
 
     private removeRepeatedExercises() {
