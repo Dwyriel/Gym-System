@@ -34,15 +34,19 @@
                         <div class="align-text-middle small-cell hor-text-center">{{(appInfo!.appWidth > minWidthForFullText) ? "Carga" : "C"}}</div>
                     </ion-item>
                 </ion-row>
-                <ion-row *ngFor="let exercise of practitionerExercises" class="flex-no-wrap">
-                    <ion-item class="full-width" (click)="onClick(exercise)" button="true" lines="full">
-                        <div class="align-text-middle big-cell"> {{exercise.exercise!.name}} </div>
-                        <div class="align-text-middle small-cell hor-text-center"> {{exercise.series}} </div>
-                        <div class="align-text-middle small-cell hor-text-center"> {{exercise.repetition}} </div>
-                        <div class="align-text-middle small-cell hor-text-center"> {{exercise.rest}} </div>
-                        <div class="align-text-middle small-cell hor-text-center"> {{exercise.load}} </div>
-                    </ion-item>
-                </ion-row>
+                <div *ngFor="let category of exercisesByCategory">
+                    <ion-list-header class="ion-margin-start">{{category.name}}</ion-list-header>
+                    <ion-row *ngFor="let exercise of category.practitionerExercises" class="flex-no-wrap">
+                        <ion-item class="full-width" (click)="onClick(exercise)" button="true" lines="full">
+                            <ion-item class="ion-no-margin ion-no-padding" slot="start" lines="none"></ion-item>
+                            <div class="ion-margin-start align-text-middle big-cell"> {{exercise.exercise!.name}} </div>
+                            <div class="align-text-middle small-cell hor-text-center"> {{exercise.series}} </div>
+                            <div class="align-text-middle small-cell hor-text-center"> {{exercise.repetition}} </div>
+                            <div class="align-text-middle small-cell hor-text-center"> {{exercise.rest}} </div>
+                            <div class="align-text-middle small-cell hor-text-center"> {{exercise.load}} </div>
+                        </ion-item>
+                    </ion-row>
+                </div>
             </ion-grid>
         </ion-list>
     </div>

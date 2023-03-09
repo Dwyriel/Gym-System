@@ -23,6 +23,12 @@ function sortPracExerciseByCategory(firstExerc: PractitionerExercise, secondExer
     return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
 }
 
+function sortPracExerciseByName(firstExerc: PractitionerExercise, secondExerc: PractitionerExercise) {
+    let firstLowerCase = firstExerc.exercise!.name.toLowerCase();
+    let secondLowerCase = secondExerc.exercise!.name.toLowerCase();
+    return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
+}
+
 @Component({
     selector: 'app-practitioner-exercise',
     templateUrl: './practitioner-exercise.page.html',
@@ -38,10 +44,10 @@ export class PractitionerExercisePage {
     public skeletonTextItems: string[] = [];
     public practitionerInfo?: Practitioner;
     public practitionerExercises?: PractitionerExercise[];
+    public exercisesByCategory: { name: string, practitionerExercises: PractitionerExercise[] }[] = [];
     public allExercises?: Exercise[];
     public isLoading = false;
     public errorOccurred = false;
-    public hasExercises = true;
     public practitionerID: string | null = null;
     public appInfo = AppInfoService.AppInfo;
 
@@ -71,17 +77,40 @@ export class PractitionerExercisePage {
     ionViewDidLeave() {
         this.isLoading = false;
         this.errorOccurred = false;
-        this.hasExercises = true;
         this.practitionerInfo = undefined;
         this.practitionerExercises = undefined;
         this.allExercises = undefined;
         this.practitionerID = null;
     }
 
+    get hasExercises() {
+        return this.practitionerExercises !== undefined && this.practitionerExercises.length > 0;
+    }
+
     setSkeletonText() {
         this.skeletonTextItems = [];
         for (let i = 0; i < this.skeletonTextNumOfItems; i++)
             this.skeletonTextItems.push(`width: ${((Math.random() * this.skeletonTextVariation) + this.minSkeletonTextSize)}px; max-width: 80%`);
+    }
+
+    private async populateExerciseList() {
+        this.practitionerExercises = await this.practitionerService.GetPractitionersExercises(this.practitionerInfo!.exercisesID);
+        this.practitionerExercises.sort(sortPracExerciseByCategory);
+        this.exercisesByCategory = [];
+        for (let practitionerExercise of this.practitionerExercises) {
+            if (!this.exercisesByCategory.some(category => category.name === practitionerExercise.exercise!.category)) {
+                this.exercisesByCategory.push({name: practitionerExercise.exercise!.category, practitionerExercises: [practitionerExercise]});
+                continue;
+            }
+            for (let index = 0; index < this.exercisesByCategory.length; index++) {
+                if (this.exercisesByCategory[index].name === practitionerExercise.exercise!.category) {
+                    this.exercisesByCategory[index].practitionerExercises.push(practitionerExercise);
+                    this.exercisesByCategory[index].practitionerExercises.sort(sortPracExerciseByName);
+                    break;
+                }
+            }
+        }
+        console.log(this.exercisesByCategory);
     }
 
     public async onClick(exercise?: PractitionerExercise) {
@@ -190,12 +219,6 @@ export class PractitionerExercisePage {
         await this.updateUserOutOfTemplate();
         await this.alertService.DismissLoading(id);
 
-    }
-
-    private async populateExerciseList() {
-        this.practitionerExercises = await this.practitionerService.GetPractitionersExercises(this.practitionerInfo!.exercisesID);
-        this.hasExercises = (typeof this.practitionerExercises != "undefined" && this.practitionerExercises.length > 0);
-        this.practitionerExercises.sort(sortPracExerciseByCategory);
     }
 
     private removeRepeatedExercises() {
