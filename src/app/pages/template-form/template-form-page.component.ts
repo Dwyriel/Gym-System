@@ -34,6 +34,7 @@ export class TemplateFormPage {
     private originalName?: string;
     private changed = false;
 
+    public editingTemplate = true;
     public exerciseTemplateID: string | null = null;
     public templateName?: string;
     public exercisesByCategory: { name: string, exercises: Exercise[] }[] = [];
@@ -56,13 +57,21 @@ export class TemplateFormPage {
         let errorOccurred = false;
         if (this.exerciseTemplateID)
             await this.exercisesService.GetExerciseTemplate(this.exerciseTemplateID).then(async value => {
+                this.editingTemplate = true;
                 this.originalName = value.name;
                 this.templateName = value.name;
                 this.exercisesService.GetTemplatesExercises(value.exerciseIDs).then(value1 => {
                     this.addedExercises = value1;
                     this.filterExercisesByCategory();
                 }).catch(() => errorOccurred = true);
-            }).catch(() => errorOccurred = true);
+            }).catch(() => {
+                this.editingTemplate = false;
+                this.originalName = undefined;
+                this.templateName = "";
+                this.addedExercises = [];
+            });
+        else
+            this.editingTemplate = false;
         if (errorOccurred) {
             await this.alertService.ShowToast("Ocorreu um erro carregando as informações", undefined, "danger");
             return;

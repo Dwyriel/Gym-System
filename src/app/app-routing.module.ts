@@ -38,22 +38,22 @@ const routes: Routes = [
     {
         path: 'exercise-form',
         loadChildren: () => import('./pages/exercise-form/exercise-form.module').then(m => m.ExerciseFormPageModule),
-        title: `Criar exercício - ${gymName}`
+        title: `Exercício - ${gymName}`
     },
     {
         path: 'exercise-form/:id',
         loadChildren: () => import('./pages/exercise-form/exercise-form.module').then(m => m.ExerciseFormPageModule),
-        title: `Editar exercício - ${gymName}`
+        title: `Exercício - ${gymName}`
     },
     {
         path: 'practitioner-form',
         loadChildren: () => import('./pages/practitioner-form/practitioner-form.module').then(m => m.PractitionerFormPageModule),
-        title: `Criar aluno - ${gymName}`
+        title: `Aluno - ${gymName}`
     },
     {
         path: 'practitioner-form/:id',
         loadChildren: () => import('./pages/practitioner-form/practitioner-form.module').then(m => m.PractitionerFormPageModule),
-        title: `Editar aluno - ${gymName}`
+        title: `Aluno - ${gymName}`
     },
     {
         path: 'practitioner-profile',
@@ -93,12 +93,12 @@ const routes: Routes = [
     {
         path: 'template-form',
         loadChildren: () => import('./pages/template-form/template-form.module').then(m => m.TemplateFormPageModule),
-        title: `Criar ciclo - ${gymName}`
+        title: `Ciclo - ${gymName}`
     },
     {
         path: 'template-form/:id',
         loadChildren: () => import('./pages/template-form/template-form.module').then(m => m.TemplateFormPageModule),
-        title: `Editar ciclo - ${gymName}`
+        title: `Ciclo - ${gymName}`
     },
     {
         path: 'template-add',

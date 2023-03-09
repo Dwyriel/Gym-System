@@ -4,7 +4,7 @@
             <ion-back-button defaultHref="/template-list" text="" [disabled]="isLoading">
             </ion-back-button>
         </ion-buttons>
-        <ion-title>{{exerciseTemplateID ? "Alterar" : "Criar"}} Ciclo</ion-title>
+        <ion-title>{{editingTemplate ? "Alterar" : "Criar"}} Ciclo</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content fullscreen="true">
@@ -38,7 +38,7 @@
             </ion-item>
         </ion-list>
         <ion-row class="ion-justify-content-center bottom-items-margin">
-            <ion-button [disabled]="!checkIfSendConditionsAreMet" class="full-width margin-top-1" (click)="onCreateOrUpdateButtonClick()"> {{exerciseTemplateID ? "Alterar" : "Criar"}} </ion-button>
+            <ion-button [disabled]="!checkIfSendConditionsAreMet" class="full-width margin-top-1" (click)="onCreateOrUpdateButtonClick()"> {{editingTemplate ? "Alterar" : "Criar"}} </ion-button>
         </ion-row>
     </div>
     <div class="spinner-div" *ngIf="isLoading">
