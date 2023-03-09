@@ -33,17 +33,17 @@ const routes: Routes = [
     {
         path: 'exercise-list',
         loadChildren: () => import('./pages/exercise-list/exercise-list.module').then(m => m.ExerciseListPageModule),
-        title: `Exercicios - ${gymName}`
+        title: `Exercícios - ${gymName}`
     },
     {
         path: 'exercise-form',
         loadChildren: () => import('./pages/exercise-form/exercise-form.module').then(m => m.ExerciseFormPageModule),
-        title: `Criar exercicio - ${gymName}`
+        title: `Criar exercício - ${gymName}`
     },
     {
         path: 'exercise-form/:id',
         loadChildren: () => import('./pages/exercise-form/exercise-form.module').then(m => m.ExerciseFormPageModule),
-        title: `Editar exercicio - ${gymName}`
+        title: `Editar exercício - ${gymName}`
     },
     {
         path: 'practitioner-form',
@@ -68,12 +68,12 @@ const routes: Routes = [
     {
         path: 'practitioner-exercise',
         redirectTo: 'practitioner-list',
-        title: `Exercicios do aluno - ${gymName}`
+        title: `Exercícios do aluno - ${gymName}`
     },
     {
         path: 'practitioner-exercise/:id',
         loadChildren: () => import('./pages/practitioner-exercise/practitioner-exercise.module').then(m => m.PractitionerExercisePageModule),
-        title: `Exercicios do aluno - ${gymName}`
+        title: `Exercícios do aluno - ${gymName}`
     },
     {
         path: 'practitioner-presence',
