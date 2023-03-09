@@ -149,7 +149,7 @@ export class TemplateFormPage {
 
     async onCreateOrUpdateButtonClick() {
         if (!AppInfoService.AppInfo?.isOnline) {
-            await this.alertService.ShowToast("Dispositivo não esta conectado a internet", undefined, "danger");
+            await this.alertService.ShowToast("Dispositivo não está conectado a internet", undefined, "danger");
             return;
         }
         this.isLoading = true;
