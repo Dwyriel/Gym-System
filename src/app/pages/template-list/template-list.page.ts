@@ -5,6 +5,13 @@ import {waitForFirebaseResponse} from "../../services/app.utility";
 import {AccountService} from "../../services/account.service";
 import {AlertService} from "../../services/alert.service";
 import {PractitionerService} from "../../services/practitioner.service";
+import {Exercise} from "../../interfaces/exercise";
+
+function sortTemplateByName(firstExerc: ExerciseTemplate, secondExerc: ExerciseTemplate) {
+    let firstLowerCase = firstExerc.name.toLowerCase();
+    let secondLowerCase = secondExerc.name.toLowerCase();
+    return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
+}
 
 @Component({
     selector: 'app-template-list',
@@ -48,6 +55,7 @@ export class TemplateListPage {
     private async PopulateInterface() {
         this.fetchingData = true;
         this.templatesList = await this.exercisesService.GetAllExerciseTemplates();
+        this.templatesList.sort(sortTemplateByName);
         this.templatesListUnaltered = [...this.templatesList];
         this.templatesListArrayIsEmpty = this.templatesList.length < 1;
         this.fetchingData = false;

@@ -11,6 +11,12 @@ interface ExercisesByCategory {
     exercises: Array<Exercise>
 }
 
+function sortExerciseByCategory(firstExerc: Exercise, secondExerc: Exercise) {
+    let firstLowerCase = firstExerc.category.toLowerCase();
+    let secondLowerCase = secondExerc.category.toLowerCase();
+    return (firstLowerCase < secondLowerCase) ? -1 : (firstLowerCase > secondLowerCase) ? 1 : 0;
+}
+
 @Component({
     selector: 'app-exercise-list',
     templateUrl: './exercise-list.page.html',
@@ -55,6 +61,7 @@ export class ExerciseListPage {
     private async PopulateInterface() {
         this.fetchingData = true;
         this.allExercises = await this.exercisesService.GetAllExercises();
+        this.allExercises.sort(sortExerciseByCategory);
         let categories: Array<string> = await this.exercisesService.GetAllCategories(this.allExercises);
         for (let categoryName of categories)
             this.exercisesByCategory.push({categoryName: categoryName, exercises: new Array<Exercise>()});
