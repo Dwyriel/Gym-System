@@ -13,10 +13,9 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {SelectExerciseAndWorkloadComponent} from "./components/select-exercise-and-workload/select-exercise-and-workload.component";
 import {PresencePickerComponent} from "./components/presence-form/presence-picker.component";
-import {ErrorComponent} from "./components/error/error.component";
 
 @NgModule({
-    declarations: [AppComponent, SelectExerciseAndWorkloadComponent, PresencePickerComponent, ErrorComponent],
+    declarations: [AppComponent, SelectExerciseAndWorkloadComponent, PresencePickerComponent],
     imports: [BrowserModule, FormsModule, IonicModule.forRoot(), AppRoutingModule, provideFirebaseApp(() => initializeApp(environment.firebase)), provideAuth(() => getAuth()), provideFirestore(() => {
         const firestore = getFirestore();
         enableIndexedDbPersistence(firestore);
