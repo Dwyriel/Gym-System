@@ -24,10 +24,9 @@
         <ion-footer>
             <ion-toolbar>
                 <div class="flex ion-padding">
-                    <div>
-                        <p class="no-margin" [hidden]="isLoadingDeviceName"> {{displayUsername}} </p>
-                        <p class="no-margin small-text" [hidden]="isLoadingDeviceName"> {{deviceName}} </p>
-                        <ion-spinner name="dots" class="spinner" [hidden]="!isLoadingDeviceName"></ion-spinner>
+                    <div class="flex ion-align-items-center">
+                        <ion-text class="no-margin" [hidden]="!displayUsername"> {{displayUsername}} </ion-text>
+                        <ion-spinner name="dots" class="spinner" [hidden]="displayUsername"></ion-spinner>
                     </div>
                     <div class="margin-left-auto">
                         <ion-menu-toggle>
@@ -40,6 +39,5 @@
             </ion-toolbar>
         </ion-footer>
     </ion-menu>
-
     <ion-router-outlet id="main-content"></ion-router-outlet>
 </ion-app>
