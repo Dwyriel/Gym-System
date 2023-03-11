@@ -5,7 +5,6 @@ import {Network} from '@capacitor/network';
 import {Subscription} from "rxjs";
 import {gymName} from '../environments/environment';
 import {AppInfoService} from "./services/app-info.service";
-import {DeviceIDService} from "./services/device-id.service";
 import {getRemSizeInPixels, inverseLerp, UnsubscribeIfSubscribed} from "./services/app.utility";
 import {Themes} from "./classes/app-config";
 import {AccountService} from "./services/account.service";
@@ -27,21 +26,17 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
     private resizeSubscription?: Subscription;
     private appConfigSubscription?: Subscription;
     private accountSubscription?: Subscription;
-    private deviceIDSubscription?: Subscription;
 
     public readonly gymName: string = gymName;
     public firebaseResponded: boolean = false;
     public displayUsername: string | null | undefined;
-    public deviceName: string | null = null;
     public menuId: string = "menu";
-    public isLoadingDeviceName: boolean = true;
 
-    constructor(private platform: Platform, private deviceIDService: DeviceIDService, private router: Router, private accountService: AccountService) {}
+    constructor(private platform: Platform, private router: Router, private accountService: AccountService) {}
 
     ngOnInit() {
         this.SetPlatformInfo();
         this.SetAppTheme();
-        this.SetDeviceName();
         this.CheckForConnectivity();
         this.CheckIfUserIsLoggedInAndRedirect();
     }
@@ -50,7 +45,6 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
         UnsubscribeIfSubscribed(this.resizeSubscription);
         UnsubscribeIfSubscribed(this.appConfigSubscription);
         UnsubscribeIfSubscribed(this.accountSubscription);
-        UnsubscribeIfSubscribed(this.deviceIDSubscription);
         await Network.removeAllListeners();
     }
 
@@ -95,15 +89,6 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
                     document.body.classList.toggle("dark", false);
                     break;
             }
-        });
-    }
-
-    async SetDeviceName() {
-        await this.deviceIDService.SetDeviceName();
-        UnsubscribeIfSubscribed(this.deviceIDSubscription);
-        this.deviceIDSubscription = this.deviceIDService.GetDeviceNameObservable().subscribe(deviceName => {
-            this.deviceName = deviceName
-            this.isLoadingDeviceName = false;
         });
     }
 
