@@ -12,4 +12,4 @@ export const environment = {
     production: true
 };
 
-export const gymName: string = "Viva+";
+export const gymName: string = "Academia";
