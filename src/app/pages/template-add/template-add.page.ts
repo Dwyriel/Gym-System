@@ -155,10 +155,10 @@ export class TemplateAddPage {
             await this.practitionerService.UpdatePractitioner(this.practitionerID!, {templateName: this.selectedTemplateName}).catch(() => errorOccurred = true);
         await this.alertService.DismissLoading(loadingID);
         if (errorOccurred) {
-            await this.alertService.ShowToast("Ocorreu um erro atribuindo o ciclo", undefined, "danger");
+            await this.alertService.ShowToast("Ocorreu um erro atribuindo o template", undefined, "danger");
             return;
         }
-        await this.alertService.ShowToast("Ciclo atribuido com sucesso", undefined, "primary");
+        await this.alertService.ShowToast("Template atribuido com sucesso", undefined, "primary");
         await this.router.navigate([`/practitioner-profile/${this.practitionerID}`]);
     }
 }

@@ -88,27 +88,27 @@ const routes: Routes = [
     {
         path: 'template-list',
         loadChildren: () => import('./pages/template-list/template-list.module').then(m => m.TemplateListPageModule),
-        title: `Ciclos - ${gymName}`
+        title: `Templates - ${gymName}`
     },
     {
         path: 'template-form',
         loadChildren: () => import('./pages/template-form/template-form.module').then(m => m.TemplateFormPageModule),
-        title: `Ciclo - ${gymName}`
+        title: `Template - ${gymName}`
     },
     {
         path: 'template-form/:id',
         loadChildren: () => import('./pages/template-form/template-form.module').then(m => m.TemplateFormPageModule),
-        title: `Ciclo - ${gymName}`
+        title: `Template - ${gymName}`
     },
     {
         path: 'template-add',
         redirectTo: 'practitioner-list',
-        title: `Atribuir ciclo - ${gymName}`
+        title: `Atribuir template - ${gymName}`
     },
     {
         path: 'template-add/:id',
         loadChildren: () => import('./pages/template-add/template-add.module').then(m => m.TemplateAddPageModule),
-        title: `Atribuir ciclo - ${gymName}`
+        title: `Atribuir template - ${gymName}`
     }
 ];
 

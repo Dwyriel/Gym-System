@@ -5,7 +5,7 @@ import {SelectExerciseAndWorkloadComponent} from "../../components/select-exerci
 import {AccountService} from "../../services/account.service";
 import {ExercisesService} from "../../services/exercises.service";
 import {AlertService} from "../../services/alert.service";
-import {Exercise, PractitionerExercise} from "../../interfaces/exercise";
+import {Exercise} from "../../interfaces/exercise";
 import {ExerciseTemplate} from "../../interfaces/exercise-template";
 import {AppInfoService} from "../../services/app-info.service";
 import {PractitionerService} from "../../services/practitioner.service";
@@ -164,16 +164,16 @@ export class TemplateFormPage {
         this.isLoading = true;
         let functionResult: Promise<any> = this.CreateOrUpdateExerciseTemplate(Boolean(this.exerciseTemplateID));
         await functionResult.then(async () => {
-            await this.alertService.ShowToast((this.exerciseTemplateID) ? "Ciclo alterado com sucesso" : "Ciclo criado com sucesso", undefined, "primary");
+            await this.alertService.ShowToast((this.exerciseTemplateID) ? "Template alterado com sucesso" : "Template criado com sucesso", undefined, "primary");
             await this.router.navigate(["/template-list"]);
         }).catch(async error => {
             this.isLoading = false;
             if (error.alreadyExists)
-                await this.alertService.ShowToast("Ciclo já existe", undefined, "warning");
+                await this.alertService.ShowToast("Template já existe", undefined, "warning");
             else if (error.nothingChanged)
                 await this.alertService.ShowToast("Nada foi alterado", undefined, "warning");
             else
-                await this.alertService.ShowToast((this.exerciseTemplateID) ? "Não foi possível alterar o ciclo" : "Não foi possível criar o ciclo", undefined, "danger");
+                await this.alertService.ShowToast((this.exerciseTemplateID) ? "Não foi possível alterar o template" : "Não foi possível criar o template", undefined, "danger");
         });
     }
 

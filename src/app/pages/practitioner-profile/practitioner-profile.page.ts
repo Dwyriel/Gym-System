@@ -18,7 +18,6 @@ export class PractitionerProfilePage {
     public practitionerID: string | null = null;
     public todayPresenceValue?: string;
 
-    //todo load presences, change button icon accordingly to today's checkin
     constructor(private router: Router, private activatedRoute: ActivatedRoute, private accountService: AccountService, private practitionerService: PractitionerService, private alertService: AlertService) { }
 
     async ionViewWillEnter() {

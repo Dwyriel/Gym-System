@@ -4,13 +4,13 @@
             <ion-back-button defaultHref="/practitioner-profile/{{practitionerID}}" text="" [disabled]="isLoading">
             </ion-back-button>
         </ion-buttons>
-        <ion-title>Atribuir Ciclo</ion-title>
+        <ion-title>Atribuir Template</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content fullscreen="true">
     <div [hidden]="isLoading || errorOccurred" class="webbrowser">
         <ion-item lines="full">
-            <ion-select [(ngModel)]="selectedTemplateName" interface="alert" cancelText="Cancelar" placeholder="Escolha um ciclo" (ionChange)="changedTemplate()">
+            <ion-select [(ngModel)]="selectedTemplateName" interface="alert" cancelText="Cancelar" placeholder="Escolha um template" (ionChange)="changedTemplate()">
                 <ion-select-option *ngFor="let template of templatesList" [value]="template.name">{{template.name}}</ion-select-option>
             </ion-select>
         </ion-item>
@@ -39,7 +39,7 @@
             </div>
         </ion-list>
         <ion-row class="ion-justify-content-center bottom-items-margin">
-            <ion-button class="full-width margin-top-1" [disabled]="checkIfSomethingIsntValid" (click)="OnClick()">Atribuir ciclo</ion-button>
+            <ion-button class="full-width margin-top-1" [disabled]="checkIfSomethingIsntValid" (click)="OnClick()">Atribuir template</ion-button>
         </ion-row>
     </div>
     <div class="spinner-div" *ngIf="isLoading && !errorOccurred">

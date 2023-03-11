@@ -12,7 +12,7 @@ import {UnsubscribeIfSubscribed, waitForFirebaseResponse} from "../../services/a
 })
 export class LoginPage {
     readonly gymName: string = gymName;
-    messageContent: string = "Entre em contato com o administrador do sistema para obter acesso.";
+    messageContent: string = "Usuário: teste123@test.com; Senha: teste123.";
 
     private appInfoSubscription?: Subscription;
 

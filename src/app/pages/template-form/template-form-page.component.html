@@ -4,14 +4,14 @@
             <ion-back-button defaultHref="/template-list" text="" [disabled]="isLoading">
             </ion-back-button>
         </ion-buttons>
-        <ion-title>{{editingTemplate ? "Alterar" : "Criar"}} Ciclo</ion-title>
+        <ion-title>{{editingTemplate ? "Alterar" : "Criar"}} Template</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content fullscreen="true">
     <div [hidden]="isLoading" class="webbrowser">
         <ion-list class="ion-no-padding">
             <ion-item>
-                <ion-label position="floating">Nome do ciclo</ion-label>
+                <ion-label position="floating">Nome do template</ion-label>
                 <ion-input [(ngModel)]="templateName" (keyup.enter)="EnterPressed()"></ion-input>
             </ion-item>
             <ion-item lines="none" class="bold-text">
@@ -20,7 +20,7 @@
             <ion-item *ngIf="exercisesByCategory.length < 1" lines="full" class="ion-text-center">
                 <ion-label color="medium">Nenhum exercício adicionado</ion-label>
             </ion-item>
-            <div *ngFor="let category of exercisesByCategory"><!--TODO fix ion-item lines-->
+            <div *ngFor="let category of exercisesByCategory">
                 <ion-list-header class="ion-margin-start">{{category.name}}</ion-list-header>
                 <ion-item *ngFor="let exercise of category.exercises" lines="full">
                     <ion-item class="ion-no-margin ion-no-padding" slot="start" lines="none"></ion-item>

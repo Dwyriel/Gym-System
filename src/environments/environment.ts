@@ -16,7 +16,7 @@ export const environment = {
     production: false
 };
 
-export const gymName: string = "Viva+";
+export const gymName: string = "Academia";
 
 /*
  * For easier debugging in development mode, you can import the following file

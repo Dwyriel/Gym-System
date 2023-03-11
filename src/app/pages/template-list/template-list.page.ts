@@ -1,11 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ExerciseTemplate} from "../../interfaces/exercise-template";
 import {ExercisesService} from "../../services/exercises.service";
 import {waitForFirebaseResponse} from "../../services/app.utility";
 import {AccountService} from "../../services/account.service";
 import {AlertService} from "../../services/alert.service";
 import {PractitionerService} from "../../services/practitioner.service";
-import {Exercise} from "../../interfaces/exercise";
 
 function sortTemplateByName(firstExerc: ExerciseTemplate, secondExerc: ExerciseTemplate) {
     let firstLowerCase = firstExerc.name.toLowerCase();
@@ -78,12 +77,12 @@ export class TemplateListPage {
     }
 
     public async DeleteTemplateBtn(templateToDelete: ExerciseTemplate) {
-        let answer = await this.alertService.ConfirmationAlert("Apagar este ciclo?", `"${templateToDelete.name}" desaparecerá para sempre`, "Não", "Sim");
+        let answer = await this.alertService.ConfirmationAlert("Apagar este template?", `"${templateToDelete.name}" desaparecerá para sempre`, "Não", "Sim");
         if (!answer)
             return;
         let id = await this.alertService.PresentLoading("Carregando");
         if (await this.DeleteTemplate(templateToDelete)) {
-            await this.alertService.ShowToast("Ciclo apagado com sucesso", undefined, "primary");
+            await this.alertService.ShowToast("Template apagado com sucesso", undefined, "primary");
             this.templatesList = [...this.templatesListUnaltered];
             for (let [index, template] of this.templatesList.entries())
                 if (template.thisObjectID == templateToDelete.thisObjectID)
@@ -91,7 +90,7 @@ export class TemplateListPage {
             this.templatesListUnaltered = [...this.templatesList];
             await this.SearchNames(false);
         } else
-            await this.alertService.ShowToast("O Ciclo não pode ser apagado", undefined, "danger");
+            await this.alertService.ShowToast("O template não pode ser apagado", undefined, "danger");
         await this.alertService.DismissLoading(id);
 
     }

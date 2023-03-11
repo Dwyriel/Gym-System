@@ -3,12 +3,12 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>Ciclos</ion-title>
+        <ion-title>Templates</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content>
     <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="templatesListArrayIsEmpty && !fetchingData">
-        <ion-note class="ion-margin-top">Não há nenhum ciclo registrado</ion-note>
+        <ion-note class="ion-margin-top">Não há nenhum template registrado</ion-note>
     </ion-row>
     <div class="webbrowser has-add-fab-on-bottom" *ngIf="!templatesListArrayIsEmpty && !fetchingData">
         <ion-item>
@@ -18,7 +18,7 @@
             <ion-input placeholder="Pesquisar" [clearInput]="true" [(ngModel)]="searchFilter" (ionChange)="SearchNames()"></ion-input>
         </ion-item>
         <ion-row class="webbrowser ion-padding ion-justify-content-center" *ngIf="templatesList && templatesList.length < 1">
-            <ion-note class="ion-margin-top">Nenhum ciclo encontrado</ion-note>
+            <ion-note class="ion-margin-top">Nenhum template encontrado</ion-note>
         </ion-row>
 
         <ion-list *ngFor="let template of templatesList" lines="full" class="ion-no-padding">

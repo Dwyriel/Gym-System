@@ -17,7 +17,7 @@ const handleColorSchemeChangeEvent = (event: MediaQueryListEvent) => document.bo
     templateUrl: 'app.component.html',
     styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on firebase based on account, not just randomly (either as an extra field or through collection names)
+export class AppComponent implements OnInit, OnDestroy {
     private readonly maxMobileWidth = 768;
     private readonly paddingSizeInRem = 3;
     private sysTheme?: MediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
@@ -104,7 +104,7 @@ export class AppComponent implements OnInit, OnDestroy {//TODO Save stuff on fir
     CheckIfUserIsLoggedInAndRedirect() {
         UnsubscribeIfSubscribed(this.accountSubscription);
         this.accountSubscription = this.accountService.GetUserObservable().subscribe(async (answer) => {
-            if (typeof answer == "boolean")//todo test this on a mobile app (loading html offline)
+            if (typeof answer == "boolean")
                 return;
             this.firebaseResponded = true;
             if (!answer) {
